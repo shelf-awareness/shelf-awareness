@@ -1,17 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
 import { PrismaClient, Role } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
+// import { PrismaPg } from '@prisma/adapter-pg';
 import { hash } from 'bcrypt';
 import * as config from '../config/settings.development.json';
 
 // Use the same adapter-based client config as your app
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-});
+// const adapter = new PrismaPg({
+//   connectionString: process.env.DATABASE_URL!,
+// });
 
 const prisma = new PrismaClient({
-  adapter,
+  // adapter,
   log: ['query'], // optional, like in lib/prisma.ts
 });
 
