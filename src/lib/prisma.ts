@@ -1,35 +1,23 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
+// global cache to prevent multiple instances during development
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
+// create adapter using DATABASE_URL
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+});
+
+// initialize Prisma client with adapter and query logging
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: ['query'], // optional, remove if you don't want query logs
+    adapter,
+    log: ['query'],
   });
 
+// cache the client during development to avoid multiple instances
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
-
-
-// import { PrismaClient } from '@prisma/client';
-// import { PrismaPg } from '@prisma/adapter-pg';
-
-// const globalForPrisma = globalThis as unknown as {
-//   prisma?: PrismaClient;
-// };
-
-// const adapter = new PrismaPg({
-//   connectionString: process.env.DATABASE_URL!,
-// });
-
-// export const prisma = globalForPrisma.prisma
-// ?? new PrismaClient({
-//   adapter,
-//   log: ['query'],
-// });
-
-// if (process.env.NODE_ENV !== 'production') {
-//   globalForPrisma.prisma = prisma;
-// }

@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import 'dotenv/config';
+ import 'dotenv/config';
 import { defineConfig, env } from 'prisma/config';
 
 export default defineConfig({
