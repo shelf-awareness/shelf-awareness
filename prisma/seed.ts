@@ -1,19 +1,23 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
 import { PrismaClient, Role } from '@prisma/client';
-// import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { hash } from 'bcrypt';
 import * as config from '../config/settings.development.json';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 // Use the same adapter-based client config as your app
-// const adapter = new PrismaPg({
-//   connectionString: process.env.DATABASE_URL!,
-// });
-
-const prisma = new PrismaClient({
-  // adapter,
-  log: ['query'], // optional, like in lib/prisma.ts
+const adapter = new PrismaPg({
+   connectionString: process.env.DATABASE_URL!,
 });
+
+export const prisma = new PrismaClient({ adapter, log: ['query'] });
+
+// const prisma = new PrismaClient({
+//   adapter,
+//   log: ['query'], // optional, like in lib/prisma.ts
+// });
 
 async function main() {
   console.log('Seeding the database');
@@ -229,3 +233,4 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+
