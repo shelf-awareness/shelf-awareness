@@ -4,6 +4,10 @@
   --fern-green: #588157; /* Deep green */
   --hunter-green: #3A5A40; /* Dark green */
   --brunswick-green: #344E41; /* Very dark green */
+  --light-blue: #0D98BA; /* blue green */
+  --azure-blue: #007FFF; /* Bright blue */
+  --prussian-blue: #1E3A5F; /* Dark blue */
+  
 }
 
 html,
@@ -25,7 +29,7 @@ body {
 }
 
 .navandfooter {
-  background-color: var(--hunter-green);
+  background-color: var(--light-blue);
   color: white;
   padding: 1rem;
 }
@@ -74,7 +78,7 @@ footer a {
   background-color: var(--sage);
   border: none;
   &:hover {
-    background-color: var(--brunswick-green);
+    background-color: var(--prussian-blue);
   }
 }
 
@@ -82,7 +86,7 @@ footer a {
   background-color: var(--fern-green);
   border: none;
   &:hover {
-    background-color: var(--brunswick-green);
+    background-color: var(--prussian-blue);
   }
 }
 
@@ -95,14 +99,14 @@ footer a {
 .pantry-controls .nav-link,
 .pantry-controls .navbar-brand,
 .pantry-controls .dropdown-toggle {
-  color: var(--brunswick-green) !important;
+  color: var(--prussian-blue) !important;
   font-weight: 700 !important;
 }
 
 /* Hover state */
 .pantry-controls .nav-link:hover,
 .pantry-controls .navbar-brand:hover {
-  color: var(--brunswick-green) !important;
+  color: var(--prussian-blue) !important;
   background-color: var(--sage) !important;
 }
 
@@ -112,7 +116,7 @@ footer a {
 .pantry-controls .nav-link.show,
 .pantry-controls .navbar-brand.active {
   color: #d4af37 !important;
-  background-color: var(--hunter-green) !important;
+  background-color: var(--light-blue) !important;
 }
 
 .recipe-card {

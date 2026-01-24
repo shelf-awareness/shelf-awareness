@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
       <Navbar className="navandfooter" expand="lg">
         <Container>
           <Navbar.Brand as={Link} href="/">
-            Pantry Pals
+            Shelf Awareness
           </Navbar.Brand>
         </Container>
       </Navbar>
@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
     <Navbar className="navandfooter" expand="lg">
       <Container>
         <Navbar.Brand as={Link} href="/" className={pathname === '/' ? 'active' : undefined}>
-          Pantry Pals
+          Shelf Awareness
         </Navbar.Brand>
 
         {session && (
@@ -41,7 +41,7 @@ const NavBar: React.FC = () => {
                   Dashboard
                 </Nav.Link>
                 <Nav.Link as={Link} id="view-pantry-nav" href="/view-pantry" active={isActive('/view-pantry')}>
-                  View Pantry
+                  View Shelf
                 </Nav.Link>
                 <Nav.Link as={Link} id="shopping-list-nav" href="/shopping-list" active={isActive('/shopping-list')}>
                   Shopping List

@@ -1,6 +1,6 @@
 .primaryButton {
   padding: 12px 28px;
-  background-color: var(--fern-green);
+  background-color: var(--light-blue);
   color: #fff;
   font-size: 1rem;
   font-weight: bold;
@@ -13,7 +13,7 @@
 }
 
 .primaryButton:hover {
-  background-color: var(--hunter-green);
+  background-color: var(--azure-blue);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
@@ -26,7 +26,7 @@
 .secondaryButton {
   padding: 12px 28px;
   background-color: transparent;
-  border: 2px solid var(--brunswick-green);
+  border: 2px solid var(--prussian-blue);
   color: var(--brunswick-green);
   font-size: 1rem;
   font-weight: bold;
@@ -38,7 +38,7 @@
 }
 
 .secondaryButton:hover {
-  background-color: var(--brunswick-green);
+  background-color: var(--azure-blue);
   color: var(--timberwolf);
   transform: translateY(-2px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
