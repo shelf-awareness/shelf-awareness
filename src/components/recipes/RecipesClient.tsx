@@ -88,8 +88,8 @@ export default function RecipesClient({
   return (
     <>
       {/* Top controls row */}
-      <div className="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-3">
-        <div>
+      <div className="mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 gap-md-3">
+        <div className="mb-2 mb-md-0">
           <Button
             variant={showCanMake ? 'success' : 'outline-dark'}
             onClick={() => setShowCanMake((v) => !v)}
@@ -97,36 +97,35 @@ export default function RecipesClient({
             {showCanMake ? 'Show All Recipes' : 'Show Recipes I Can Make'}
           </Button>
         </div>
+  <div className="flex-grow-1 d-flex justify-content-center mb-2 mb-md-0">
+    <Form style={{ width: '100%', maxWidth: 400 }}>
+      <Form.Control
+        type="text"
+        placeholder="Search recipes..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+    </Form>
+  </div>
 
-        <div className="flex-grow-1 d-flex justify-content-center">
-          <Form style={{ width: '100%', maxWidth: 400 }}>
-            <Form.Control
-              type="text"
-              placeholder="Search recipes..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </Form>
-        </div>
+  <div className="d-flex gap-2 flex-wrap justify-content-center">
+    {canAdd && (
+      <>
+        <Button className="btn-add" onClick={() => setShowAdd(true)}>
+          + Add Recipe
+        </Button>
 
-        <div className="d-flex gap-2">
-          {canAdd && (
-            <Button className="btn-add" onClick={() => setShowAdd(true)}>
-              + Add Recipe
-            </Button>
-          )}
-
-          {canAdd && (
-            <Button
-              variant={editMode ? 'danger' : 'outline-secondary'}
-              size="sm"
-              onClick={() => setEditMode((v) => !v)}
-            >
-              {editMode ? 'Cancel' : 'Edit Recipes'}
-            </Button>
-          )}
-        </div>
-      </div>
+        <Button
+          variant={editMode ? 'danger' : 'outline-secondary'}
+          size="sm"
+          onClick={() => setEditMode((v) => !v)}
+        >
+          {editMode ? 'Cancel' : 'Edit Recipes'}
+        </Button>
+      </>
+    )}
+  </div>
+</div>
 
       {/* Recipe cards */}
       <Row xs={1} md={2} lg={3} className="g-4">
@@ -159,7 +158,9 @@ export default function RecipesClient({
             );
           })
         ) : (
-          <p className="text-center text-muted w-100">No recipes found.</p>
+          <p className="text-center text-muted w-100 py-4">
+            No recipes found. Try adjusting your filters or search.
+          </p>
         )}
       </Row>
 

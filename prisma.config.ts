@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
  import 'dotenv/config';
-import { defineConfig } from 'prisma/config';
+import { defineConfig, env } from 'prisma/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 
 const adapter = new PrismaPg({
@@ -10,7 +10,7 @@ const adapter = new PrismaPg({
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   datasource: {
-    adapter,
+    url: env('DATABASE_URL'),
   },
   migrations: {
     seed: 'ts-node --compiler-options {"module":"CommonJS"} prisma/seed.ts',

@@ -40,20 +40,20 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 
   return (
     <main style={{ backgroundColor: '#f8f9fa' }}>
-      <Container className="py-5">
+      <Container className="py-4 py-md-5 px-3 px-md-0">
         {/* Header Section */}
         <div className="mb-4">
           <Link href="/recipes" passHref>
             <Button
               variant="link"
-              className="text-decoration-none p-0 mb-3"
+              className="text-decoration-none p-0 mb-3 d-inline-flex align-items-center"
               style={{ color: '#6c757d', fontSize: '0.95rem' }}
             >
               ← Back to Recipes
             </Button>
           </Link>
 
-          <h1 className="display-5 fw-bold mb-3" style={{ color: '#2c3e50' }}>
+          <h1 className="display-6 display-md-5 fw-bold mb-3" style={{ color: '#2c3e50' }}>
             {recipe.title}
           </h1>
 
@@ -114,6 +114,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
             <div className="card border-0 shadow-sm" style={{ overflow: 'hidden' }}>
               <div style={{ position: 'relative', width: '100%', paddingBottom: '75%' }}>
                 <Image
+                  fluid
                   src={recipe.imageUrl || 'https://placehold.co/800x600?text=Recipe'}
                   alt={recipe.title}
                   style={{
@@ -291,7 +292,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                     const label = parts.join(' ');
 
                     return (
-                      <li key={item.id ?? `${item.name}-${item.unit ?? ''}`} style={{ marginBottom: '0.5rem' }}>
+                      <li key={item.id ?? `${item.name}-${item.unit ?? ''}`} style={{ marginBottom: '0.75rem' }}>
                         <div className="d-flex align-items-center gap-2">
                           <span>{label}</span>
                           {hasItem ? (
