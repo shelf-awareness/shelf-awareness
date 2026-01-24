@@ -24,11 +24,12 @@ export default function UploadDishButton({ recipeId, recipeTitle, userEmail }: P
           fontWeight: 600,
           padding: '0.75rem 1.5rem',
           fontSize: '1.05rem',
+          whiteSpace: 'normal',
         }}
         onClick={() => setShowModal(true)}
         disabled={!userEmail}
       >
-        <CameraFill size={20} />
+        <CameraFill size={18} />
         Made this dish? Show us!
       </Button>
 

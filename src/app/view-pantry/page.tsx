@@ -32,7 +32,7 @@ const ViewPantryPage = async () => {
 
   return (
     <main>
-      <Container id="view-pantry" className="py-3">
+      <Container id="view-pantry" className="py-3 px-2 px-md-3">
         <PantryClient
           initialProduce={produce}
           initialLocations={locations.map((loc) => loc.name)}

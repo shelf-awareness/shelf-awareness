@@ -150,9 +150,10 @@ export default function AddToShoppingList({ missingItems }: Props) {
         {missingItems.map((item) => {
           const key = keyFor(item);
           return (
-            <div key={key} className="d-flex align-items-center gap-2">
+            <div key={key} className="d-flex align-items-center gap-2 flex-grow-1" style={{ minWidth: '150px' }}>
               <Button
                 size="sm"
+                className={`w-100 ${added[key] ? 'btn-success' : 'dish-btn-secondary'}`}
                 variant={added[key] ? 'success' : ' dish-btn-secondary'}
                 onClick={() => addOne(item)}
                 disabled={adding[key] || !!added[key]}

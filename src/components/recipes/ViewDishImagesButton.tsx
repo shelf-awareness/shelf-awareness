@@ -23,10 +23,11 @@ export default function ViewDishImagesButton({ recipeId, recipeTitle }: Props) {
           fontWeight: 600,
           padding: '0.75rem 1.5rem',
           fontSize: '1.05rem',
+          whiteSpace: 'normal',
         }}
         onClick={() => setShowModal(true)}
       >
-        <Images size={20} />
+        <Images size={18} />
         View Community Photos
       </Button>
 

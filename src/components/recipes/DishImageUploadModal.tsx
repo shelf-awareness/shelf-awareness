@@ -108,7 +108,7 @@ export default function DishImageUploadModal({
   }
 
   return (
-    <Modal show={show} onHide={handleClose} centered size="lg">
+    <Modal show={show} onHide={handleClose} centered size="lg" fullscreen="sm-down">
       <Modal.Header closeButton>
         <Modal.Title>
           Share Your
@@ -138,7 +138,7 @@ export default function DishImageUploadModal({
                 alt="preview"
                 width={400}
                 height={300}
-                style={{ objectFit: 'cover', borderRadius: '8px' }}
+                style={{ objectFit: 'cover', borderRadius: '8px', maxWidth: '100%', height: 'auto' }}
                 unoptimized
               />
             </div>
