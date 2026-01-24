@@ -96,7 +96,9 @@ export default function RecipeCard({
         }`}
         role="button"
         tabIndex={0}
-        onClick={() => router.push(`/recipes/${id}`)}
+        onClick={() => {
+          if (!editMode) router.push(`/recipes/${id}`);
+        }}
         onKeyDown={(e) => {
           if (!editMode && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
@@ -180,7 +182,7 @@ export default function RecipeCard({
                 <Col xs={6}>
                   <Button
                     variant="primary"
-                    className="btn-edit"
+                    className="btn-edit w-100 py-2"
                     onClick={(e) => {
                       e.stopPropagation();
                       setShowEdit(true);
@@ -197,7 +199,7 @@ export default function RecipeCard({
                       handleDelete();
                     }}
                     disabled={loading}
-                    className="btn-delete"
+                    className="btn-delete w-100 py-2"
                   >
                     {loading ? 'Deleting…' : <Trash color="white" size={18} />}
                   </Button>
