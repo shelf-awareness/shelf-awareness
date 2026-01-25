@@ -28,7 +28,7 @@ const DeleteShoppingListModal = ({ show, onHide, shoppingList }: DeleteShoppingL
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered size="lg">
+    <Modal show={show} onHide={onHide} centered size="lg" fullscreen="sm-down">
       <Modal.Header className="justify-content-center">
         <Modal.Title>
           {`Delete ${shoppingList.name}`}
@@ -50,6 +50,7 @@ const DeleteShoppingListModal = ({ show, onHide, shoppingList }: DeleteShoppingL
           <Row>
             <Col>
               <h6>Items in List:</h6>
+              <div className="table-responsive">
               <Table striped bordered hover size="sm">
                 <thead>
                   <tr>
@@ -73,6 +74,7 @@ const DeleteShoppingListModal = ({ show, onHide, shoppingList }: DeleteShoppingL
                   ))}
                 </tbody>
               </Table>
+              </div>
             </Col>
           </Row>
         ) : (
@@ -83,8 +85,8 @@ const DeleteShoppingListModal = ({ show, onHide, shoppingList }: DeleteShoppingL
           </Row>
         )}
 
-        <Row className="pt-4">
-          <Col className="text-center">
+        <Row className="pt-4 g-2">
+          <Col xs={12} md={6} className="text-center">
             <Button
               onClick={onHide}
               variant="secondary"
@@ -94,7 +96,7 @@ const DeleteShoppingListModal = ({ show, onHide, shoppingList }: DeleteShoppingL
               Cancel
             </Button>
           </Col>
-          <Col className="text-center">
+          <Col xs={12} md={6} className="text-center">
             <Button
               onClick={handleDelete}
               variant="danger"
