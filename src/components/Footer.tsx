@@ -20,7 +20,7 @@ const Footer = () => {
               <div className="p-1 me-4 rounded" style={{ backgroundColor: 'var(--timberwolf)' }}>
                 <Image
                   src={imgSrc}
-                  alt="Pantry Pals Logo"
+                  alt="Shelf Awareness Logo"
                   width="50"
                   height="50"
                   onError={() => setImgSrc('/fallback-logo.png')}
@@ -81,7 +81,7 @@ const Footer = () => {
               </li>
               <li className="d-flex align-items-center">
                 <a
-                  href="https://github.com/shelf-awareness/shelf-awareness"
+                  href="https://github.com/shelf-awareness"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="nav-link p-0 d-inline-flex align-items-center"

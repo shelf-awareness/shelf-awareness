@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 
 import { Card, ListGroup, Button, Badge, Form } from 'react-bootstrap';
 import { useState } from 'react';
@@ -131,8 +131,8 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
         </ListGroup>
       </Card.Body>
 
-      <Card.Footer className="d-flex">
-        <Button className="me-2 editbutton" onClick={() => setShowViewModal(true)}>
+      <Card.Footer className="d-flex flex-column flex-sm-row gap-2">
+        <Button className="editbutton w-100 w-sm-auto" onClick={() => setShowViewModal(true)}>
           View
         </Button>
 
@@ -140,7 +140,7 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
           variant="danger"
           className="d-flex align-items-center justify-content-center"
           onClick={() => setShowDeleteModal(true)}
-          style={{ width: '40px', height: '40px', padding: 0 }}
+          style={{ width: '44px', height: '44px', padding: 0 }}
         >
           <Trash color="white" size={18} />
         </Button>

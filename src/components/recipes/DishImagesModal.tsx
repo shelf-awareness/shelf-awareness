@@ -64,7 +64,7 @@ export default function DishImagesModal({ show, onHide, recipeId, recipeTitle }:
   }, [show, recipeId]);
 
   return (
-    <Modal show={show} onHide={onHide} centered size="xl">
+    <Modal show={show} onHide={onHide} centered size="xl" fullscreen="sm-down">
       <Modal.Header closeButton>
         <Modal.Title>
           Community Photos:

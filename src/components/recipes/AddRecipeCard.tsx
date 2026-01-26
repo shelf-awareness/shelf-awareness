@@ -10,7 +10,12 @@ export default function AddRecipeCard() {
   return (
     <>
       <Card className="h-100 d-flex align-items-center justify-content-center">
-        <Button className="btn-add" onClick={() => setShow(true)}>+ Add Recipe</Button>
+        <Button
+          className="btn-add w-100 py-2"
+          onClick={() => setShow(true)}
+          >
+          + Add Recipe
+        </Button>
       </Card>
 
       <AddRecipeModal show={show} onHide={() => setShow(false)} />

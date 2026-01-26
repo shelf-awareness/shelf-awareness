@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 
 import { useState, useEffect, useCallback } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
@@ -68,7 +68,7 @@ export default function RecommendedSettingsModal({
   );
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} onHide={onHide} centered fullscreen="sm-down">
       <Form onSubmit={handleSubmit}>
         <Modal.Header closeButton>
           <Modal.Title>Recommendation Settings</Modal.Title>
@@ -87,7 +87,7 @@ export default function RecommendedSettingsModal({
 
           <Form.Group>
             <Form.Label>Expiring Soon Threshold</Form.Label>
-            <div className="d-flex gap-2">
+            <div className="d-flex flex-column flex-md-row gap-2">
               <Form.Control
                 type="number"
                 min="1"

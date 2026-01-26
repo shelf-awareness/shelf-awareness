@@ -1,4 +1,4 @@
-'use client';
+'use client'; 
 
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
@@ -57,7 +57,7 @@ export default function EditShoppingListItemModal({
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} onHide={onHide} centered fullscreen="sm-down">
       <Modal.Header closeButton>
         <Modal.Title>Edit Item</Modal.Title>
       </Modal.Header>
@@ -76,7 +76,7 @@ export default function EditShoppingListItemModal({
 
           {/* QTY + UNIT */}
           <Row className="mt-3">
-            <Col>
+            <Col xs={12} md={6}>
               <Form.Label>Quantity</Form.Label>
               <Form.Control
                 name="quantity"
@@ -86,7 +86,7 @@ export default function EditShoppingListItemModal({
               />
             </Col>
 
-            <Col>
+            <Col xs={12} md={6}>
               <Form.Label>Unit</Form.Label>
               <Form.Control
                 name="unit"
