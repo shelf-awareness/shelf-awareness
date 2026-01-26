@@ -18,7 +18,7 @@ const NavBar: React.FC = () => {
       <Navbar className="navandfooter" expand="lg">
         <Container>
           <Navbar.Brand as={Link} href="/">
-            Pantry Pals
+            Shelf Awareness
           </Navbar.Brand>
         </Container>
       </Navbar>
@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
     <Navbar className="navandfooter" expand="lg">
       <Container>
         <Navbar.Brand as={Link} href="/" className={pathname === '/' ? 'active' : undefined}>
-          Pantry Pals
+          Shelf Awareness
         </Navbar.Brand>
 
         {session && (
