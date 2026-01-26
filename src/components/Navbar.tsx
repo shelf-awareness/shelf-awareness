@@ -41,7 +41,7 @@ const NavBar: React.FC = () => {
                   Dashboard
                 </Nav.Link>
                 <Nav.Link as={Link} id="view-pantry-nav" href="/view-pantry" active={isActive('/view-pantry')}>
-                  View Pantry
+                  View Shelf
                 </Nav.Link>
                 <Nav.Link as={Link} id="shopping-list-nav" href="/shopping-list" active={isActive('/shopping-list')}>
                   Shopping List

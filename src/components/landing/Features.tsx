@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 const features = [
   {
-    title: 'Track Your Pantry',
+    title: 'Track Your Pantry Shelf',
     description: 'Easily keep track of your pantry, fridge, freezer, and spices, so you always know what you have.',
     icon: '/apple.png',
   },

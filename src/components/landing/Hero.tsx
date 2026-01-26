@@ -28,8 +28,8 @@ export default function Hero() {
               whileHover={{ scale: 1.04, rotate: 0.8 }}
             >
               <Image
-                src="/shelfawareness-logo-placeholder.png"
-                alt="Shelf Awareness Logo Placeholder"
+                src="/shelf-awareness-logo.png"
+                alt="Pantry Pals Logo"
                 width={420}
                 height={420}
                 style={{ backgroundColor: 'white' }}
@@ -44,17 +44,17 @@ export default function Hero() {
             <motion.div variants={parent} initial="hidden" animate="show">
               <motion.h1
                 className="fw-bold mb-3"
-                style={{ color: 'var(--brunswick-green)' }}
+                style={{ color: 'var(--prussian-blue)' }}
                 variants={item}
               >
                 Welcome to
                 {' '}
-                <span style={{ color: 'var(--fern-green)' }}>Shelf Awareness</span>
+                <span style={{ color: 'var(--light-blue)' }}>Shelf Awareness</span>
               </motion.h1>
 
               <motion.p
                 className="mb-4"
-                style={{ color: 'var(--hunter-green)', fontSize: '1.1rem' }}
+                style={{ color: 'var(--azure-blue)', fontSize: '1.1rem' }}
                 variants={item}
               >
                 Keep track of your pantry, cut down on food waste, and discover
