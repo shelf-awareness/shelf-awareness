@@ -6,7 +6,7 @@ import { GeoAlt, Envelope, Github } from 'react-bootstrap-icons';
 import Link from 'next/link';
 
 const Footer = () => {
-  const [imgSrc, setImgSrc] = useState('/pantrypals-logo.png');
+  const [imgSrc, setImgSrc] = useState('/shelfawareness-logo-placeholder.png');
   const currentYear = new Date().getFullYear();
 
   return (
@@ -20,13 +20,13 @@ const Footer = () => {
               <div className="p-1 me-4 rounded" style={{ backgroundColor: 'var(--timberwolf)' }}>
                 <Image
                   src={imgSrc}
-                  alt="Pantry Pals Logo"
+                  alt="Shelf Awareness Logo"
                   width="50"
                   height="50"
                   onError={() => setImgSrc('/fallback-logo.png')}
                 />
               </div>
-              <h5 className="fw-bold mb-0">Pantry Pals</h5>
+              <h5 className="fw-bold mb-0">Shelf Awareness</h5>
             </Link>
 
             <p className="footer-text-muted small">
@@ -81,7 +81,7 @@ const Footer = () => {
               </li>
               <li className="d-flex align-items-center">
                 <a
-                  href="https://github.com/pantry-pals"
+                  href="https://github.com/shelf-awareness"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="nav-link p-0 d-inline-flex align-items-center"
@@ -104,7 +104,7 @@ const Footer = () => {
               {' '}
               {currentYear}
               {' '}
-              Pantry Pals. All Rights Reserved.
+              Shelf Awareness. All Rights Reserved.
             </Col>
           </Row>
         </Container>

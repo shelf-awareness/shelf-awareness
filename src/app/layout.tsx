@@ -9,8 +9,8 @@ import Providers from './providers';
 const saira = Saira({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Pantry Pals',
-  description: 'Team 1 project at UH Manoa',
+  title: 'Shelf Awareness',
+  description: 'Group 1 ICS414 Project, forked from Pantry Pals',
 };
 
 export default function RootLayout({
