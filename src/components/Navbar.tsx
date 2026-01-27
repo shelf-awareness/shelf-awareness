@@ -49,6 +49,9 @@ const NavBar: React.FC = () => {
                 <Nav.Link as={Link} id="recipe-nav" href="/recipes" active={isActive('/recipes')}>
                   Recipes
                 </Nav.Link>
+                <Nav.Link as={Link} id="map-nav" href="/map" active={isActive('/map')}>
+                  Map
+                </Nav.Link>
               </Nav>
 
               <Nav>
