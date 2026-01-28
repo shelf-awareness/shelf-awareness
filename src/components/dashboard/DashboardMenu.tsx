@@ -41,7 +41,7 @@ export default function DashboardMenu({ ownerEmail, recipes, produce }: Dashboar
 
   return (
     <main>
-      <div className="container" id="dashboard">
+      <div className="container mobile-section" id="dashboard">
         <div className="row align-items-center text-center mt-5">
           <motion.div variants={parent} initial="hidden" animate="show">
             <motion.h1
@@ -71,7 +71,7 @@ export default function DashboardMenu({ ownerEmail, recipes, produce }: Dashboar
 
         {/* Dashboard cards */}
         <motion.div
-          className="grid gap-4 mt-5 mb-5"
+          className="grid gap-4 mt-5 mb-5 mobile-grid"
           variants={parent}
           initial="hidden"
           animate="show"
@@ -84,6 +84,7 @@ export default function DashboardMenu({ ownerEmail, recipes, produce }: Dashboar
           {menuItems.map((itemData) => (
             <motion.div
               key={itemData.href}
+              className="mobile-card"
               variants={item}
               whileHover={{
                 scale: 1.06,
