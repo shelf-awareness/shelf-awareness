@@ -178,4 +178,28 @@ footer a {
   .mobile-card {
     padding: 2rem 1rem;
   }
-}
+
+  /*adjusts search bar bottom margin on mobile for add shopping list page*/
+  .mobile-search {
+    margin-bottom: 1.5rem;
+  }
+
+  /*adjusts action buttons on shopping list cards for mobile*/
+  .mobile-actions {
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+  }
+
+  .mobile-view {
+    width: auto !important;     
+    flex: 1 1 auto !important;
+    min-width: 0 !important;    
+  }
+
+  .mobile-trash {
+    flex: 0 0 44px !important;
+  }
+  }
+

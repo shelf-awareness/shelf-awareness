@@ -94,9 +94,9 @@ const AddToShoppingListModal = ({
   };
 
   const formContent = (
-    <Form noValidate onSubmit={handleSubmit(onSubmit)}>
-      <Row className="mb-3">
-        <Col xs={6}>
+    <Form className="mobile-section" noValidate onSubmit={handleSubmit(onSubmit)}>
+      <Row className="mb-3 mobile-grid">
+        <Col xs={12} sm={6}>
           <Form.Group>
             <Form.Label>Item Name</Form.Label>
             <Form.Control
@@ -109,7 +109,7 @@ const AddToShoppingListModal = ({
           </Form.Group>
         </Col>
 
-        <Col xs={3}>
+        <Col xs={6} sm={3}>
           <Form.Group>
             <Form.Label>Qty</Form.Label>
             <Form.Control
@@ -122,7 +122,7 @@ const AddToShoppingListModal = ({
           </Form.Group>
         </Col>
 
-        <Col xs={3}>
+        <Col xs={6} sm={3}>
           <Form.Group>
             <Form.Label>Unit</Form.Label>
             <Form.Control type="text" {...register('unit')} />
@@ -131,7 +131,7 @@ const AddToShoppingListModal = ({
       </Row>
 
       <Row className="mb-3">
-        <Col xs={5}>
+        <Col xs={12} sm={5}>
           <Form.Group>
             <Form.Label>Price (optional)</Form.Label>
             <InputGroup>
@@ -148,7 +148,7 @@ const AddToShoppingListModal = ({
           </Form.Group>
         </Col>
 
-        <Col xs={7}>
+        <Col xs={12} sm={7}>
           <Form.Group>
             <Form.Label>List</Form.Label>
             <Form.Select
@@ -167,7 +167,7 @@ const AddToShoppingListModal = ({
         </Col>
       </Row>
 
-      <Row className="pt-3">
+      <Row className="pt-3 mobile-grid">
         <Col>
           <Button type="submit" className="btn-submit" disabled={isSubmitting}>
             {isSubmitting ? 'Adding…' : 'Submit'}
@@ -178,7 +178,7 @@ const AddToShoppingListModal = ({
             type="button"
             onClick={() => reset({ name: prefillName })}
             variant="warning"
-            className="btn-reset"
+            className="btn-reset mobile-card"
           >
             Reset
           </Button>

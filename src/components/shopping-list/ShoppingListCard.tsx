@@ -131,14 +131,14 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
         </ListGroup>
       </Card.Body>
 
-      <Card.Footer className="d-flex flex-column flex-sm-row gap-2">
-        <Button className="editbutton w-100 w-sm-auto" onClick={() => setShowViewModal(true)}>
+      <Card.Footer className="d-flex flex-sm-row gap-2 mobile-actions">
+        <Button className="editbutton w-100 w-sm-auto mobile-view-btn mobile-view" onClick={() => setShowViewModal(true)}>
           View
         </Button>
 
         <Button
           variant="danger"
-          className="d-flex align-items-center justify-content-center"
+          className="d-flex align-items-center justify-content-center mobile-trash"
           onClick={() => setShowDeleteModal(true)}
           style={{ width: '44px', height: '44px', padding: 0 }}
         >

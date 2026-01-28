@@ -32,6 +32,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           <Form.Control
             type="text"
             placeholder="Search shopping lists..."
+            className="mobile-search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

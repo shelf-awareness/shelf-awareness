@@ -61,7 +61,7 @@ export default function AddShoppingList({ show, onHide, owner }: Props) {
       </Modal.Header>
 
       <Modal.Body>
-        <Form noValidate onSubmit={handleSubmit(onSubmit)}>
+        <Form className="mobile-section" noValidate onSubmit={handleSubmit(onSubmit)}>
           <Form.Group className="mb-3">
             <Form.Label>List Name</Form.Label>
             <Form.Control
@@ -76,13 +76,13 @@ export default function AddShoppingList({ show, onHide, owner }: Props) {
           {/* OWNER HIDDEN */}
           <input type="hidden" {...register('owner')} value={owner} />
 
-          <Row className="pt-3">
+          <Row className="pt-3 mobile grid">
             <Col>
               <Button
                 type="submit"
                 disabled={isSubmitting}
                 style={{ backgroundColor: 'var(--fern-green)' }}
-                className="btn-submit"
+                className="btn-submit mobile-card"
               >
                 {isSubmitting ? 'Creating…' : 'Create'}
               </Button>
@@ -92,7 +92,7 @@ export default function AddShoppingList({ show, onHide, owner }: Props) {
                 type="button"
                 onClick={() => reset()}
                 variant="warning"
-                className="btn-reset"
+                className="btn-reset mobile-card"
               >
                 Reset
               </Button>
