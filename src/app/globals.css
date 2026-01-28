@@ -162,3 +162,20 @@ footer a {
 .clickable-card:hover {
   cursor: pointer;
 }
+
+/* for mobile devices */
+@media (max-width: 576px) {
+  .mobile-section {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .mobile-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: 2rem;
+  }
+
+  .mobile-card {
+    padding: 2rem 1rem;
+  }
+}
