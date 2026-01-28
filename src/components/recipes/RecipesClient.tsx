@@ -90,12 +90,25 @@ export default function RecipesClient({
       {/* Top controls row */}
       <div className="mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 gap-md-3">
         <div className="mb-2 mb-md-0">
-          <Button
-            variant={showCanMake ? 'success' : 'outline-dark'}
-            onClick={() => setShowCanMake((v) => !v)}
-          >
-            {showCanMake ? 'Show All Recipes' : 'Show Recipes I Can Make'}
-          </Button>
+          <Row>
+            <Col>
+              <Button
+                variant={showCanMake ? 'success' : 'outline-dark'}
+                onClick={() => setShowCanMake((v) => !v)}
+              >
+                {showCanMake ? 'Show All Recipes' : 'Show Recipes I Can Make'}
+              </Button>
+            </Col>
+            
+            <Col>
+              <Button
+                variant={showCanMake ? 'success' : 'outline-dark'}
+                onClick={() => setShowCanMake((v) => !v)}
+              >
+                {showCanMake ? 'Show All Recipes' : 'Show Recipes Within Budget'}
+              </Button>
+            </Col>
+          </Row>
         </div>
   <div className="flex-grow-1 d-flex justify-content-center mb-2 mb-md-0">
     <Form style={{ width: '100%', maxWidth: 400 }}>
