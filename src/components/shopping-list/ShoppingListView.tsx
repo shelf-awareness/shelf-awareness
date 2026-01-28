@@ -26,7 +26,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
       {/* Search + Buttons Row */}
       <Row
         className="mb-4 d-flex justify-content-center align-items-center text-center"
-        style={{ minHeight: '60px' }}
+        style={{ minHeight: '50px' }}
       >
         <Col xs={12} md={6} lg={4} className="mb-2">
           <Form.Control
@@ -85,7 +85,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
       </Row>
 
       {/* MAIN LAYOUT: Lists left, Recommended right */}
-      <Row>
+      <Row classname="d-flex flex-column flex-md-row">
         {/* LEFT SIDE — Shopping Lists */}
         <Col xs={12} md={8}>
           {filteredLists.length === 0 ? (

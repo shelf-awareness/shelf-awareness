@@ -100,7 +100,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
 
   return (
     <>
-      <Modal show={show} onHide={onHide} centered size="lg">
+      <Modal show={show} onHide={onHide} centered size="lg" fullscreen="sm-down">
         <Modal.Header className="justify-content-center">
           <Modal.Title>{shoppingList?.name ?? 'Shopping List'}</Modal.Title>
         </Modal.Header>
