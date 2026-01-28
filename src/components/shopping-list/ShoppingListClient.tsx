@@ -7,8 +7,12 @@ function ShoppingListClient({ initialShoppingLists }: { initialShoppingLists: an
     <main>
       <Container id="view-shopping-list" className="py-3">
         <Row className="mb-3">
-          <Col className="d-flex justify-content-between align-items-center">
+          <Col>
+          </Col>
+          <Col sm="auto" className="d-flex justify-content-between align-items-center">
             <h1>Your Shopping Lists</h1>
+          </Col>
+          <Col sm>
           </Col>
         </Row>
         <Row>

@@ -53,8 +53,8 @@ export default function RecommendedWidget({ owner, shoppingLists }: RecommendedW
   return (
     <>
       <div className="p-3 border rounded bg-light">
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <h5 className="mb-0">Recommended Items</h5>
+        <div className="d-flex justify-content-between mb-2">
+          <h6 className="mb-0 justify-content-between align-items-left">Recommended Items</h6>
           <Button
             size="sm"
             variant="outline-secondary"
