@@ -132,7 +132,8 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
       </Card.Body>
 
       <Card.Footer className="d-flex flex-sm-row gap-2 mobile-actions">
-        <Button className="editbutton w-100 w-sm-auto mobile-view-btn mobile-view" onClick={() => setShowViewModal(true)}>
+        <Button className="editbutton w-100 w-sm-auto mobile-view-btn mobile-view"
+          onClick={() => setShowViewModal(true)}>
           View
         </Button>
 
