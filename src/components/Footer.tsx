@@ -77,7 +77,7 @@ const Footer = () => {
               </li>
               <li className="d-flex align-items-center mb-2">
                 <Envelope className="me-2 flex-shrink-0" />
-                <span>contactshelfawareness@gmail.com</span>
+                <span>ShelfAwarenessApp@gmail.com</span>
               </li>
               <li className="d-flex align-items-center">
                 <a
