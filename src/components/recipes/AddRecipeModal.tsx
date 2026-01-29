@@ -298,7 +298,7 @@ export default function AddRecipeModal({ show, onHide }: Props) {
                 <Form.Control
                   type="number"
                   placeholder="e.g., 2, 4, 6"
-                  min={1}
+                  min={0}
                   value={servings}
                   onChange={(e) => setServings(
                     e.target.value === '' ? '' : Number(e.target.value),
@@ -343,7 +343,7 @@ export default function AddRecipeModal({ show, onHide }: Props) {
                 <Form.Control
                   type="number"
                   placeholder="e.g., 1, 5, 10"
-                  min={1}
+                  min={0}
                   value={proteinGrams}
                   onChange={(e) => setProteinGrams(
                     e.target.value === '' ? '' : Number(e.target.value),

@@ -350,7 +350,7 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                 <Form.Control
                   type="number"
                   placeholder="e.g., 2, 4, 6"
-                  min={1}
+                  min={0}
                   value={servings}
                   onChange={(e) => setServings(
                     e.target.value === '' ? '' : Number(e.target.value),

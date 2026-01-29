@@ -130,8 +130,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
             </div>
 
             {/* Quick Info Card */}
-            {(recipe.servings || recipe.prepMinutes || recipe.cookMinutes
-              || recipe.proteinGrams || recipe.carbsGrams || recipe.fatGrams) && (
+            {(
               <div className="card border-0 shadow-sm mt-4">
                 <div className="card-body">
                   <h6
@@ -145,7 +144,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                     Recipe Info
                   </h6>
                   <Row className="g-3">
-                    {recipe.servings && (
+                    {recipe.servings != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -169,7 +168,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         </div>
                       </Col>
                     )}
-                    {recipe.prepMinutes && (
+                    {recipe.prepMinutes != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -193,7 +192,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         </div>
                       </Col>
                     )}
-                    {recipe.cookMinutes && (
+                    {recipe.cookMinutes != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -227,7 +226,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                   >
                     Per Serving
                   </h6>
-                    {recipe.proteinGrams && (
+                    {recipe.proteinGrams != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -251,7 +250,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         </div>
                       </Col>
                     )}
-                    {recipe.carbsGrams && (
+                    {recipe.carbsGrams != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -275,7 +274,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         </div>
                       </Col>
                     )}
-                    {recipe.fatGrams && (
+                    {recipe.fatGrams != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
