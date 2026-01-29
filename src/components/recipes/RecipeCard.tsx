@@ -32,6 +32,9 @@ export type RecipeCardProps = {
   servings?: number | null;
   prepMinutes?: number | null;
   cookMinutes?: number | null;
+  proteinGrams?: number | null;
+  carbsGrams?: number | null;
+  fatGrams?: number | null;
   sourceUrl?: string | null;
   pantryNames: Set<string>;
 };
@@ -51,6 +54,9 @@ export default function RecipeCard({
   servings = null,
   prepMinutes = null,
   cookMinutes = null,
+  proteinGrams = null,
+  carbsGrams = null,
+  fatGrams = null,
   sourceUrl = null,
   pantryNames,
 }: RecipeCardProps) {
@@ -226,6 +232,9 @@ export default function RecipeCard({
             servings: servings ?? undefined,
             prepMinutes: prepMinutes ?? undefined,
             cookMinutes: cookMinutes ?? undefined,
+            proteinGrams: proteinGrams ?? undefined,
+            carbsGrams: carbsGrams ?? undefined,
+            fatGrams: fatGrams ?? undefined,
             sourceUrl: sourceUrl ?? '',
           }}
         />

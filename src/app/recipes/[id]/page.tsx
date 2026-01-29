@@ -130,7 +130,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
             </div>
 
             {/* Quick Info Card */}
-            {(recipe.servings || recipe.prepMinutes || recipe.cookMinutes) && (
+            {(
               <div className="card border-0 shadow-sm mt-4">
                 <div className="card-body">
                   <h6
@@ -144,7 +144,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                     Recipe Info
                   </h6>
                   <Row className="g-3">
-                    {recipe.servings && (
+                    {recipe.servings != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -168,7 +168,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         </div>
                       </Col>
                     )}
-                    {recipe.prepMinutes && (
+                    {recipe.prepMinutes != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -192,7 +192,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         </div>
                       </Col>
                     )}
-                    {recipe.cookMinutes && (
+                    {recipe.cookMinutes != null && (
                       <Col xs={4}>
                         <div className="text-center">
                           <div
@@ -212,6 +212,88 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                             }}
                           >
                             Cook (min)
+                          </div>
+                        </div>
+                      </Col>
+                    )}
+                    <h6
+                    className="text-uppercase fw-bold mt-4 mb-1"
+                    style={{
+                      fontSize: '0.85rem',
+                      letterSpacing: '0.5px',
+                      color: '#495057',
+                    }}
+                  >
+                    Per Serving
+                  </h6>
+                    {recipe.proteinGrams != null && (
+                      <Col xs={4}>
+                        <div className="text-center">
+                          <div
+                            style={{
+                              fontSize: '1.5rem',
+                              fontWeight: 'bold',
+                              color: '#28a745',
+                            }}
+                          >
+                            {recipe.proteinGrams}g
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.8rem',
+                              color: '#6c757d',
+                              marginTop: '0.25rem',
+                            }}
+                          >
+                            Protein
+                          </div>
+                        </div>
+                      </Col>
+                    )}
+                    {recipe.carbsGrams != null && (
+                      <Col xs={4}>
+                        <div className="text-center">
+                          <div
+                            style={{
+                              fontSize: '1.5rem',
+                              fontWeight: 'bold',
+                              color: '#28a745',
+                            }}
+                          >
+                            {recipe.carbsGrams}g
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.8rem',
+                              color: '#6c757d',
+                              marginTop: '0.25rem',
+                            }}
+                          >
+                            Carbs
+                          </div>
+                        </div>
+                      </Col>
+                    )}
+                    {recipe.fatGrams != null && (
+                      <Col xs={4}>
+                        <div className="text-center">
+                          <div
+                            style={{
+                              fontSize: '1.5rem',
+                              fontWeight: 'bold',
+                              color: '#28a745',
+                            }}
+                          >
+                            {recipe.fatGrams}g
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.8rem',
+                              color: '#6c757d',
+                              marginTop: '0.25rem',
+                            }}
+                          >
+                            Fat
                           </div>
                         </div>
                       </Col>

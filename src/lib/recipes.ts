@@ -28,6 +28,9 @@ export type RecipeInput = {
   servings?: number;
   prepMinutes?: number;
   cookMinutes?: number;
+  proteinGrams?: number;
+  carbsGrams?: number;
+  fatGrams?: number;
   sourceUrl?: string;
 };
 
@@ -79,6 +82,9 @@ function normalizeRecipeInput(
     servings: input.servings ?? null,
     prepMinutes: input.prepMinutes ?? null,
     cookMinutes: input.cookMinutes ?? null,
+    proteinGrams: input.proteinGrams ?? null,
+    carbsGrams: input.carbsGrams ?? null,
+    fatGrams: input.fatGrams ?? null,
     sourceUrl: input.sourceUrl?.trim() || null,
     ...(ownerEmail ? { owner: ownerEmail } : {}),
   };
