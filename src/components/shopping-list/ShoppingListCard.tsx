@@ -56,6 +56,7 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
   }, 0) || 0;
 
   return (
+    // TODO: Refine the resizing logic of the cards and reduce whitespace for mobile viewports
     <Card className="h-100 mb-3 image-shadow">
       <Card.Header
         className="d-flex align-items-center"
