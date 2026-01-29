@@ -38,6 +38,36 @@ export default function RecipesClient({
     [produce],
   );
 
+  // TODO: Add "within budget" filter state and logic
+  // TODO: Condense filter buttons into a dropdown or similar
+  /*
+
+  const canMakeFiltered = useMemo(() => {
+    if (!showCanMake) return recipes;
+
+    return recipes.filter((r) => {
+      const items = r.ingredientItems ?? [];
+      if (items.length === 0) return false;
+
+      return items.every((i: any) => pantryNames.has(i.name.toLowerCase()));
+    });
+  }, [recipes, showCanMake, pantryNames]);
+
+  const filteredRecipes = useMemo(() => {
+    const query = search.toLowerCase();
+    if (!query) return canMakeFiltered;
+
+    return canMakeFiltered.filter((r) => {
+      const titleMatch = r.title.toLowerCase().includes(query);
+      const cuisineMatch = r.cuisine.toLowerCase().includes(query);
+      const dietaryMatch = (r.dietary ?? []).some((tag: string) => tag.toLowerCase().includes(query));
+      const ingredientMatch = (r.ingredientItems ?? []).some((item: any) => item.name.toLowerCase().includes(query));
+
+      return titleMatch || cuisineMatch || dietaryMatch || ingredientMatch;
+    });
+  }, [canMakeFiltered, search]);
+
+  */
   const canMakeFiltered = useMemo(() => {
     if (!showCanMake) return recipes;
 
@@ -99,7 +129,7 @@ export default function RecipesClient({
                 {showCanMake ? 'Show All Recipes' : 'Show Recipes I Can Make'}
               </Button>
             </Col>
-            
+
             <Col>
               <Button
                 variant={showCanMake ? 'success' : 'outline-dark'}
