@@ -37,6 +37,9 @@ type EditRecipeModalProps = {
     servings?: number | null;
     prepMinutes?: number | null;
     cookMinutes?: number | null;
+    proteinGrams?: number | null;
+    carbsGrams?: number | null;
+    fatGrams?: number | null;
     sourceUrl?: string | null;
   };
 };
@@ -70,6 +73,15 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
   const [cookMinutes, setCookMinutes] = useState<number | ''>(
     recipe.cookMinutes ?? '',
   );
+  const [proteinGrams, setProteinGrams] = useState<number | ''>(
+    recipe.proteinGrams ?? '',
+  );
+  const [carbsGrams, setCarbsGrams] = useState<number | ''>(
+    recipe.carbsGrams ?? '',
+  );
+  const [fatGrams, setFatGrams] = useState<number | ''>(
+    recipe.fatGrams ?? '',
+  );
   const [sourceUrl, setSourceUrl] = useState(recipe.sourceUrl || '');
 
   // image picker modal
@@ -94,6 +106,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
     setServings(recipe.servings ?? '');
     setPrepMinutes(recipe.prepMinutes ?? '');
     setCookMinutes(recipe.cookMinutes ?? '');
+    setProteinGrams(recipe.proteinGrams ?? '');
+    setCarbsGrams(recipe.carbsGrams ?? '');
+    setFatGrams(recipe.fatGrams ?? '');
     setSourceUrl(recipe.sourceUrl || '');
   }, [recipe]);
 
@@ -154,6 +169,12 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
             prepMinutes === '' ? undefined : Number(prepMinutes),
           cookMinutes:
             cookMinutes === '' ? undefined : Number(cookMinutes),
+          proteinGrams:
+            proteinGrams === '' ? undefined : Number(proteinGrams),
+          carbsGrams:
+            carbsGrams === '' ? undefined : Number(carbsGrams),
+          fatGrams:
+            fatGrams === '' ? undefined : Number(fatGrams),
           sourceUrl: sourceUrl || undefined,
         });
 
@@ -177,6 +198,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
       servings,
       prepMinutes,
       cookMinutes,
+      proteinGrams,
+      carbsGrams,
+      fatGrams,
       sourceUrl,
       router,
       onHide,
@@ -357,6 +381,51 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                   min={0}
                   value={cookMinutes}
                   onChange={(e) => setCookMinutes(
+                    e.target.value === '' ? '' : Number(e.target.value),
+                  )}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Protein (grams per serving)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="e.g., 1, 5, 10"
+                  min={0}
+                  value={proteinGrams}
+                  onChange={(e) => setProteinGrams(
+                    e.target.value === '' ? '' : Number(e.target.value),
+                  )}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Carbs (grams per serving)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="e.g., 2, 4, 8"
+                  min={0}
+                  value={carbsGrams}
+                  onChange={(e) => setCarbsGrams(
+                    e.target.value === '' ? '' : Number(e.target.value),
+                  )}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Fat (grams per serving)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="e.g., 3, 6, 9"
+                  min={0}
+                  value={fatGrams}
+                  onChange={(e) => setFatGrams(
                     e.target.value === '' ? '' : Number(e.target.value),
                   )}
                 />

@@ -194,6 +194,9 @@ export default function RecipesClient({
                   servings={r.servings ?? null}
                   prepMinutes={r.prepMinutes ?? null}
                   cookMinutes={r.cookMinutes ?? null}
+                  proteinGrams={r.proteinGrams ?? null}
+                  carbsGrams={r.carbsGrams ?? null}
+                  fatGrams={r.fatGrams ?? null}
                   sourceUrl={r.sourceUrl ?? null}
                   pantryNames={pantryNames}
                 />

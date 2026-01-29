@@ -39,6 +39,9 @@ export default function AddRecipeModal({ show, onHide }: Props) {
   const [prepMinutes, setPrepMinutes] = useState<number | ''>('');
   const [cookMinutes, setCookMinutes] = useState<number | ''>('');
   const [sourceUrl, setSourceUrl] = useState('');
+  const [proteinGrams, setProteinGrams] = useState<number | ''>('');
+  const [carbsGrams, setCarbsGrams] = useState<number | ''>('');
+  const [fatGrams, setFatGrams] = useState<number | ''>('');
 
   // image picker modal
   const [showPicker, setShowPicker] = useState(false);
@@ -55,6 +58,10 @@ export default function AddRecipeModal({ show, onHide }: Props) {
     setServings('');
     setPrepMinutes('');
     setCookMinutes('');
+    setProteinGrams('');
+    setCarbsGrams('');
+    setFatGrams('');
+
     setSourceUrl('');
     setImageAlt('');
   }, []);
@@ -112,6 +119,9 @@ export default function AddRecipeModal({ show, onHide }: Props) {
           servings: servings === '' ? undefined : Number(servings),
           prepMinutes: prepMinutes === '' ? undefined : Number(prepMinutes),
           cookMinutes: cookMinutes === '' ? undefined : Number(cookMinutes),
+          proteinGrams: proteinGrams === '' ? undefined : Number(proteinGrams),
+          carbsGrams: carbsGrams === '' ? undefined : Number(carbsGrams),
+          fatGrams: fatGrams === '' ? undefined : Number(fatGrams),
           sourceUrl: sourceUrl || undefined,
         });
 
@@ -135,6 +145,9 @@ export default function AddRecipeModal({ show, onHide }: Props) {
       servings,
       prepMinutes,
       cookMinutes,
+      proteinGrams,
+      carbsGrams,
+      fatGrams,
       sourceUrl,
       router,
       handleReset,
@@ -316,6 +329,51 @@ export default function AddRecipeModal({ show, onHide }: Props) {
                   min={0}
                   value={cookMinutes}
                   onChange={(e) => setCookMinutes(
+                    e.target.value === '' ? '' : Number(e.target.value),
+                  )}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Protein (grams per serving)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="e.g., 1, 5, 10"
+                  min={1}
+                  value={proteinGrams}
+                  onChange={(e) => setProteinGrams(
+                    e.target.value === '' ? '' : Number(e.target.value),
+                  )}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Carbs (grams per serving)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="e.g., 2, 4, 8"
+                  min={0}
+                  value={carbsGrams}
+                  onChange={(e) => setCarbsGrams(
+                    e.target.value === '' ? '' : Number(e.target.value),
+                  )}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={4}>
+              <Form.Group className="mb-3">
+                <Form.Label>Fat (grams per serving)</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="e.g., 3, 6, 9"
+                  min={0}
+                  value={fatGrams}
+                  onChange={(e) => setFatGrams(
                     e.target.value === '' ? '' : Number(e.target.value),
                   )}
                 />
