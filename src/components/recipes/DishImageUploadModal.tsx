@@ -4,9 +4,6 @@
 
 import React, { useState } from 'react';
 import { Modal, Button, Form, ProgressBar } from 'react-bootstrap';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { storage, db } from '@/lib/firebase';
 import swal from 'sweetalert';
 import Image from 'next/image';
 
@@ -54,58 +51,40 @@ export default function DishImageUploadModal({
   }
 
   async function handleUpload() {
-    if (!file) {
-      swal('No File Selected', 'Please select a file to upload.', 'warning');
-      return;
-    }
-    if (!userEmail) {
-      swal('Not Signed In', 'You must be signed in to upload.', 'warning');
-      return;
-    }
+  if (!file) return alert('Select a file');
+  if (!userEmail) return alert('Must be signed in');
 
-    setUploading(true);
-    const filePath = `recipe-images/${userEmail}/${recipeId}/${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, filePath);
-    const uploadTask = uploadBytesResumable(storageRef, file);
+  setUploading(true);
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const pct = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgress(Math.round(pct));
-      },
-      (error) => {
-        console.error('Upload error:', error);
-        swal(
-          'Upload Failed',
-          'An error occurred during upload. Check console for details.',
-          'error',
-        );
-        setUploading(false);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        await addDoc(collection(db, 'recipeImages'), {
-          userEmail,
+  // Convert file to Base64 temporarily for testing  
+  const reader = new FileReader();
+  reader.onloadend = async () => {
+    const url = reader.result as string;
+
+    try {
+      await fetch('/api/recipe-images/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           recipeId,
-          recipeTitle,
-          path: filePath,
-          url,
+          userEmail,
           name: file.name,
-          size: file.size,
-          contentType: file.type,
-          createdAt: serverTimestamp(),
-        });
-        setUploading(false);
-        swal(
-          'Upload Complete!',
-          'Your dish photo has been uploaded successfully.',
-          'success',
-        );
-        handleClose();
-      },
-    );
-  }
+          url,
+        }),
+      });
+      alert('Upload complete!');
+      handleClose();
+    } catch (err) {
+      console.error(err);
+      alert('Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  reader.readAsDataURL(file); // converts image to base64 for now
+}
+
 
   return (
     <Modal show={show} onHide={handleClose} centered size="lg" fullscreen="sm-down">

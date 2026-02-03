@@ -1,20 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
-import { storage, db } from '@/lib/firebase';
 import swal from 'sweetalert';
 import Image from 'next/image';
 
 type SessionUser = { id: string; email: string; randomKey: string };
-// eslint-disable-next-line react/require-default-props
 type Props = { user?: SessionUser | null };
 
 export default function ImageUploader({ user }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [progress, setProgress] = useState<number>(0);
   const [uploading, setUploading] = useState(false);
   const maxFileSize = 5 * 1024 * 1024; // 5MB
 
@@ -34,50 +29,32 @@ export default function ImageUploader({ user }: Props) {
   }
 
   async function handleUpload() {
-    if (!file) {
-      swal('No File Selected', 'Please select a file to upload.', 'warning');
-      return;
-    }
-    if (!user) {
-      swal('Not Signed In', 'You must be signed in to upload.', 'warning');
-      return;
-    }
+    if (!file) return swal('No File Selected', 'Please select a file to upload.', 'warning');
+    if (!user?.email) return swal('Not Signed In', 'You must be signed in to upload.', 'warning');
 
     setUploading(true);
-    const uid = user.id;
-    const filePath = `images/${uid}/${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, filePath);
-    const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on(
-      'state_changed',
-      snapshot => {
-        const pct = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgress(Math.round(pct));
-      },
-      error => {
-        console.error('Upload error:', error);
-        swal('Upload Failed', 'An error occurred during upload. Check console for details.', 'error');
-        setUploading(false);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
-        await addDoc(collection(db, 'images'), {
-          uid,
-          path: filePath,
-          url,
-          name: file.name,
-          size: file.size,
-          contentType: file.type,
-          createdAt: serverTimestamp(),
-        });
-        setUploading(false);
-        setFile(null);
-        setPreview(null);
-        setProgress(0);
-        swal('Upload Complete!', 'Your image has been uploaded successfully.', 'success');
-      },
-    );
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('userEmail', user.email);
+
+    try {
+      const res = await fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) throw new Error('Upload failed');
+
+      swal('Upload Complete!', 'Your image has been uploaded successfully.', 'success');
+      setFile(null);
+      setPreview(null);
+    } catch (err) {
+      console.error(err);
+      swal('Upload Failed', 'An error occurred during upload.', 'error');
+    } finally {
+      setUploading(false);
+    }
   }
 
   return (
@@ -93,18 +70,9 @@ export default function ImageUploader({ user }: Props) {
           unoptimized
         />
       )}
-      {uploading ? (
-        <div>
-          Uploading...
-          {' '}
-          {progress}
-          %
-        </div>
-      ) : (
-        <button type="button" onClick={handleUpload} disabled={!file || !user}>
-          Upload
-        </button>
-      )}
+      <button type="button" onClick={handleUpload} disabled={!file || !user || uploading}>
+        {uploading ? 'Uploading...' : 'Upload'}
+      </button>
     </div>
   );
 }

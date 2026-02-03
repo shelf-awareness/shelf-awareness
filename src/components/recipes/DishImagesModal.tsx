@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Modal, Spinner, Alert, Row, Col, Card } from 'react-bootstrap';
-import { collection, query, where, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
 import Image from 'next/image';
 
 type Props = {
@@ -27,41 +25,27 @@ export default function DishImagesModal({ show, onHide, recipeId, recipeTitle }:
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!show) return;
+  if (!show) return;
 
-    async function fetchImages() {
-      setLoading(true);
-      setError(null);
-      try {
-        const q = query(
-          collection(db, 'recipeImages'),
-          where('recipeId', '==', recipeId),
-        );
-        const snapshot = await getDocs(q);
-        const fetchedImages: DishImage[] = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          userEmail: doc.data().userEmail,
-          url: doc.data().url,
-          name: doc.data().name,
-          createdAt: doc.data().createdAt,
-        }));
-
-        fetchedImages.sort((a, b) => {
-          if (!a.createdAt || !b.createdAt) return 0;
-          return b.createdAt.seconds - a.createdAt.seconds;
-        });
-
-        setImages(fetchedImages);
-      } catch (err) {
-        console.error('Error fetching images:', err);
-        setError('Failed to load images. Please try again.');
-      } finally {
-        setLoading(false);
-      }
+  async function fetchImages() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/recipe-images/${recipeId}`);
+      if (!res.ok) throw new Error('Failed to fetch images');
+      const data: DishImage[] = await res.json();
+      setImages(data);
+    } catch (err) {
+      console.error('Error fetching images:', err);
+      setError('Failed to load images. Please try again.');
+    } finally {
+      setLoading(false);
     }
+  }
 
-    fetchImages();
-  }, [show, recipeId]);
+  fetchImages();
+}, [show, recipeId]);
+
 
   return (
     <Modal show={show} onHide={onHide} centered size="xl" fullscreen="sm-down">
