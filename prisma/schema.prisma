@@ -134,6 +134,9 @@ model Recipe {
   prepMinutes     Int?
   cookMinutes     Int?
   sourceUrl       String?
+  proteinGrams    Int?
+  carbsGrams      Int?
+  fatGrams        Int?
 
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
