@@ -133,13 +133,15 @@ model Recipe {
   servings        Int?
   prepMinutes     Int?
   cookMinutes     Int?
+  sourceUrl       String?
   proteinGrams    Int?
   carbsGrams      Int?
   fatGrams        Int?
-  sourceUrl       String?
 
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
+
+  recipeImage     RecipeImage[]
 
   @@unique([title, owner], name: "title_owner")
   @@index([title])
@@ -157,4 +159,14 @@ model RecipeIngredient {
   order     Int?
 
   @@index([recipeId])
+}
+model RecipeImage {
+  id        Int      @id @default(autoincrement())
+  recipeId  Int
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+
+  userEmail String
+  url       String @db.Text // store base64
+  name      String
+  createdAt DateTime @default(now())
 }
