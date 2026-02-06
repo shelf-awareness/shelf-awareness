@@ -10,34 +10,44 @@ import { BagCheckFill } from 'react-bootstrap-icons';
 import AddToShoppingListModal from './AddToShoppingListModal';
 import EditShoppingListItemModal from './EditShoppingListItemModal';
 
-interface ShoppingListItem {
-  id: number;
-  name: string;
-  quantity: number;
-  unit?: string | null;
-  price?: number | null;
-  restockTrigger?: string | null;
-  customThreshold?: number | null;
-}
+import { ShoppingListWithProtein } from '../../types/shoppingList';
 
-interface ShoppingList {
-  id: number;
-  name: string;
-  items?: ShoppingListItem[];
-}
+// interface ShoppingListItem {
+//   id: number;
+//   name: string;
+//   quantity: number;
+//   unit?: string | null;
+//   price?: number | null;
+//   restockTrigger?: string | null;
+//   customThreshold?: number | null;
+// }
+
+// interface ShoppingList {
+//   id: number;
+//   name: string;
+//   items?: ShoppingListItem[];
+// }
+
+// interface ViewShoppingListModalProps {
+//   show: boolean;
+//   onHide: () => void;
+//   shoppingList?: ShoppingList; // optional for safety
+// }
 
 interface ViewShoppingListModalProps {
   show: boolean;
   onHide: () => void;
-  shoppingList?: ShoppingList; // optional for safety
+  shoppingList?: ShoppingListWithProtein; // optional for safety
 }
 
 const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListModalProps) => {
-  const [items, setItems] = useState<ShoppingListItem[]>([]);
+  // const [items, setItems] = useState<ShoppingListItem[]>([]);
+  const [items, setItems] = useState<ShoppingListWithProtein['items']>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [deletingItemId, setDeletingItemId] = useState<number | null>(null);
   const [checkedState, setCheckedState] = useState<Record<number, boolean>>({});
-  const [editingItem, setEditingItem] = useState<ShoppingListItem | null>(null);
+  // const [editingItem, setEditingItem] = useState<ShoppingListItem | null>(null);
+  const [editingItem, setEditingItem] = useState<ShoppingListWithProtein['items'][number] | null>(null);
 
   // Update items when the shopping list changes
   useEffect(() => {
@@ -228,19 +238,22 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
       <EditShoppingListItemModal
         show={!!editingItem}
         onHide={() => setEditingItem(null)}
-        item={editingItem}
+        item={{
+          ...editingItem,
+          price: editingItem.price ? Number(editingItem.price.toString()) : null,
+        }}
       />
       )}
     </>
   );
 };
 
-ViewShoppingListModal.defaultProps = {
-  shoppingList: {
-    id: 0,
-    name: '',
-    items: [],
-  },
-};
+// ViewShoppingListModal.defaultProps = {
+//   shoppingList: {
+//     id: 0,
+//     name: '',
+//     items: [],
+//   },
+// };
 
 export default ViewShoppingListModal;
