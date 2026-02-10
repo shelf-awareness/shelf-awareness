@@ -21,6 +21,12 @@ const ViewShoppingListPage = async () => {
     orderBy: [{ createdAt: 'desc' }],
   });
 
+  shoppingLists.forEach((list: any) => {
+    list.items.forEach((item: any) => {
+      item.price = item.price?.toNumber?.() ?? item.price;
+    });
+  });
+
   return (
     <main>
       <Container id="view-shopping-list" className="py-3">
