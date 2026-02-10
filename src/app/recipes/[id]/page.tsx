@@ -8,6 +8,8 @@ import { getUserProduceByEmail } from '@/lib/dbActions';
 import AddToShoppingList from '@/components/recipes/AddToShoppingList';
 import UploadDishButton from '@/components/recipes/UploadDishButton';
 import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
+import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
+
 
 type PageProps = { params: { id: string } };
 export const dynamic = 'force-dynamic';
@@ -316,6 +318,11 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                 View Original Recipe →
               </Button>
             )}
+
+            <div className="mt-3">
+              <SavedRecipeButton recipeId={recipe.id} owner={email} />
+            </div>
+
 
             <div className="mt-3">
               <UploadDishButton recipeId={recipe.id} recipeTitle={recipe.title} userEmail={email} />
