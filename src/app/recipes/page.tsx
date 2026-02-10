@@ -7,13 +7,13 @@ import { getUserProduceByEmail } from '@/lib/dbActions';
 
 export const dynamic = 'force-dynamic';
 
-// ...
+
 export default async function RecipeListPage() {
   const session = await getServerSession();
 
   const email = session?.user?.email ?? null;
-  const canAdd = !!email; // anyone logged-in can add
-  const isAdmin = email === 'admin@foo.com'; // adjust if you have a real role system
+  const canAdd = !!email; 
+  const isAdmin = email === 'admin@foo.com'; 
 
   let pantry: any[] = [];
   if (email) pantry = await getUserProduceByEmail(email);
@@ -24,7 +24,7 @@ export default async function RecipeListPage() {
     <main>
       <Container id="list" fluid className="py-3">
         <Container>
-          <h2 className="text-center mb-4">Recipes</h2>
+          <h2 className="text-center mb-4">Browse Recipes</h2>
           <RecipesClient
             key={email}
             recipes={recipes}

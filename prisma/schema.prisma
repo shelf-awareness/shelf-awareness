@@ -22,6 +22,7 @@ model User {
 
   emailVerificationCodes EmailVerificationCode[]
   passwordResetTokens    PasswordResetToken[]
+  savedRecipes SavedRecipe[]
 }
 
 model EmailVerificationCode {
@@ -143,6 +144,7 @@ model Recipe {
   updatedAt       DateTime   @updatedAt
 
   recipeImage     RecipeImage[]
+  savedBy SavedRecipe[]
 
   @@unique([title, owner], name: "title_owner")
   @@index([title])
@@ -170,4 +172,18 @@ model RecipeImage {
   url       String @db.Text // store base64
   name      String
   createdAt DateTime @default(now())
+}
+
+model SavedRecipe {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  recipeId  Int
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId]) // prevents saving same recipe twice
+  @@index([userId])
+  @@index([recipeId])
 }
