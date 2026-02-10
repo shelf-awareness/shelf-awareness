@@ -16,21 +16,40 @@ const ViewShoppingListPage = async () => {
   const shoppingLists = await prisma.shoppingList.findMany({
     where: { owner },
     include: {
-      items: true, // ✅ matches your schema: ShoppingListItem[] relation only
+      items: true,
     },
     orderBy: [{ createdAt: 'desc' }],
   });
 
-  shoppingLists.forEach((list: any) => {
-    list.items.forEach((item: any) => {
-      item.price = item.price?.toNumber?.() ?? item.price;
-    });
+  // --- add protein totals + convert Decimal → number ---
+  const shoppingListsWithProtein = shoppingLists.map((list: { items: any[]; }) => {
+    const items = list.items.map((item) => ({
+      ...item,
+      price: item.price ? Number(item.price) : null,
+    }));
+
+    // const totalProtein = items.reduce((sum, item) => {
+    //   const protein = item.proteinG ?? 0;
+    //   return sum + protein * item.quantity;
+    // }, 0);
+
+    const totalProtein = list.items.reduce(
+      (sum: number, item: { proteinG: any; quantity: number }) =>
+        sum + (item.proteinG ? Number(item.proteinG) * item.quantity : 0),
+      0
+    );
+
+    return {
+      ...list,
+      items,
+      totalProtein,
+    };
   });
 
   return (
     <main>
       <Container id="view-shopping-list" className="py-3">
-        <ShoppingListClient initialShoppingLists={shoppingLists} />
+        <ShoppingListClient initialShoppingLists={shoppingListsWithProtein} />
       </Container>
     </main>
   );

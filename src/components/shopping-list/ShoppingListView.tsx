@@ -8,9 +8,16 @@ import ShoppingListCard from './ShoppingListCard';
 import AddToShoppingListModal from './AddToShoppingListModal';
 import RecommendedWidget from './RecommendedWidget';
 
+import { ShoppingListWithProtein } from '../../types/shoppingList';
+
+// type ShoppingListViewProps = {
+//   initialShoppingLists: any[];
+// };
+
 type ShoppingListViewProps = {
-  initialShoppingLists: any[];
+  initialShoppingLists: ShoppingListWithProtein[];
 };
+
 
 export default function ShoppingListView({ initialShoppingLists }: ShoppingListViewProps) {
   const { data: session } = useSession();

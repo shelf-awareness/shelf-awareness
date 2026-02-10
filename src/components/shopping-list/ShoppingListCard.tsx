@@ -7,9 +7,16 @@ import { FaPencilAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import ViewShoppingListModal from './ViewShoppingListModal';
 import DeleteShoppingListModal from './DeleteShoppingListModal';
 
+import { ShoppingListWithProtein } from '../../types/shoppingList';
+
+// type ShoppingListCardProps = {
+//   shoppingList: any;
+// };
+
 type ShoppingListCardProps = {
-  shoppingList: any;
+  shoppingList: ShoppingListWithProtein;
 };
+
 
 const formatDate = (d?: Date | string | null) => {
   if (!d) return 'Not Available';
@@ -128,6 +135,10 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
             {' '}
             $
             {totalCost.toFixed(2)}
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <strong>Total Protein:</strong>{' '}
+            {shoppingList.totalProtein.toFixed(1)} g
           </ListGroup.Item>
         </ListGroup>
       </Card.Body>

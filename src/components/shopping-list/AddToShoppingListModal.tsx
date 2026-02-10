@@ -10,8 +10,11 @@ import { useSession } from 'next-auth/react';
 import { AddShoppingListItemSchema } from '@/lib/validationSchemas';
 import { addShoppingListItem } from '@/lib/dbActions';
 
+import { ShoppingListWithProtein } from '../../types/shoppingList';
+
 // ------- types -------
-type SL = { id: number; name: string };
+// type SL = { id: number; name: string };
+type SL = Pick<ShoppingListWithProtein, 'id' | 'name'>;
 
 type AddItemValues = {
   name: string;
