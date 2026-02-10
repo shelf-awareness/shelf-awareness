@@ -28,7 +28,7 @@ const SearchBarControls: React.FC<Props> = ({
   setView,
   clear,
 }) => (
-  <div className="d-flex flex-wrap gap-2 align-items-center justify-content-center my-4">
+  <div className="d-flex flex-wrap gap-2 align-items-center justify-content-center mt-2 mt-md-4 mb-4">
     <Form.Control
       type="text"
       placeholder="Search by name, type, or storage…"
