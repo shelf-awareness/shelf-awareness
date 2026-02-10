@@ -68,9 +68,17 @@ function PantryClient({ initialProduce, initialLocations, owner }: PantryClientP
 
   return (
     <main>
-      <Container id="view-pantry" className="py-3">
+      <Container id="view-pantry" className="py-3 text-center">
         <Row className="mb-3">
-          <Col className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <Col className="d-flex
+                          flex-column 
+                          flex-md-row 
+                          align-items-center 
+                          justify-content-center 
+                          justify-content-md-between 
+                          text-center 
+                          text-md-start 
+                          gap-2">
             <h1>Your Pantry at a Glance</h1>
             <Button className="btn-add" onClick={() => setShowAddProduceModal(true)}>
               + Add Item
@@ -90,6 +98,7 @@ function PantryClient({ initialProduce, initialLocations, owner }: PantryClientP
               <Nav.Item style={{ alignItems: 'center', marginLeft: '6px' }}>
                 <Nav.Link>
                   <PlusCircle
+                    className="mt-2 mt-md-0"
                     size={18}
                     onClick={() => setShowAddLocationModal(true)}
                     style={{ cursor: 'pointer' }}
@@ -97,12 +106,12 @@ function PantryClient({ initialProduce, initialLocations, owner }: PantryClientP
                 </Nav.Link>
               </Nav.Item>
 
-              <Nav.Item>
+              <Nav.Item className="mt-2 mt-md-0">
                 <Nav.Link eventKey="all">All Locations</Nav.Link>
               </Nav.Item>
 
               {locations.map((loc) => (
-                <Nav.Item key={loc}>
+                <Nav.Item key={loc} className="mt-2 mt-md-0">
                   <div className="location-tab">
                     <Nav.Link eventKey={loc} style={{ textTransform: 'capitalize' }}>
                       {loc}
