@@ -10,7 +10,7 @@ const saira = Saira({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Shelf Awareness',
-  description: 'Group 1 ICS414 Project, forked from Pantry Pals',
+  description: 'Manage your pantry and be shelf aware.',
 };
 
 export default function RootLayout({
