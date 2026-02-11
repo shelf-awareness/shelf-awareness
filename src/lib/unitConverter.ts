@@ -1,13 +1,13 @@
-type Unit = 'kg' | 'g' | 'lb' | 'oz' | 'pcs' | 'ml' | 'l' | 'Other';
+//type Unit = 'kg' | 'g' | 'lb' | 'oz' | 'pcs' | 'ml' | 'l' | 'Other';
 
-export function convertUnits(quantity: number, fromUnit: Unit, toUnit: Unit): number {
+export function convertUnits(quantity: number, fromUnit: String | null, toUnit: String | null): number {
   if (fromUnit === toUnit) return quantity;
 
   // Block cross-category conversions (mass ↔ volume ↔ count ↔ other)
-  const mass = new Set<Unit>(['kg', 'g', 'lb', 'oz']);
-  const volume = new Set<Unit>(['ml', 'l']);
-  const count = new Set<Unit>(['pcs']);
-  const other = new Set<Unit>(['Other']);
+  const mass = new Set<String | null>(['kg', 'g', 'lb', 'oz']);
+  const volume = new Set<String | null>(['ml', 'l']);
+  const count = new Set<String | null>(['pcs']);
+  const other = new Set<String | null>(['Other']);
 
   const sameCategory =
     (mass.has(fromUnit) && mass.has(toUnit)) ||

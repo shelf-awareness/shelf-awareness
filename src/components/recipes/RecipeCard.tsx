@@ -10,6 +10,9 @@ import { useState } from 'react';
 import React from 'react';
 import EditRecipeModal from '@/components/recipes/EditRecipeModal';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
+import { Produce } from '@prisma/client';
+import { convertUnits } from '@/lib/unitConverter';
+
 
 export type IngredientItemCard = {
   id?: number;
@@ -38,6 +41,7 @@ export type RecipeCardProps = {
   fatGrams?: number | null;
   sourceUrl?: string | null;
   pantryNames: Set<string>;
+  pantryItems: Set<Produce>;
 };
 
 export default function RecipeCard({
@@ -60,6 +64,7 @@ export default function RecipeCard({
   fatGrams = null,
   sourceUrl = null,
   pantryNames,
+  pantryItems,
 }: RecipeCardProps) {
   const dietTags = Array.isArray(dietary) ? dietary.filter(Boolean) : [];
   const router = useRouter();
@@ -166,12 +171,27 @@ export default function RecipeCard({
                 <div className="mt-1 d-flex flex-wrap gap-2">
                   {ingredientItems.map((item) => {
                     const hasItem = pantryNames.has(item.name.toLowerCase());
-
+                    let hasEnough = false;
+                    let convertedUnit = 0;
+                    for (let p of pantryItems){
+                      if (hasItem && p.name.toLowerCase() === item.name.toLowerCase()){
+                        convertedUnit += convertUnits(p.quantity, p.unit, item.unit);
+                         
+                      }
+                    }
+                    if (hasItem && typeof item.quantity === 'number' && convertedUnit >= item.quantity) {
+                      hasEnough = true;
+                    }
                     return (
                       <Badge
                         key={`${id}-${item.id ?? item.name}`}
                         pill
-                        bg={hasItem ? 'success' : 'danger'}
+                        bg={!hasItem
+                            ? 'danger'
+                            : hasEnough
+                              ? 'success'
+                              : 'warning'
+                          }
                         className="px-2 py-1"
                       >
                         {item.name}
