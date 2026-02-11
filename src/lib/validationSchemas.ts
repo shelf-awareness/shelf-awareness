@@ -93,3 +93,10 @@ export const EditShoppingListItemSchema = Yup.object({
     .min(0, 'Threshold cannot be negative')
     .notRequired(),
 });
+
+export const UpdateBudgetSchema = Yup.object({
+  budget: Yup.number()
+    .typeError('Budget must be a number')
+    .positive('Budget must be greater than 0')
+    .required('Budget is required'),
+});

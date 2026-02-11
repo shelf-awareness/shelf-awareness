@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Row, Col, Form, Button } from 'react-bootstrap';
+import { getBudgetByUserId } from '@/lib/dbActions';
 import AddShoppingList from './AddShoppingList';
 import ShoppingListCard from './ShoppingListCard';
 import AddToShoppingListModal from './AddToShoppingListModal';
 import RecommendedWidget from './RecommendedWidget';
+import UpdateBudget from './UpdateBudget';
 
 import { ShoppingListWithProtein } from '../../types/shoppingList';
 
@@ -24,6 +26,42 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
   const [searchTerm, setSearchTerm] = useState('');
   const [show, setShow] = useState(false);
   const [showCreateList, setShowCreateList] = useState(false);
+  const [showUpdateBudget, setShowUpdateBudget] = useState(false);
+  const [budget, setBudget] = useState<string>('$0.00');
+  const [loadingBudget, setLoadingBudget] = useState(true);
+
+  useEffect(() => {
+    const fetchBudget = async () => {
+      if (!session?.user?.id) {
+        setLoadingBudget(false);
+        return;
+      }
+
+      try {
+        const budgetStr = await getBudgetByUserId(Number(session.user.id));
+        const budgetAmount = parseFloat(budgetStr || '0');
+        setBudget(`$${budgetAmount.toFixed(2)}`);
+      } catch (error) {
+        console.error('Error fetching budget:', error);
+      } finally {
+        setLoadingBudget(false);
+      }
+    };
+
+    fetchBudget();
+  }, [session?.user?.id]);
+
+  const refetchBudget = async () => {
+  if (!session?.user?.id) return;
+  try {
+    const budgetStr = await getBudgetByUserId(Number(session.user.id));
+    const budgetAmount = parseFloat(budgetStr || '0');
+    setBudget(`$${budgetAmount.toFixed(2)}`);
+  } catch (error) {
+    console.error('Error refetching budget:', error);
+  }
+};
+
 
   const searchLower = searchTerm.toLowerCase();
   const filteredLists = initialShoppingLists.filter((list) => list.name.toLowerCase().includes(searchLower));
@@ -88,6 +126,48 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
             onHide={() => setShowCreateList(false)}
             owner={session?.user?.email ?? ''}
           />
+        </Col>
+
+        {/* FUTURE FEATURE: SET BUDGET */}
+        <Col xs="auto" className="mb-2">
+          <Button
+            onClick={() => setShowUpdateBudget(true)}
+            style={{
+              backgroundColor: 'var(--fern-green)',
+              height: '34px',
+              padding: '4px 12px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            className="btn-submit"
+          >
+            + Set Budget
+          </Button>
+
+          <UpdateBudget
+            show={showUpdateBudget}
+            onHide={() => setShowUpdateBudget(false)}
+            userID={Number(session?.user?.id ?? 0)}
+            onBudgetUpdated={refetchBudget} 
+          />
+        </Col>
+
+        <Col xs="auto" className="mb-2">
+          <div
+            style={{
+              backgroundColor: 'var(--fern-green)',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              minWidth: '120px',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: '12px', opacity: 0.9 }}>Budget</div>
+            <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+              {loadingBudget ? 'Loading...' : budget}
+            </div>
+          </div>
         </Col>
       </Row>
 
