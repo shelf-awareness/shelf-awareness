@@ -36,6 +36,7 @@ export async function DELETE(
         owner: item.shoppingListId.toString(),
         locationId: location.id,
         storageId: storage.id,
+        proteinGrams: item.proteinGrams ?? null, // Transfers protein data to pantry
       },
     });
 
@@ -64,6 +65,7 @@ export async function PUT(
         quantity: body.quantity,
         unit: body.unit || null,
         price: body.price ?? null,
+        proteinGrams: body.proteinGrams ?? null,
         restockTrigger: body.restockTrigger ?? null,
         customThreshold: body.customThreshold ?? null,
       },

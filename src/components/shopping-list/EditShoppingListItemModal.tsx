@@ -12,6 +12,7 @@ type EditModalProps = {
     quantity: number;
     unit?: string | null;
     price?: number | null;
+    proteinGrams?: number | null;
     restockTrigger?: string | null;
     customThreshold?: number | null;
   };
@@ -27,6 +28,7 @@ export default function EditShoppingListItemModal({
     quantity: item.quantity,
     unit: item.unit ?? '',
     price: item.price ?? '',
+    proteinGrams: item.proteinGrams ?? '',
     restockTrigger: item.restockTrigger ?? 'empty',
     customThreshold: item.customThreshold ?? '',
   });
@@ -45,6 +47,7 @@ export default function EditShoppingListItemModal({
         ...form,
         quantity: Number(form.quantity),
         price: form.price ? Number(form.price) : null,
+        proteinGrams: form.proteinGrams ? Number(form.proteinGrams) : null,
         customThreshold:
           form.restockTrigger === 'custom'
             ? Number(form.customThreshold)
@@ -105,6 +108,20 @@ export default function EditShoppingListItemModal({
               step="0.01"
               value={form.price}
               onChange={handleChange}
+            />
+          </Form.Group>
+
+          {/* PROTEIN */}
+          <Form.Group className="mt-3">
+            <Form.Label>Protein (grams)</Form.Label>
+            <Form.Control
+              name="proteinGrams"
+              type="number"
+              step="0.1"
+              min="0"
+              value={form.proteinGrams}
+              onChange={handleChange}
+              placeholder="0"
             />
           </Form.Group>
 
