@@ -41,7 +41,7 @@ export type RecipeCardProps = {
   fatGrams?: number | null;
   sourceUrl?: string | null;
   pantryNames: Set<string>;
-  pantryItems: Set<Produce>;
+  pantryItems: Produce[];
 };
 
 export default function RecipeCard({

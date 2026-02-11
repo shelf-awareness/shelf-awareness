@@ -11,7 +11,6 @@ export async function GET(req: Request) {
 
   const produce = await prisma.produce.findMany({
     where: { owner },
-    select: { name: true },
   });
 
   return NextResponse.json(produce);
