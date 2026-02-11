@@ -242,7 +242,10 @@ export async function deleteProduce(id: number) {
 export async function getUserProduceByEmail(owner: string) {
   return prisma.produce.findMany({
     where: { owner },
-    select: { name: true },
+    select: { name: true,
+              unit: true,
+              quantity: true,
+     },
   });
 }
 
