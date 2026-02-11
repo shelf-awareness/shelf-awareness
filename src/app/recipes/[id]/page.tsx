@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import { Container, Row, Col, Image, Badge, Button } from 'react-bootstrap';
-import { CheckCircleFill, XCircleFill } from 'react-bootstrap-icons';
+import { CheckCircleFill, XCircleFill, ExclamationCircleFill } from 'react-bootstrap-icons';
 import { notFound } from 'next/navigation';
 import { getRecipeById } from '@/lib/recipes';
-//import {unitConverter} from '@/lib/unitConverter';
+import { convertUnits } from '@/lib/unitConverter';
 import { getServerSession } from 'next-auth';
 import { getUserProduceByEmail } from '@/lib/dbActions';
 import AddToShoppingList from '@/components/recipes/AddToShoppingList';
@@ -27,7 +27,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
   if (email) {
     pantry = await getUserProduceByEmail(email);
   }
-
+  
   // Create a set of pantry item names (lowercase for case-insensitive matching)
   const pantryNames = new Set(pantry.map((p) => p.name.toLowerCase()));
 
@@ -362,6 +362,17 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                 >
                   {ingredientItems.map((item) => {
                     const hasItem = pantryNames.has(item.name.toLowerCase());
+                    let hasEnough = false;
+                    let convertedUnit = 0;
+                    for (let p of pantry){
+                      if (hasItem && p.name.toLowerCase() === item.name.toLowerCase()){
+                        convertedUnit += convertUnits(p.quantity, p.unit, item.unit);
+                         
+                      }
+                    }
+                    if (hasItem && convertedUnit >= item.quantity){
+                      hasEnough = true;
+                    }
 
                     const parts: string[] = [];
                     if (item.quantity != null) {
@@ -379,9 +390,25 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                         <div className="d-flex align-items-center gap-2">
                           <span>{label}</span>
                           {hasItem ? (
-                            <CheckCircleFill color="#28a745" size={16} title="You have this in your pantry" />
+                            hasEnough ? (
+                              <CheckCircleFill
+                                color="#28a745"
+                                size={16}
+                                title="You have enough of this ingredient"
+                              />
+                            ) : (
+                              <ExclamationCircleFill
+                                color="#ffc107"
+                                size={16}
+                                title="You have this ingredient, but not enough"
+                              />
+                            )
                           ) : (
-                            <XCircleFill color="#dc3545" size={16} title="You don't have this in your pantry" />
+                            <XCircleFill
+                              color="#dc3545"
+                              size={16}
+                              title="You don't have this ingredient"
+                            />
                           )}
                         </div>
                       </li>

@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { Row, Col, Button, Form } from 'react-bootstrap';
 import AddRecipeModal from '@/components/recipes/AddRecipeModal';
 import { useSession } from 'next-auth/react';
+import { getUserProduceByEmail } from '@/lib/dbActions';
 import RecipeCard from './RecipeCard';
 import '../../styles/buttons.css';
 
@@ -23,7 +24,7 @@ export default function RecipesClient({
   isAdmin: serverIsAdmin,
 }: Props) {
   const { data: session } = useSession();
-
+  
   const currentUserEmail = (session?.user?.email ?? serverEmail) || null;
   const isAdmin = serverIsAdmin || currentUserEmail === 'admin@foo.com';
   const canAdd = serverCanAdd || !!currentUserEmail;
@@ -32,11 +33,12 @@ export default function RecipesClient({
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [editMode, setEditMode] = useState(false);
-
   const pantryNames = useMemo(
     () => new Set(produce.map((p) => p.name.toLowerCase())),
     [produce],
   );
+  
+
 
   // TODO: Add "within budget" filter state and logic
   // TODO: Condense filter buttons into a dropdown or similar

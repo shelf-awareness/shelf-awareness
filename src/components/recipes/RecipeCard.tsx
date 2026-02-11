@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Card, Image, Badge, Button, Row, Col } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import React from 'react';
 import EditRecipeModal from '@/components/recipes/EditRecipeModal';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
 
