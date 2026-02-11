@@ -109,7 +109,7 @@ model ShoppingListItem {
   shoppingListId  Int
   name            String // name of the item (not linked to pantry)
   quantity        Float
-  proteinG        Float?   // grams of protein per unit
+  proteinGrams    Float?   // grams of protein per unit
   unit            String?
   price           Decimal? @db.Decimal(10, 2)
   restockTrigger  String?

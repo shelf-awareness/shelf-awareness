@@ -22,6 +22,7 @@ type AddItemValues = {
   shoppingListId: number;
   price?: number;
   unit?: string;
+  proteinGrams?: number;
 };
 
 interface Props {
@@ -55,16 +56,17 @@ const AddToShoppingListModal = ({
       quantity: 0,
       unit: '',
       price: 0,
+      proteinGrams: 0,
       shoppingListId: shoppingLists[0]?.id ?? 0,
     },
   });
 
   useEffect(() => {
-    if (!show) reset({ name: prefillName });
+    if (!show) reset({ name: prefillName, proteinGrams:0 });
   }, [show, reset, prefillName]);
 
   const handleClose = () => {
-    reset({ name: prefillName });
+    reset({ name: prefillName, proteinGrams:0 });
     onHide();
   };
 
@@ -79,11 +81,16 @@ const AddToShoppingListModal = ({
         ? data.price
         : parseFloat(data.price || '0');
 
+      const proteinGrams = typeof data.proteinGrams === 'number'
+        ? data.proteinGrams
+        : parseFloat(data.proteinGrams || '0');
+
       await addShoppingListItem({
         name: data.name.trim(),
         quantity: Number(data.quantity),
         unit: data.unit || '',
         price,
+        proteinGrams,
         shoppingListId: Number(data.shoppingListId),
       });
 
@@ -151,6 +158,21 @@ const AddToShoppingListModal = ({
           </Form.Group>
         </Col>
 
+        <Col xs={12} sm={4}>
+          <Form.Group>
+            <Form.Label>Protein (g)</Form.Label>
+            <Form.Control
+              type="number"
+              step="0.1"
+              min="0"
+              placeholder="0"
+              {...register('proteinGrams', { valueAsNumber: true })}
+              className={`${errors.proteinGrams ? 'is-invalid' : ''}`}
+            />
+            <div className="invalid-feedback">{errors.proteinGrams?.message}</div>
+          </Form.Group>
+        </Col>
+
         <Col xs={12} sm={7}>
           <Form.Group>
             <Form.Label>List</Form.Label>
@@ -179,7 +201,7 @@ const AddToShoppingListModal = ({
         <Col>
           <Button
             type="button"
-            onClick={() => reset({ name: prefillName })}
+            onClick={() => reset({ name: prefillName, proteinGrams:0 })}
             variant="warning"
             className="btn-reset mobile-card"
           >

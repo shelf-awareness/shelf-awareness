@@ -330,6 +330,7 @@ export async function addShoppingListItem(data: {
   quantity: number;
   unit?: string;
   price?: number;
+  proteinGrams?: number;
   shoppingListId: number;
 }) {
   const item = await prisma.shoppingListItem.create({
@@ -338,6 +339,7 @@ export async function addShoppingListItem(data: {
       quantity: data.quantity,
       unit: data.unit || '',
       price: data.price ?? null,
+      proteinGrams: data.proteinGrams ?? null,
       shoppingListId: data.shoppingListId,
     },
   });

@@ -29,13 +29,13 @@ const ViewShoppingListPage = async () => {
     }));
 
     // const totalProtein = items.reduce((sum, item) => {
-    //   const protein = item.proteinG ?? 0;
+    //   const protein = item.proteinGrams ?? 0;
     //   return sum + protein * item.quantity;
     // }, 0);
 
     const totalProtein = list.items.reduce(
-      (sum: number, item: { proteinG: any; quantity: number }) =>
-        sum + (item.proteinG ? Number(item.proteinG) * item.quantity : 0),
+      (sum: number, item: { proteinGrams: any; quantity: number }) =>
+        sum + (item.proteinGrams ? Number(item.proteinGrams) * item.quantity : 0),
       0
     );
 
