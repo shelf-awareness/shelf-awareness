@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { Row, Col, Button, Form } from 'react-bootstrap';
+import { Row, Col, Button, Form, Dropdown, Container } from 'react-bootstrap';
 import AddRecipeModal from '@/components/recipes/AddRecipeModal';
 import { useSession } from 'next-auth/react';
-import { getUserProduceByEmail } from '@/lib/dbActions';
+// import { getUserProduceByEmail } from '@/lib/dbActions';
+import * as Icon from  'react-bootstrap-icons';
 import RecipeCard from './RecipeCard';
 import '../../styles/buttons.css';
 
@@ -122,25 +123,37 @@ export default function RecipesClient({
       {/* Top controls row */}
       <div className="mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 gap-md-3">
         <div className="mb-2 mb-md-0">
-          <Row>
-            <Col>
-              <Button
-                variant={showCanMake ? 'success' : 'outline-dark'}
-                onClick={() => setShowCanMake((v) => !v)}
-              >
-                {showCanMake ? 'Show All Recipes' : 'Show Recipes I Can Make'}
-              </Button>
-            </Col>
+          <Dropdown>
+            <Dropdown.Toggle variant="secondary" id="filter-dropdown">
+              <Icon.Funnel className="me-1" />
+              Filters
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Container>
+                <Row className="d-flex flex-column flex-md-row gap-2">
+                  {/* Button 1 */}
+                  <Col className="mb-2 mt-2">
+                    <Button
+                      variant={showCanMake ? 'success' : 'outline-dark'}
+                      onClick={() => setShowCanMake((v) => !v)}
+                    >
+                      {showCanMake ? 'Show All Recipes' : 'Show Recipes I Can Make'}
+                    </Button>
+                  </Col>
 
-            <Col>
-              <Button
-                variant={showCanMake ? 'success' : 'outline-dark'}
-                onClick={() => setShowCanMake((v) => !v)}
-              >
-                {showCanMake ? 'Show All Recipes' : 'Show Recipes Within Budget'}
-              </Button>
-            </Col>
-          </Row>
+                  {/* Button 2 - Placeholder for "within budget" filter */}
+                  <Col className="mb-2 mt-2">
+                    <Button
+                      variant={showCanMake ? 'success' : 'outline-dark'}
+                      onClick={() => setShowCanMake((v) => !v)}
+                    >
+                      {showCanMake ? 'Show All Recipes' : 'Show Recipes Within Budget'}
+                    </Button>
+                  </Col>
+                </Row>
+              </Container>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
   <div className="flex-grow-1 d-flex justify-content-center mb-2 mb-md-0">
     <Form style={{ width: '100%', maxWidth: 400 }}>
