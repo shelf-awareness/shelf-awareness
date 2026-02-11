@@ -1,11 +1,18 @@
-import { type NextAuthOptions } from 'next-auth';
+import { type NextAuthOptions, type DefaultSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
 import { prisma } from './prisma';
 
 declare module 'next-auth' {
   interface User {
+    id: string;
     role?: string | null;
+  }
+  interface Session {
+    user: {
+      id: string;
+      role?: string | null;
+    } & DefaultSession['user'];
   }
 }
 

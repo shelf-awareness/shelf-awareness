@@ -18,6 +18,7 @@ export async function createUser({ email, password }: { email: string; password:
   return user;
 }
 
+
 /**
  * Changes a user's password, checking the old password.
  */
@@ -304,6 +305,27 @@ export async function editShoppingList(list: Prisma.ShoppingListUpdateInput & { 
   });
 
   return updatedList;
+}
+
+/**
+ * Update a user's budget.
+ */
+export async function updateBudget(id: number, budget: number) {
+  await prisma.user.update({
+    where: { id },
+    data: { budget: new Prisma.Decimal(budget) },
+  });
+}
+
+/**
+ * Get a user's budget.
+ */
+export async function getBudgetByUserId(userId: number) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { budget: true },
+  });
+  return user?.budget?.toString() || '0';
 }
 
 /**
