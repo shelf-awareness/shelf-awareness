@@ -10,7 +10,7 @@ import '../../styles/buttons.css';
 
 type Props = {
   recipes: any[];
-  produce: { name: string }[];
+  produce: any[];
   canAdd: boolean;
   currentUserEmail: string | null;
   isAdmin: boolean;
@@ -37,7 +37,7 @@ export default function RecipesClient({
     () => new Set(produce.map((p) => p.name.toLowerCase())),
     [produce],
   );
-  
+  const pantryItems = useMemo(() => { return new Set(produce) }, [produce]);
 
 
   // TODO: Add "within budget" filter state and logic
@@ -201,6 +201,7 @@ export default function RecipesClient({
                   fatGrams={r.fatGrams ?? null}
                   sourceUrl={r.sourceUrl ?? null}
                   pantryNames={pantryNames}
+                  pantryItems={pantryItems}
                 />
               </Col>
             );
