@@ -95,7 +95,7 @@ const ProduceItem = ({
         </td>
       </tr>
 
-      {/* Edit modal */}
+
       <EditProduceModal
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
@@ -114,7 +114,7 @@ const ProduceItem = ({
         }}
       />
 
-      {/* Delete modal */}
+
       <DeleteProduceModal
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}
