@@ -35,13 +35,13 @@ const SearchBarControls: React.FC<Props> = ({
       value={search}
       onChange={(e) => setSearch(e.target.value)}
       onKeyDown={(e) => e.key === 'Enter' && e.preventDefault()}
-      style={{ maxWidth: '280px' }}
+      style={{ minWidth: '280px', maxWidth: '300px' }}
     />
 
     <Form.Select
       value={sort}
       onChange={(e) => setSort(e.target.value as SortType)}
-      style={{ maxWidth: '180px' }}
+      style={{ minWidth: '180px', maxWidth: '200px' }}
     >
       <option value="">Sort by…</option>
       <option value="name-asc">Name (A–Z)</option>
