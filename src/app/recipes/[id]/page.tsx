@@ -12,11 +12,12 @@ import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
 import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
 
 
-type PageProps = { params: { id: string } };
+type PageProps = { params: Promise<{ id: string }> };
 export const dynamic = 'force-dynamic';
 
 export default async function RecipeDetailPage({ params }: PageProps) {
-  const id = Number(params.id);
+  const { id: rawId } = await params;
+  const id = Number(rawId);
   if (Number.isNaN(id)) return notFound();
 
   const recipe = await getRecipeById(id);
