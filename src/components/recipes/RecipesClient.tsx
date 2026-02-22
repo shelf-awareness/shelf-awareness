@@ -38,7 +38,9 @@ export default function RecipesClient({
     () => new Set(produce.map((p) => p.name.toLowerCase())),
     [produce],
   );
-  const pantryItems = useMemo(() => { return new Set(produce) }, [produce]);
+  // const pantryItems = useMemo(() => { return new Set(produce) }, [produce]);
+  // Edited to pass pantryItems as an array instead of a Set, since it is defined as an array in the RecipeCardProps
+  const pantryItems = useMemo(() => produce, [produce]);
 
 
   // TODO: Add "within budget" filter state and logic

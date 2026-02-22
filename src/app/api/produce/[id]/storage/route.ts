@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       select: { name: true },
       orderBy: { name: 'asc' },
     });
-    return NextResponse.json(storages.map((s) => s.name));
+    return NextResponse.json(storages.map((s: { name: string }) => s.name));
   }
 
   const location = await prisma.location.findFirst({
@@ -34,5 +34,5 @@ export async function GET(request: Request) {
     orderBy: { name: 'asc' },
   });
 
-  return NextResponse.json(storages.map((s) => s.name));
+  return NextResponse.json(storages.map((s: { name: string }) => s.name));
 }

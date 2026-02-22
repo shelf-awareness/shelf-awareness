@@ -40,7 +40,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
   const ingredientItems = recipe.ingredientItems ?? [];
 
   // Missing item names (for AddToShoppingList)
-  const missingItems = ingredientItems.filter((item) => !pantryNames.has(item.name.toLowerCase()));
+  const missingItems = ingredientItems.filter((item: any) => !pantryNames.has(item.name.toLowerCase()));
 
   return (
     <main style={{ backgroundColor: '#f8f9fa' }}>
@@ -95,7 +95,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 
           {recipe.dietary?.length ? (
             <div className="d-flex flex-wrap gap-2">
-              {recipe.dietary.map((d) => (
+              {recipe.dietary.map((d: string) => (
                 <Badge
                   bg="success"
                   key={d}
@@ -368,7 +368,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                     color: '#495057',
                   }}
                 >
-                  {ingredientItems.map((item) => {
+                  {ingredientItems.map((item: any) => {
                     const hasItem = pantryNames.has(item.name.toLowerCase());
                     let hasEnough = false;
                     let convertedUnit = 0;

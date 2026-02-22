@@ -109,7 +109,7 @@ export async function POST(request: Request) {
       select: { name: true },
     });
 
-    const existingNames = new Set(existingItems.map((i) => i.name));
+    const existingNames = new Set(existingItems.map((i: { name: string }) => i.name));
 
     // Filter out duplicates by name
     const itemsToInsert = normalizedItems.filter(

@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(saved.map((s) => s.recipe), {
+    return NextResponse.json(saved.map((s: { recipe: any }) => s.recipe), {
       headers: { "Cache-Control": "no-store" },
     });
   } catch (err) {
@@ -96,7 +96,7 @@ export async function GET(req: Request) {
       },
     });
 
-    return NextResponse.json(saved.map((s) => s.recipe), {
+    return NextResponse.json(saved.map((s: { recipe: any }) => s.recipe), {
       headers: { "Cache-Control": "no-store" },
     });
   } catch (err) {
