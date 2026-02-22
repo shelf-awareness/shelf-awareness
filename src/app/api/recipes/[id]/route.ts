@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 
 type RouteParams = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export async function DELETE(
@@ -21,7 +21,8 @@ export async function DELETE(
       );
     }
 
-    const recipeId = Number(params.id);
+    const { id: rawId } = await params;
+    const recipeId = Number(rawId);
     if (Number.isNaN(recipeId)) {
       return NextResponse.json(
         { error: 'Invalid recipe id' },

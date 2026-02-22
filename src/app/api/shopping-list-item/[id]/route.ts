@@ -3,10 +3,11 @@ import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = Number(params.id);
+    const { id: rawId } = await params;
+    const id = Number(rawId);
     const item = await prisma.shoppingListItem.findUnique({ where: { id } });
     if (!item) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 });
@@ -52,10 +53,11 @@ export async function DELETE(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const id = Number(params.id);
+    const { id: rawId } = await params;
+    const id = Number(rawId);
     const body = await request.json();
 
     const updatedItem = await prisma.shoppingListItem.update({
