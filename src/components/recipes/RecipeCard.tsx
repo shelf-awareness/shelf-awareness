@@ -41,7 +41,7 @@ export type RecipeCardProps = {
   fatGrams?: number | null;
   sourceUrl?: string | null;
   pantryNames: Set<string>;
-  pantryItems: Produce[];
+  pantryItems: Produce[]; // pantryItems is passed as an array of Produce objects
 };
 
 export default function RecipeCard({

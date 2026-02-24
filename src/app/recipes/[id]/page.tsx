@@ -14,11 +14,12 @@ import MadeThisRecipeButton from '@/components/recipes/MadeThisRecipeButton';
 import { prisma } from '@/lib/prisma';
 
 
-type PageProps = { params: { id: string } };
+type PageProps = { params: Promise<{ id: string }> };
 export const dynamic = 'force-dynamic';
 
 export default async function RecipeDetailPage({ params }: PageProps) {
-  const id = Number(params.id);
+  const { id: rawId } = await params;
+  const id = Number(rawId);
   if (Number.isNaN(id)) return notFound();
 
   const recipe = await getRecipeById(id);
@@ -59,7 +60,7 @@ if (email) {
   const ingredientItems = recipe.ingredientItems ?? [];
 
   // Missing item names (for AddToShoppingList)
-  const missingItems = ingredientItems.filter((item) => !pantryNames.has(item.name.toLowerCase()));
+  const missingItems = ingredientItems.filter((item: any) => !pantryNames.has(item.name.toLowerCase()));
 
   return (
     <main style={{ backgroundColor: '#f8f9fa' }}>
@@ -114,7 +115,7 @@ if (email) {
 
           {recipe.dietary?.length ? (
             <div className="d-flex flex-wrap gap-2">
-              {recipe.dietary.map((d) => (
+              {recipe.dietary.map((d: string) => (
                 <Badge
                   bg="success"
                   key={d}
@@ -395,7 +396,7 @@ if (email) {
                     color: '#495057',
                   }}
                 >
-                  {ingredientItems.map((item) => {
+                  {ingredientItems.map((item: any) => {
                     const hasItem = pantryNames.has(item.name.toLowerCase());
                     let hasEnough = false;
                     let convertedUnit = 0;

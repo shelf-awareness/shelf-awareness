@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     where: { owner: ownerEmail },
   });
 
-  const lowStockItems = produceItems.filter((p) => isBelowThreshold(
+  const lowStockItems = produceItems.filter((p: any) => isBelowThreshold(
     p.quantity,
     p.restockTrigger,
     p.customThreshold ?? undefined,

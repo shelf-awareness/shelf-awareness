@@ -20,7 +20,7 @@ export async function getRecommendedProduce(
     select: { name: true },
   });
 
-  const excludedNames = listItems.map(item => item.name.toLowerCase());
+  const excludedNames = listItems.map((item: { name: string }) => item.name.toLowerCase());
 
   // Produce to recommend
   const produce = await prisma.produce.findMany({
