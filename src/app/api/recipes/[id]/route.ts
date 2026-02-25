@@ -1,16 +1,16 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 
+type RouteParams = {
+  params: Promise<{ id: string }>;
+};
+
 export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> },
+  request: Request,
+  { params }: RouteParams,
 ) {
   try {
-    const { id } = await context.params;
-    const recipeId = Number(id);
-
     const session = await getServerSession();
     const email = session?.user?.email ?? null;
 
@@ -21,6 +21,8 @@ export async function DELETE(
       );
     }
 
+    const { id: rawId } = await params;
+    const recipeId = Number(rawId);
     if (Number.isNaN(recipeId)) {
       return NextResponse.json(
         { error: 'Invalid recipe id' },
@@ -42,6 +44,7 @@ export async function DELETE(
 
     const { owner: ownerField } = recipe;
 
+    // Normalize owner to an array
     let owners: string[] = [];
     if (Array.isArray(ownerField)) {
       owners = ownerField;
