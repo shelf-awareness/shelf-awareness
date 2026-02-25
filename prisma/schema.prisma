@@ -207,3 +207,9 @@ model RecipeUsage {
   @@index([userId])
   @@index([recipeId])
 }
+
+model MigrationTest {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+}
