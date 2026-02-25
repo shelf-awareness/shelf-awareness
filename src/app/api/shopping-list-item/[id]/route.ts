@@ -1,20 +1,14 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function DELETE(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> },
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await context.params;
-    const itemId = Number(id);
-
-    if (Number.isNaN(itemId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
-    }
-
-    const item = await prisma.shoppingListItem.findUnique({ where: { id: itemId } });
+    const { id: rawId } = await params;
+    const id = Number(rawId);
+    const item = await prisma.shoppingListItem.findUnique({ where: { id } });
     if (!item) {
       return NextResponse.json({ error: 'Item not found' }, { status: 404 });
     }
@@ -43,12 +37,12 @@ export async function DELETE(
         owner: item.shoppingListId.toString(),
         locationId: location.id,
         storageId: storage.id,
-        proteinGrams: item.proteinGrams ?? null,
+        proteinGrams: item.proteinGrams ?? null, // Transfers protein data to pantry
       },
     });
 
     // Delete from shopping list
-    await prisma.shoppingListItem.delete({ where: { id: itemId } });
+    await prisma.shoppingListItem.delete({ where: { id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -58,21 +52,16 @@ export async function DELETE(
 }
 
 export async function PUT(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> },
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await context.params;
-    const itemId = Number(id);
-
-    if (Number.isNaN(itemId)) {
-      return NextResponse.json({ error: 'Invalid id' }, { status: 400 });
-    }
-
+    const { id: rawId } = await params;
+    const id = Number(rawId);
     const body = await request.json();
 
     const updatedItem = await prisma.shoppingListItem.update({
-      where: { id: itemId },
+      where: { id },
       data: {
         name: body.name,
         quantity: body.quantity,
