@@ -62,7 +62,7 @@ export default function AddLocationModal({ show, onHide, owner }: AddLocationMod
           <Row className="mb-3">
             <Col xs={12}>
               <Form.Group>
-                <Form.Label className="mb-0 required-field">Location Name</Form.Label>
+                <Form.Label className="mb-1 required-field">Location Name</Form.Label>
                 <Form.Control
                   type="text"
                   placeholder="e.g., House, Apartment, Office"
