@@ -42,6 +42,7 @@ export type RecipeCardProps = {
   sourceUrl?: string | null;
   pantryNames: Set<string>;
   pantryItems: Produce[]; // pantryItems is passed as an array of Produce objects
+  onSelect?: (recipe: { id: number; title: string; ingredientItems: IngredientItemCard[] }) => void;
 };
 
 export default function RecipeCard({
@@ -65,6 +66,7 @@ export default function RecipeCard({
   sourceUrl = null,
   pantryNames,
   pantryItems,
+  onSelect,
 }: RecipeCardProps) {
   const dietTags = Array.isArray(dietary) ? dietary.filter(Boolean) : [];
   const router = useRouter();
@@ -109,12 +111,22 @@ export default function RecipeCard({
         role="button"
         tabIndex={0}
         onClick={() => {
-          if (!editMode) router.push(`/recipes/${id}`);
+          if (!editMode) {
+            if (onSelect) {
+              onSelect({ id, title, ingredientItems });
+            } else {
+              router.push(`/recipes/${id}`);
+            }
+          }
         }}
         onKeyDown={(e) => {
           if (!editMode && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
-            router.push(`/recipes/${id}`);
+            if (onSelect) {
+              onSelect({ id, title, ingredientItems });
+            } else {
+              router.push(`/recipes/${id}`);
+            }
           }
         }}
       >

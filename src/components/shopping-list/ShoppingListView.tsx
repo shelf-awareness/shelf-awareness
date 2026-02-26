@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import { getBudgetByUserId } from '@/lib/dbActions';
@@ -9,6 +9,7 @@ import ShoppingListCard from './ShoppingListCard';
 import AddToShoppingListModal from './AddToShoppingListModal';
 import RecommendedWidget from './RecommendedWidget';
 import UpdateBudget from './UpdateBudget';
+import RecipesModal from '../recipes/RecipesModal';
 
 import { ShoppingListWithProtein } from '../../types/shoppingList';
 
@@ -23,10 +24,12 @@ type ShoppingListViewProps = {
 
 export default function ShoppingListView({ initialShoppingLists }: ShoppingListViewProps) {
   const { data: session } = useSession();
+  const [shoppingLists, setShoppingLists] = useState<ShoppingListWithProtein[]>(initialShoppingLists);
   const [searchTerm, setSearchTerm] = useState('');
   const [show, setShow] = useState(false);
   const [showCreateList, setShowCreateList] = useState(false);
   const [showUpdateBudget, setShowUpdateBudget] = useState(false);
+  const [showRecipesModal, setShowRecipesModal] = useState(false);
   const [budget, setBudget] = useState<string>('$0.00');
   const [loadingBudget, setLoadingBudget] = useState(true);
 
@@ -63,8 +66,12 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
 };
 
 
+  const handleListCreated = useCallback((newList: ShoppingListWithProtein) => {
+    setShoppingLists((prev) => [newList, ...prev]);
+  }, []);
+
   const searchLower = searchTerm.toLowerCase();
-  const filteredLists = initialShoppingLists.filter((list) => list.name.toLowerCase().includes(searchLower));
+  const filteredLists = shoppingLists.filter((list) => list.name.toLowerCase().includes(searchLower));
 
   return (
     <>
@@ -100,7 +107,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           <AddToShoppingListModal
             show={show}
             onHide={() => setShow(false)}
-            shoppingLists={initialShoppingLists}
+            shoppingLists={shoppingLists}
             sidePanel={false}
             prefillName=""
           />
@@ -153,6 +160,28 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
         </Col>
 
         <Col xs="auto" className="mb-2">
+          <Button
+            onClick={() => setShowRecipesModal(true)}
+            style={{
+              backgroundColor: 'var(--fern-green)',
+              height: '34px',
+              padding: '4px 12px',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            className="btn-submit"
+          >
+            + Create From Recipe
+          </Button>
+        </Col>
+
+        <RecipesModal
+          show={showRecipesModal}
+          onHide={() => setShowRecipesModal(false)}
+          onListCreated={handleListCreated}
+        />
+
+        <Col xs="auto" className="mb-2">
           <div
             style={{
               backgroundColor: 'var(--fern-green)',
@@ -197,7 +226,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           {session?.user?.email && (
           <RecommendedWidget
             owner={session?.user?.email ?? ''}
-            shoppingLists={initialShoppingLists}
+            shoppingLists={shoppingLists}
           />
           )}
         </Col>
