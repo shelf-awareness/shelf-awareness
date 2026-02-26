@@ -169,7 +169,6 @@ export async function editProduce(
     create: { name: produce.storage as string, locationId: location.id },
   });
 
-  // Handle expiration
   let expiration: Date | Prisma.DateTimeFieldUpdateOperationsInput | null | undefined = null;
   if (produce.expiration) {
     if (produce.expiration instanceof Date) {
@@ -181,7 +180,6 @@ export async function editProduce(
     }
   }
 
-  // Update produce linking new IDs
   const updatedProduce = await prisma.produce.update({
     where: { id: produce.id },
     data: {
@@ -261,7 +259,7 @@ export async function addLocation(location: { name: string; owner: string }) {
   // Create the location if it doesn’t already exist
   const newLocation = await prisma.location.upsert({
     where: { name_owner: { name, owner } },
-    update: {}, // do nothing if exists
+    update: {},
     create: { name, owner },
   });
 
@@ -332,7 +330,6 @@ export async function getBudgetByUserId(userId: number) {
  * Deletes a shopping list and its items.
  */
 export async function deleteShoppingList(id: number) {
-  // delete items first to maintain relational integrity
   await prisma.shoppingListItem.deleteMany({
     where: { shoppingListId: id },
   });
