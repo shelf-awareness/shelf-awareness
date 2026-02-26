@@ -10,8 +10,6 @@ import AddToShoppingList from '@/components/recipes/AddToShoppingList';
 import UploadDishButton from '@/components/recipes/UploadDishButton';
 import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
 import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
-import MadeThisRecipeButton from '@/components/recipes/MadeThisRecipeButton';
-import { prisma } from '@/lib/prisma';
 
 
 type PageProps = { params: Promise<{ id: string }> };
@@ -27,24 +25,6 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 
   const session = await getServerSession();
   const email = session?.user?.email ?? null;
-  let initialMadeCount = 0;
-
-if (email) {
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { id: true },
-  });
-
-  if (user) {
-    const usage = await prisma.recipeUsage.findUnique({
-      where: { userId_recipeId: { userId: user.id, recipeId: recipe.id } },
-      select: { count: true },
-    });
-
-    initialMadeCount = usage?.count ?? 0;
-  }
-}
-
 
   let pantry: any[] = [];
   if (email) {
@@ -326,13 +306,6 @@ if (email) {
                 </div>
               </div>
             )}
-            
-            <div>
-              <MadeThisRecipeButton
-                recipeId={recipe.id}
-                initialCount={initialMadeCount}
-              />
-            </div>
 
             {recipe.sourceUrl && (
               <Button
@@ -347,7 +320,6 @@ if (email) {
                 View Original Recipe →
               </Button>
             )}
-
 
             <div className="mt-3">
               <SavedRecipeButton recipeId={recipe.id} owner={email} />
