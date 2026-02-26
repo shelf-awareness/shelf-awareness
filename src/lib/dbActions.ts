@@ -410,3 +410,50 @@ export async function deleteShoppingListItem(id: number) {
     where: { id },
   });
 }
+
+/**
+ * Creates a shopping list named after a recipe and populates it with the
+ * recipe's ingredients as shopping list items. Runs as a single transaction.
+ */
+export async function createShoppingListFromRecipe(data: {
+  owner: string;
+  recipeName: string;
+  ingredients: { name: string; quantity: number | null; unit: string | null }[];
+}) {
+  const baseName = data.recipeName.trim();
+
+  // Find a unique list name by appending a counter if needed
+  let listName = baseName;
+  let counter = 1;
+  while (await prisma.shoppingList.findFirst({ where: { name: listName, owner: data.owner } })) {
+    listName = `${baseName} (${counter})`;
+    counter++;
+  }
+
+  return prisma.$transaction(async (tx: { shoppingList: { 
+    create: (arg0: { data: { name: string; owner: string; }; }) => any; 
+    findUniqueOrThrow: (arg0: { where: { id: any; }; include: { items: boolean; }; }) => any; 
+  }; shoppingListItem: { createMany: (arg0: { data: { shoppingListId: any; name: string; 
+    quantity: number; unit: string; }[]; }) => any; }; }) => {
+    const list = await tx.shoppingList.create({
+      data: { name: listName, owner: data.owner },
+    });
+
+    if (data.ingredients.length > 0) {
+      await tx.shoppingListItem.createMany({
+        data: data.ingredients.map((ingredient) => ({
+          shoppingListId: list.id,
+          name: ingredient.name,
+          quantity: ingredient.quantity ?? 1,
+          unit: ingredient.unit ?? '',
+        })),
+      });
+    }
+
+    // Return the list with its items so the UI can update without a page reload
+    return tx.shoppingList.findUniqueOrThrow({
+      where: { id: list.id },
+      include: { items: true },
+    });
+  });
+}
