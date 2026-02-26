@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { config } from 'dotenv';
-config({ path: '.env.local' });
+import 'dotenv/config';
 import { defineConfig, env } from 'prisma/config';
 import { PrismaPg } from '@prisma/adapter-pg';
 
@@ -11,7 +10,7 @@ const adapter = new PrismaPg({
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   datasource: {
-    url: env('POSTGRES_PRISMA_URL'),
+    url: env('DATABASE_URL'),
     // Prisma 7 does not support direct URLs for PostgreSQL
     // directUrl: env('POSTGRES_URL_NON_POOLING'),
   },
