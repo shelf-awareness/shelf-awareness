@@ -25,7 +25,7 @@ export default function ProduceCard({ produce }: Props) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   return (
-    <Card className="h-100 mb-3 image-shadow">
+    <Card className="min-vh-75 min-vw-75 mb-3 image-shadow">
       <Card.Header>
         <Link href={`/produce/${produce.id}`} className="link-dark">
           <Card.Title className="mb-1">{produce.name}</Card.Title>
@@ -56,14 +56,13 @@ export default function ProduceCard({ produce }: Props) {
             <strong>Expiration:</strong> {formatDate(produce.expiration)}
           </ListGroup.Item>
         </ListGroup>
-        <Card.Footer className="d-flex">
+        <Card.Footer className="d-flex mb-0">
           <Button className="me-2 btn-edit" onClick={() => setShowEditModal(true)}>
             <PencilSquare color="white" size={18} />
           </Button>
           <Button
             variant="danger"
             className="btn-delete"
-            // style={{ width: '100px' }}
             onClick={() => setShowDeleteModal(true)}
           >
             <Trash color="white" size={18} />

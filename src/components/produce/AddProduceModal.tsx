@@ -201,15 +201,15 @@ export default function AddProduceModal({ show, onHide, produce }: AddProduceMod
   };
 
   return (
-    <Modal show={show} onHide={onHide} centered>
-      <Modal.Header className="justify-content-center">
-        <Modal.Title>Add Pantry Item</Modal.Title>
+    <Modal size="lg" show={show} onHide={onHide} centered>
+      <Modal.Header className="justify-content-center" closeButton>
+        <Modal.Title>Add Produce</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="text-center">
         <Form onSubmit={handleSubmit(onSubmit)}>
           {/* Barcode Scanner - Highlighted */}
-          <Row className="mb-4 justify-content-center">
+          <Row className="mb-2 justify-content-center">
             <Col xs={12}>
               <div
                 className="p-3 mb-3 border rounded bg-light text-center"
