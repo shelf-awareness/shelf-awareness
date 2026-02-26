@@ -24,6 +24,7 @@ model User {
   emailVerificationCodes EmailVerificationCode[]
   passwordResetTokens    PasswordResetToken[]
   savedRecipes SavedRecipe[]
+  RecipeUsage   RecipeUsage[]
 }
 
 model EmailVerificationCode {
@@ -146,6 +147,7 @@ model Recipe {
 
   recipeImage     RecipeImage[]
   savedBy SavedRecipe[]
+  usages          RecipeUsage[]
 
   @@unique([title, owner], name: "title_owner")
   @@index([title])
@@ -161,6 +163,7 @@ model RecipeIngredient {
   quantity  Float?
   unit      String?
   order     Int?
+  substitutes  String?
 
   @@index([recipeId])
 }
