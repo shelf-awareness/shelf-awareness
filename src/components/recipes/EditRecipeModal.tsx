@@ -12,6 +12,7 @@ import {
 } from 'react-bootstrap';
 import { useState, useTransition, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { DietaryCategory } from '@prisma/client';
 import ImagePickerModal from '@/components/images/ImagePickerModal';
 import { updateRecipe } from '@/lib/recipes';
 import '@/styles/buttons.css';
@@ -54,7 +55,7 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
   const [cuisine, setCuisine] = useState(recipe.cuisine);
   const [description, setDescription] = useState(recipe.description || '');
   const [imageUrl, setImageUrl] = useState(recipe.imageUrl || '');
-  const [dietary, setDietary] = useState((recipe.dietary ?? []).join(', '));
+  const [dietary, setDietary] = useState<string[]>(recipe.dietary ?? []);
 
   // ingredientText: one ingredient per line: "qty unit name"
   const [ingredientText, setIngredientText] = useState(
@@ -94,7 +95,7 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
     setCuisine(recipe.cuisine);
     setDescription(recipe.description || '');
     setImageUrl(recipe.imageUrl || '');
-    setDietary((recipe.dietary ?? []).join(', '));
+    setDietary(recipe.dietary ?? []);
     setIngredientText(
       (recipe.ingredientItems ?? [])
         .map((i) => `${i.quantity ?? ''} ${i.unit ?? ''} ${i.name}`
@@ -157,11 +158,7 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
           cuisine,
           description,
           imageUrl,
-          dietary: dietary
-            .split(',')
-            .map((s) => s.trim())
-            .filter(Boolean),
-          // 🔥 new structured ingredients
+          dietary: dietary.map((d) => d as DietaryCategory),
           ingredientItems: normalizedIngredientItems,
           instructions,
           servings: servings === '' ? undefined : Number(servings),
@@ -296,12 +293,23 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
 
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Dietary (comma-separated)</Form.Label>
-                <Form.Control
-                  placeholder="Vegan, Gluten-Free"
-                  value={dietary}
-                  onChange={(e) => setDietary(e.target.value)}
-                />
+                <Form.Label>Dietary</Form.Label>
+              <Form.Select
+                multiple
+                value={dietary}
+                onChange={(e) => {
+                const selected = Array.from(e.target.selectedOptions).map(
+                  (opt) => opt.value);
+                setDietary(selected);
+                }}
+                >
+                <option value="VEGAN">Vegan</option>
+                <option value="VEGETARIAN">Vegetarian</option>
+                <option value="KETO">Keto</option>
+                <option value="GLUTEN_FREE">Gluten-Free</option>
+                <option value="HIGH_PROTEIN">High-Protein</option>
+                <option value="LOW_CARB">Low-Carb</option>
+                </Form.Select>
               </Form.Group>
             </Col>
           </Row>

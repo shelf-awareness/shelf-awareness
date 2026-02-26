@@ -247,7 +247,7 @@ export default function RecipeCard({
             cuisine,
             description: description ?? '',
             imageUrl: imageUrl ?? '',
-            dietary,
+            dietary: dietary,
             ingredientItems,
             instructions: instructions ?? '',
             servings: servings ?? undefined,

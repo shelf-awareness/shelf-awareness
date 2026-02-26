@@ -110,7 +110,7 @@ export default function SavedRecipesClient() {
                   description={r.description}
                   imageUrl={r.imageUrl ?? undefined}
                   cuisine={r.cuisine}
-                  dietary={r.dietary ?? []}
+                  dietary={Array.isArray(r.dietary) ? r.dietary : r.dietary ? [r.dietary] : []}
                   ingredientItems={r.ingredientItems ?? []}
                   owner={r.owner ?? "Pantry Pals Team"}
                   canEdit={false}
