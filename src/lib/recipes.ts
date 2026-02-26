@@ -1,7 +1,9 @@
 'use server';
 
+import { DietaryCategory } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { D } from 'react-router/dist/development/instrumentation-DvHY1sgY';
 
 // Minimal shape so TS knows about session.user.email
 type SessionLike = {
@@ -21,7 +23,7 @@ export type RecipeInput = {
   cuisine: string;
   description?: string;
   imageUrl?: string;
-  dietary?: string[];
+  dietary?: DietaryCategory[];
   // 🔥 Only structured ingredients now
   ingredientItems?: IngredientItemInput[];
   instructions?: string;

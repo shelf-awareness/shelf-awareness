@@ -202,7 +202,7 @@ export default function RecipesClient({
                   description={r.description}
                   imageUrl={r.imageUrl ?? undefined}
                   cuisine={r.cuisine}
-                  dietary={r.dietary ?? []}
+                  dietary={Array.isArray(r.dietary) ? r.dietary : r.dietary ? [r.dietary] : []}
                   ingredientItems={r.ingredientItems ?? []}
                   owner={owner}
                   canEdit={canEdit}

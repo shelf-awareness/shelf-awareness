@@ -122,13 +122,22 @@ model ShoppingListItem {
   @@unique([shoppingListId, name])
 }
 
+enum DietaryCategory {
+  VEGAN
+  VEGETARIAN
+  KETO
+  GLUTEN_FREE
+  HIGH_PROTEIN
+  LOW_CARB
+}
+
 model Recipe {
   id              Int       @id @default(autoincrement())
   title           String
   description     String?
   imageUrl        String?
   cuisine         String
-  dietary         String[]   // e.g., ["Vegan","Gluten-Free"]
+  dietary         DietaryCategory[]   // e.g., ["Vegan","Gluten-Free"]
   ingredientItems RecipeIngredient[]
   owner           String?
 

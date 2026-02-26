@@ -1,5 +1,5 @@
 'use client';
-
+import { DietaryCategory } from '@prisma/client';
 import { useState, useTransition, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -15,6 +15,16 @@ import {
 import { createRecipe } from '@/lib/recipes';
 import ImagePickerModal from '@/components/images/ImagePickerModal';
 import '@/styles/buttons.css';
+import { set } from 'react-hook-form';
+
+const dietaryOptions: DietaryCategory[] = [
+  DietaryCategory.VEGAN,
+  DietaryCategory.VEGETARIAN,
+  DietaryCategory.KETO,
+  DietaryCategory.GLUTEN_FREE,
+  DietaryCategory.HIGH_PROTEIN,
+  DietaryCategory.LOW_CARB,
+];
 
 type Props = {
   show: boolean;
@@ -30,7 +40,7 @@ export default function AddRecipeModal({ show, onHide }: Props) {
   const [cuisine, setCuisine] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [dietary, setDietary] = useState(''); // comma-separated
+  const [dietary, setDietary] = useState<string[]>([]);
   const [ingredientText, setIngredientText] = useState(''); // multiline "qty unit name"
 
   // new fields
@@ -52,7 +62,7 @@ export default function AddRecipeModal({ show, onHide }: Props) {
     setCuisine('');
     setDescription('');
     setImageUrl('');
-    setDietary('');
+    setDietary(['']);
     setIngredientText('');
     setInstructions('');
     setServings('');
@@ -105,15 +115,25 @@ export default function AddRecipeModal({ show, onHide }: Props) {
         });
 
       try {
+        const dietaryMap: Record<string, DietaryCategory> = {
+        vegan: DietaryCategory.VEGAN,
+        vegetarian: DietaryCategory.VEGETARIAN,
+        keto: DietaryCategory.KETO,
+        'gluten-free': DietaryCategory.GLUTEN_FREE,
+        'high-protein': DietaryCategory.HIGH_PROTEIN,
+        'low-carb': DietaryCategory.LOW_CARB,
+        };
+        const dietaryEnums = dietary
+        .map((s) => s.trim().toLowerCase())
+        .map((tag) => dietaryMap[tag])
+        .filter(Boolean); // remove any invalid/undefined
+
         await createRecipe({
           title,
           cuisine,
           description,
           imageUrl,
-          dietary: dietary
-            .split(',')
-            .map((s) => s.trim())
-            .filter(Boolean),
+          dietary: dietaryEnums,
           ingredientItems: normalizedIngredientItems,
           instructions,
           servings: servings === '' ? undefined : Number(servings),
@@ -244,12 +264,34 @@ export default function AddRecipeModal({ show, onHide }: Props) {
 
             <Col md={6}>
               <Form.Group className="mb-3">
-                <Form.Label>Dietary (comma-separated)</Form.Label>
-                <Form.Control
-                  placeholder="Vegan, Gluten-Free"
+                <Form.Label>Dietary</Form.Label>
+                <Form.Select
+                  as="select"
+                  multiple
                   value={dietary}
-                  onChange={(e) => setDietary(e.target.value)}
-                />
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions).map(
+                      (opt) => (opt as any).value,
+                    );
+                    setDietary(selected);
+                  }}
+                  
+                >
+                  {dietaryOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option.replace('_', ' ')}
+                    </option>
+                  ))}
+                  <option value="VEGAN">Vegan</option>
+                  <option value="VEGETARIAN">Vegetarian</option>
+                  <option value="KETO">Keto</option>
+                  <option value="GLUTEN_FREE">Gluten-Free</option>
+                  <option value="HIGH_PROTEIN">High-Protein</option>
+                  <option value="LOW_CARB">Low-Carb</option>
+                </Form.Select>
+                  <Form.Text className="text-muted">
+                    Hold Ctrl (Windows) or Cmd (Mac) to select multiple
+                  </Form.Text>
               </Form.Group>
             </Col>
           </Row>

@@ -41,7 +41,15 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 
   // Missing item names (for AddToShoppingList)
   const missingItems = ingredientItems.filter((item: any) => !pantryNames.has(item.name.toLowerCase()));
-
+  
+  const dietaryDisplayMap: Record<string, string> = {
+    VEGAN: 'Vegan',
+    VEGETARIAN: 'Vegetarian',
+    KETO: 'Keto',
+    GLUTEN_FREE: 'Gluten-Free',
+    HIGH_PROTEIN: 'High-Protein',
+    LOW_CARB: 'Low-Carb',
+  };
   return (
     <main style={{ backgroundColor: '#f8f9fa' }}>
       <Container className="py-4 py-md-5 px-3 px-md-0">
@@ -105,7 +113,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                     padding: '0.4rem 0.75rem',
                   }}
                 >
-                  {d}
+                  {dietaryDisplayMap[d] ?? d}
                 </Badge>
               ))}
             </div>

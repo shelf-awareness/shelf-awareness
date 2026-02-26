@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
-import { PrismaClient, Role } from '@prisma/client';
+import { PrismaClient, Role, DietaryCategory } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { hash } from 'bcrypt';
 import * as config from '../config/settings.development.json';
@@ -14,6 +14,23 @@ const prisma = new PrismaClient({
   adapter,
   log: ['query'], // optional, like in lib/prisma.ts
 });
+// Helper to map string to enum
+function mapDietaryStringsToEnum(tags?: string[]): DietaryCategory[] {
+  if (!tags || !tags.length) return [];
+
+  const mapping: Record<string, DietaryCategory> = {
+    Vegan: DietaryCategory.VEGAN,
+    Vegetarian: DietaryCategory.VEGETARIAN,
+    Keto: DietaryCategory.KETO,
+    "Gluten-Free": DietaryCategory.GLUTEN_FREE,
+    "High-Protein": DietaryCategory.HIGH_PROTEIN,
+    "Low-Carb": DietaryCategory.LOW_CARB,
+  };
+
+  return tags
+    .map((t) => mapping[t])
+    .filter((v): v is DietaryCategory => !!v); // remove invalid entries
+}
 
 async function main() {
   console.log('Seeding the database');
@@ -173,7 +190,7 @@ async function main() {
           cuisine: r.cuisine,
           description: r.description ?? null,
           imageUrl: r.imageUrl && r.imageUrl.length > 0 ? r.imageUrl : null,
-          dietary: r.dietary ?? [],
+          dietary: mapDietaryStringsToEnum(r.dietary),
           instructions: r.instructions ?? null,
           servings: r.servings ?? null,
           prepMinutes: r.prepMinutes ?? null,
@@ -185,7 +202,7 @@ async function main() {
           cuisine: r.cuisine,
           description: r.description ?? null,
           imageUrl: r.imageUrl && r.imageUrl.length > 0 ? r.imageUrl : null,
-          dietary: r.dietary ?? [],
+          dietary: mapDietaryStringsToEnum(r.dietary),
           owner: r.owner,
           instructions: r.instructions ?? null,
           servings: r.servings ?? null,
