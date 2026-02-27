@@ -9,6 +9,7 @@ import { Button, Col, Modal, Row, Table } from 'react-bootstrap';
 import { BagCheckFill } from 'react-bootstrap-icons';
 import AddToShoppingListModal from './AddToShoppingListModal';
 import EditShoppingListItemModal from './EditShoppingListItemModal';
+import { PencilSquare, Trash } from 'react-bootstrap-icons';
 
 import { ShoppingListWithProtein } from '../../types/shoppingList';
 
@@ -129,6 +130,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
                       <th>Quantity</th>
                       <th>Unit</th>
                       <th>Price</th>
+                      <th>Protein</th>
                       <th>Restock When</th>
                       <th>Actions</th>
                     </tr>
@@ -148,6 +150,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
                         <td>{item.quantity}</td>
                         <td>{item.unit || '-'}</td>
                         <td>{item.price ? `$${Number(item.price).toFixed(2)}` : 'N/A'}</td>
+                        <td>{item.proteinGrams ? `${Number(item.proteinGrams).toFixed(1)}g` : 'N/A'}</td>
                         <td>
                           <select
                             value={item.restockTrigger || 'empty'}
@@ -178,7 +181,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
                             size="sm"
                             onClick={() => setEditingItem(item)}
                           >
-                            Edit
+                            <PencilSquare color="white" size={18} />
                           </Button>
 
                           <Button
@@ -187,7 +190,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
                             onClick={() => handleDeleteItem(item.id)}
                             disabled={deletingItemId === item.id}
                           >
-                            {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
+                            {deletingItemId === item.id ? 'Deleting...' : <Trash color="white" size={18} />}
                           </Button>
                         </td>
                       </tr>

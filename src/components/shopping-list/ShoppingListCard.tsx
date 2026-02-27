@@ -136,7 +136,7 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
             $
             {totalCost.toFixed(2)}
           </ListGroup.Item>
-          <ListGroup.Item>
+          <ListGroup.Item className="bg-light">
             <strong>Total Protein:</strong>{' '}
             {shoppingList.totalProtein.toFixed(1)} g
           </ListGroup.Item>
