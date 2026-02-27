@@ -206,7 +206,18 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
               </Col>
             </Row>
           )}
-
+          <Row className="pt-4"> 
+            <Col className="text-center">
+              <Button
+                variant="success"
+                className="btn-submit"
+                disabled={Object.values(checkedState).every(v => !v)}
+                // onClick={handleMoveToPantry}
+              >
+                ✓ Move Checked to Pantry
+              </Button>
+            </Col>
+          </Row>
           <Row className="pt-4">
             <Col className="text-center">
               <Button
