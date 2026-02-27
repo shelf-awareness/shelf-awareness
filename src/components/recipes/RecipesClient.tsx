@@ -31,6 +31,7 @@ export default function RecipesClient({
   const canAdd = serverCanAdd || !!currentUserEmail;
 
   const [showCanMake, setShowCanMake] = useState(false);
+  const [showWithinBudget, setShowWithinBudget] = useState(false);
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -38,6 +39,24 @@ export default function RecipesClient({
     () => new Set(produce.map((p) => p.name.toLowerCase())),
     [produce],
   );
+  const dietaryOptions = [
+  'VEGAN',
+  'VEGETARIAN',
+  'KETO',
+  'GLUTEN_FREE',
+  'HIGH_PROTEIN',
+  'LOW_CARB',
+];
+
+const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
+
+const toggleDietary = (tag: string) => {
+  setSelectedDietary((prev) =>
+    prev.includes(tag)
+      ? prev.filter((t) => t !== tag)
+      : [...prev, tag]
+  );
+};
   // const pantryItems = useMemo(() => { return new Set(produce) }, [produce]);
   // Edited to pass pantryItems as an array instead of a Set, since it is defined as an array in the RecipeCardProps
   const pantryItems = useMemo(() => produce, [produce]);
@@ -84,11 +103,28 @@ export default function RecipesClient({
     });
   }, [recipes, showCanMake, pantryNames]);
 
+  const dietaryFiltered = useMemo(() => {
+  if (selectedDietary.length === 0) return canMakeFiltered;
+
+  return canMakeFiltered.filter((r) => {
+    const recipeDietary = Array.isArray(r.dietary)
+      ? r.dietary
+      : r.dietary
+      ? [r.dietary]
+      : [];
+    const normalizedRecipeDietary = recipeDietary.map((d: string) =>
+      d.toUpperCase()
+    );
+    return selectedDietary.every((tag) =>
+      normalizedRecipeDietary.includes(tag.toUpperCase())
+    );
+  });
+}, [canMakeFiltered, selectedDietary]);
   const filteredRecipes = useMemo(() => {
     const query = search.toLowerCase();
-    if (!query) return canMakeFiltered;
+    if (!query) return dietaryFiltered;
 
-    return canMakeFiltered.filter((r) => {
+    return dietaryFiltered.filter((r) => {
       const titleMatch = r.title.toLowerCase().includes(query);
       const cuisineMatch = r.cuisine.toLowerCase().includes(query);
       const dietaryMatch = (r.dietary ?? []).some((tag: string) => tag.toLowerCase().includes(query));
@@ -96,7 +132,7 @@ export default function RecipesClient({
 
       return titleMatch || cuisineMatch || dietaryMatch || ingredientMatch;
     });
-  }, [canMakeFiltered, search]);
+  }, [dietaryFiltered, search]);
 
   // Helper: can current user edit this recipe?
   const canEditRecipe = useCallback(
@@ -132,6 +168,31 @@ export default function RecipesClient({
             </Dropdown.Toggle>
             <Dropdown.Menu>
               <Container>
+                <hr />
+                <div className="px-3 pb-2">
+                  <strong>Dietary Filters</strong>
+                    {dietaryOptions.map((tag) => (
+                      <Form.Check
+                        key={tag}
+                        type="checkbox"
+                        id={`diet-${tag}`}
+                        label={tag.replace('_', ' ')}
+                        checked={selectedDietary.includes(tag)}
+                        onChange={() => toggleDietary(tag)}
+                        className="mt-1"
+                      />
+                    ))}
+                    {selectedDietary.length > 0 && (
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="p-0 mt-2"
+                        onClick={() => setSelectedDietary([])}
+                      >
+                        Clear Filters
+                      </Button>
+                    )}
+                  </div>
                 <Row className="d-flex flex-column flex-md-row gap-2">
                   {/* Button 1 */}
                   <Col className="mb-2 mt-2">
@@ -146,10 +207,10 @@ export default function RecipesClient({
                   {/* Button 2 - Placeholder for "within budget" filter */}
                   <Col className="mb-2 mt-2">
                     <Button
-                      variant={showCanMake ? 'success' : 'outline-dark'}
-                      onClick={() => setShowCanMake((v) => !v)}
+                      variant={showWithinBudget ? 'success' : 'outline-dark'}
+                      onClick={() => setShowWithinBudget((v) => !v)}
                     >
-                      {showCanMake ? 'Show All Recipes' : 'Show Recipes Within Budget'}
+                      {showWithinBudget ? 'Show All Recipes' : 'Show Recipes Within Budget'}
                     </Button>
                   </Col>
                 </Row>
@@ -157,36 +218,50 @@ export default function RecipesClient({
             </Dropdown.Menu>
           </Dropdown>
         </div>
-  <div className="flex-grow-1 d-flex justify-content-center mb-2 mb-md-0">
-    <Form style={{ width: '100%', maxWidth: 400 }}>
-      <Form.Control
-        type="text"
-        placeholder="Search recipes..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-    </Form>
-  </div>
+        <div className="flex-grow-1 d-flex justify-content-center mb-2 mb-md-0">
+          <Form style={{ width: '100%', maxWidth: 400 }}>
+          <Form.Control
+            type="text"
+            placeholder="Search recipes..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            />
+          </Form>
+        </div>
 
-  <div className="d-flex gap-2 flex-wrap justify-content-center">
-    {canAdd && (
-      <>
-        <Button className="btn-add" onClick={() => setShowAdd(true)}>
-          + Add Recipe
-        </Button>
+        <div className="d-flex gap-2 flex-wrap justify-content-center">
+          {canAdd && (
+            <>
+          <Button className="btn-add" onClick={() => setShowAdd(true)}>
+            + Add Recipe
+          </Button>
 
+          <Button
+            variant={editMode ? 'danger' : 'outline-secondary'}
+            size="sm"
+            onClick={() => setEditMode((v) => !v)}
+          >
+            {editMode ? 'Cancel' : 'Edit Recipes'}
+          </Button>
+         </>
+          )}
+        </div>
+      </div>
+      {/* Active dietary filter badges */}
+      {selectedDietary.length > 0 && (
+      <div className="mb-3 d-flex flex-wrap gap-2">
+        {selectedDietary.map((tag) => (
         <Button
-          variant={editMode ? 'danger' : 'outline-secondary'}
+          key={tag}
           size="sm"
-          onClick={() => setEditMode((v) => !v)}
+          variant="outline-success"
+          onClick={() => toggleDietary(tag)}
         >
-          {editMode ? 'Cancel' : 'Edit Recipes'}
+          {tag.replace('_', ' ')} ✕
         </Button>
-      </>
-    )}
-  </div>
-</div>
-
+        ))}
+      </div>
+      )}
       {/* Recipe cards */}
       <Row xs={1} md={2} lg={3} className="g-4">
         {recipesToShow.length > 0 ? (
