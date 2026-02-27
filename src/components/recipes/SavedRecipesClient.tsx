@@ -15,7 +15,24 @@ export default function SavedRecipesClient() {
   const [pantry, setPantry] = useState<Produce[]>([]);
   const [search, setSearch] = useState("");
   const [editMode, setEditMode] = useState(false);
+  const dietaryOptions = [
+  "VEGAN",
+  "VEGETARIAN",
+  "KETO",
+  "GLUTEN_FREE",
+  "HIGH_PROTEIN",
+  "LOW_CARB",
+  ];
 
+  const [selectedDietary, setSelectedDietary] = useState<string[]>([]);
+
+  const toggleDietary = (tag: string) => {
+    setSelectedDietary((prev) =>
+      prev.includes(tag)
+        ? prev.filter((t) => t !== tag)
+        : [...prev, tag]
+    );
+  };
   // Quick lookup for names
   const pantryNames = useMemo(
     () => new Set(pantry.map((p) => p.name.toLowerCase())),
@@ -48,22 +65,43 @@ export default function SavedRecipesClient() {
 
   // Filter recipes by search
   const filteredRecipes = useMemo(() => {
-    const query = search.toLowerCase().trim();
-    if (!query) return recipes;
+    let base = recipes;
 
-    return recipes.filter((r) => {
-      const titleMatch = (r.title ?? "").toLowerCase().includes(query);
-      const cuisineMatch = (r.cuisine ?? "").toLowerCase().includes(query);
-      const dietaryMatch = (r.dietary ?? []).some((tag: string) =>
-        tag.toLowerCase().includes(query)
-      );
-      const ingredientMatch = (r.ingredientItems ?? []).some((item: any) =>
-        (item.name ?? "").toLowerCase().includes(query)
-      );
+    // Dietary filter first
+    if (selectedDietary.length > 0) {
+      base = base.filter((r) => {
+        const recipeDietary = Array.isArray(r.dietary)
+          ? r.dietary
+          : r.dietary
+          ? [r.dietary]
+          : [];
 
-      return titleMatch || cuisineMatch || dietaryMatch || ingredientMatch;
+        const normalized = recipeDietary.map((d: string) =>
+          d.toUpperCase()
+        );
+
+        return selectedDietary.every((tag) =>
+          normalized.includes(tag.toUpperCase())
+      );
     });
-  }, [recipes, search]);
+  }
+
+  const query = search.toLowerCase().trim();
+  if (!query) return base;
+
+  return base.filter((r) => {
+    const titleMatch = (r.title ?? "").toLowerCase().includes(query);
+    const cuisineMatch = (r.cuisine ?? "").toLowerCase().includes(query);
+    const dietaryMatch = (r.dietary ?? []).some((tag: string) =>
+      tag.toLowerCase().includes(query)
+    );
+    const ingredientMatch = (r.ingredientItems ?? []).some((item: any) =>
+      (item.name ?? "").toLowerCase().includes(query)
+    );
+
+    return titleMatch || cuisineMatch || dietaryMatch || ingredientMatch;
+  });
+}, [recipes, search, selectedDietary]);
 
   const removeFromUI = (recipeId: number) => {
     setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
@@ -78,16 +116,35 @@ export default function SavedRecipesClient() {
       {/* Search + Edit */}
       <Row className="mb-3 align-items-center g-2">
         <Col md={3} className="d-none d-md-block" />
-        <Col xs={12} md={6} className="d-flex flex-column align-items-center">
-          <Form style={{ width: "100%", maxWidth: 400 }}>
-            <Form.Control
-              type="text"
-              placeholder="Search saved recipes..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </Form>
-        </Col>
+          <Col xs={12} md={6} className="d-flex flex-column align-items-center">
+            {/* Search Bar */}
+            <Form style={{ width: "100%", maxWidth: 400 }}>
+              <Form.Control
+                type="text"
+                placeholder="Search saved recipes..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </Form>
+            {/* Dietary Filter Pills */}
+            <div className="d-flex flex-wrap gap-2 mt-2 justify-content-center">
+              {dietaryOptions.map((tag) => (
+              <Button
+                key={tag}
+                size="sm"
+                className="rounded-pill"
+                variant={
+                selectedDietary.includes(tag)
+                ? "success"
+                : "outline-secondary"
+                }
+                onClick={() => toggleDietary(tag)}
+              >
+               {tag.replace("_", " ")}
+              </Button>
+              ))}
+            </div>
+          </Col>
         <Col xs={12} md={3} className="d-flex justify-content-center justify-content-md-end">
           <Button
             variant={editMode ? "danger" : "outline-secondary"}
