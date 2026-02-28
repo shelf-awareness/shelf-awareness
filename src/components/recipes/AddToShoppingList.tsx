@@ -22,7 +22,9 @@ export default function AddToShoppingList({ missingItems }: Props) {
   const [addingAll, setAddingAll] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const keyFor = (item: MissingItem) => item.name.toLowerCase();
+const keyFor = (item: MissingItem) => mainNameOf(item.name).toLowerCase();
+
+  const mainNameOf = (name: string) => name.split('/')[0].trim();
 
   const formatItemLabel = (item: MissingItem) => {
     const parts: string[] = [];
@@ -36,7 +38,7 @@ export default function AddToShoppingList({ missingItems }: Props) {
     if (item.unit) {
       parts.push(item.unit);
     }
-    parts.push(item.name);
+    parts.push(mainNameOf(item.name));
     return parts.join(' ');
   };
 
@@ -50,7 +52,7 @@ export default function AddToShoppingList({ missingItems }: Props) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: item.name,
+          name: mainNameOf(item.name),
           quantity: item.quantity ?? null,
           unit: item.unit ?? null,
         }),
@@ -86,7 +88,7 @@ export default function AddToShoppingList({ missingItems }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: itemsToAdd.map((i) => ({
-            name: i.name,
+            name: mainNameOf(i.name),
             quantity: i.quantity ?? null,
             unit: i.unit ?? null,
           })),

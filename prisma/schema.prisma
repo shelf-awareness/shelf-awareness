@@ -176,6 +176,22 @@ model RecipeIngredient {
 
   @@index([recipeId])
 }
+
+model IngredientSubstitution {
+  id Int @id @default(autoincrement())
+
+  fromName String
+  toName   String
+
+  owner    String?
+
+  createdAt DateTime @default(now())
+
+  @@index([fromName])
+  @@index([toName])
+  @@unique([fromName, toName, owner])
+}
+
 model RecipeImage {
   id        Int      @id @default(autoincrement())
   recipeId  Int
