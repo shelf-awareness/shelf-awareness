@@ -17,6 +17,27 @@ import ImagePickerModal from '@/components/images/ImagePickerModal';
 import { updateRecipe } from '@/lib/recipes';
 import '@/styles/buttons.css';
 
+// Your schema stores substitutes as a single string (RecipeIngredient.substitutes String?)
+// We'll encode/decode as: "pepperoni|salami|ham"
+const splitNameAndSubs = (raw: string) => {
+  const parts = raw
+    .split('/')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  return {
+    main: parts[0] ?? '',
+    subs: parts.slice(1),
+  };
+};
+
+const decodeSubs = (s?: string | null): string[] => {
+  if (!s) return [];
+
+  const parts = s.includes('|') ? s.split('|') : s.split(',');
+  return parts.map((x) => x.trim()).filter(Boolean);
+};
+
 type EditRecipeModalProps = {
   show: boolean;
   onHide: () => void;
@@ -33,6 +54,7 @@ type EditRecipeModalProps = {
       quantity: number | null;
       unit: string | null;
       order?: number | null;
+      substitutes?: string | null; // ✅ matches Prisma schema
     }[];
     instructions?: string | null;
     servings?: number | null;
@@ -44,6 +66,24 @@ type EditRecipeModalProps = {
     sourceUrl?: string | null;
   };
 };
+
+function buildIngredientText(
+  items: EditRecipeModalProps['recipe']['ingredientItems'],
+) {
+  return (items ?? [])
+    .slice()
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map((i) => {
+      const subs = decodeSubs(i.substitutes);
+      const suffix = subs.length ? `/${subs.join('/')}` : '';
+      const nameWithSubs = `${i.name}${suffix}`;
+
+      return `${i.quantity ?? ''} ${i.unit ?? ''} ${nameWithSubs}`
+        .trim()
+        .replace(/\s+/g, ' ');
+    })
+    .join('\n');
+}
 
 export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModalProps) {
   const router = useRouter();
@@ -57,32 +97,18 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
   const [imageUrl, setImageUrl] = useState(recipe.imageUrl || '');
   const [dietary, setDietary] = useState<string[]>(recipe.dietary ?? []);
 
-  // ingredientText: one ingredient per line: "qty unit name"
+  // ✅ ingredientText shows name/subs as "pizza/pepperoni"
   const [ingredientText, setIngredientText] = useState(
-    (recipe.ingredientItems ?? [])
-      .map((i) => `${i.quantity ?? ''} ${i.unit ?? ''} ${i.name}`
-        .trim()
-        .replace(/\s+/g, ' '))
-      .join('\n'),
+    buildIngredientText(recipe.ingredientItems ?? []),
   );
 
   const [instructions, setInstructions] = useState(recipe.instructions || '');
   const [servings, setServings] = useState<number | ''>(recipe.servings ?? '');
-  const [prepMinutes, setPrepMinutes] = useState<number | ''>(
-    recipe.prepMinutes ?? '',
-  );
-  const [cookMinutes, setCookMinutes] = useState<number | ''>(
-    recipe.cookMinutes ?? '',
-  );
-  const [proteinGrams, setProteinGrams] = useState<number | ''>(
-    recipe.proteinGrams ?? '',
-  );
-  const [carbsGrams, setCarbsGrams] = useState<number | ''>(
-    recipe.carbsGrams ?? '',
-  );
-  const [fatGrams, setFatGrams] = useState<number | ''>(
-    recipe.fatGrams ?? '',
-  );
+  const [prepMinutes, setPrepMinutes] = useState<number | ''>(recipe.prepMinutes ?? '');
+  const [cookMinutes, setCookMinutes] = useState<number | ''>(recipe.cookMinutes ?? '');
+  const [proteinGrams, setProteinGrams] = useState<number | ''>(recipe.proteinGrams ?? '');
+  const [carbsGrams, setCarbsGrams] = useState<number | ''>(recipe.carbsGrams ?? '');
+  const [fatGrams, setFatGrams] = useState<number | ''>(recipe.fatGrams ?? '');
   const [sourceUrl, setSourceUrl] = useState(recipe.sourceUrl || '');
 
   // image picker modal
@@ -96,13 +122,7 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
     setDescription(recipe.description || '');
     setImageUrl(recipe.imageUrl || '');
     setDietary(recipe.dietary ?? []);
-    setIngredientText(
-      (recipe.ingredientItems ?? [])
-        .map((i) => `${i.quantity ?? ''} ${i.unit ?? ''} ${i.name}`
-          .trim()
-          .replace(/\s+/g, ' '))
-        .join('\n'),
-    );
+    setIngredientText(buildIngredientText(recipe.ingredientItems ?? []));
     setInstructions(recipe.instructions || '');
     setServings(recipe.servings ?? '');
     setPrepMinutes(recipe.prepMinutes ?? '');
@@ -119,6 +139,7 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
       setErr(null);
 
       // Parse ingredientText → ingredientItems
+      // Stores substitutes as a pipe-separated string in `substitutes`
       const normalizedIngredientItems = ingredientText
         .split('\n')
         .map((line) => line.trim())
@@ -126,26 +147,29 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
         .map((line, index) => {
           const parts = line.split(/\s+/);
 
-          // first token numeric → treat as quantity
           const qty = Number(parts[0]);
           const hasNumericQty = !Number.isNaN(qty);
 
           if (hasNumericQty && parts.length >= 3) {
             const quantity = qty;
             const unit = parts[1];
-            const name = parts.slice(2).join(' ');
+            const rawName = parts.slice(2).join(' ');
+            const { main, subs } = splitNameAndSubs(rawName);
 
             return {
-              name,
+              name: main,
+              substitutes: subs.map((x) => x.trim()).filter(Boolean).join('|') || null,
               quantity,
               unit,
               order: index,
             };
           }
 
-          // fallback: entire line is just name
+          const { main, subs } = splitNameAndSubs(line);
+
           return {
-            name: line,
+            name: main,
+            substitutes: subs.map((x) => x.trim()).filter(Boolean).join('|') || null,
             quantity: null,
             unit: null,
             order: index,
@@ -159,19 +183,14 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
           description,
           imageUrl,
           dietary: dietary.map((d) => d as DietaryCategory),
-          ingredientItems: normalizedIngredientItems,
+          ingredientItems: normalizedIngredientItems as any, // if TS complains, fix RecipeInput type later
           instructions,
           servings: servings === '' ? undefined : Number(servings),
-          prepMinutes:
-            prepMinutes === '' ? undefined : Number(prepMinutes),
-          cookMinutes:
-            cookMinutes === '' ? undefined : Number(cookMinutes),
-          proteinGrams:
-            proteinGrams === '' ? undefined : Number(proteinGrams),
-          carbsGrams:
-            carbsGrams === '' ? undefined : Number(carbsGrams),
-          fatGrams:
-            fatGrams === '' ? undefined : Number(fatGrams),
+          prepMinutes: prepMinutes === '' ? undefined : Number(prepMinutes),
+          cookMinutes: cookMinutes === '' ? undefined : Number(cookMinutes),
+          proteinGrams: proteinGrams === '' ? undefined : Number(proteinGrams),
+          carbsGrams: carbsGrams === '' ? undefined : Number(carbsGrams),
+          fatGrams: fatGrams === '' ? undefined : Number(fatGrams),
           sourceUrl: sourceUrl || undefined,
         });
 
@@ -294,21 +313,22 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
             <Col md={6}>
               <Form.Group className="mb-3">
                 <Form.Label>Dietary</Form.Label>
-              <Form.Select
-                multiple
-                value={dietary}
-                onChange={(e) => {
-                const selected = Array.from(e.target.selectedOptions).map(
-                  (opt) => opt.value);
-                setDietary(selected);
-                }}
+                <Form.Select
+                  multiple
+                  value={dietary}
+                  onChange={(e) => {
+                    const selected = Array.from(e.target.selectedOptions).map(
+                      (opt) => opt.value,
+                    );
+                    setDietary(selected);
+                  }}
                 >
-                <option value="VEGAN">Vegan</option>
-                <option value="VEGETARIAN">Vegetarian</option>
-                <option value="KETO">Keto</option>
-                <option value="GLUTEN_FREE">Gluten-Free</option>
-                <option value="HIGH_PROTEIN">High-Protein</option>
-                <option value="LOW_CARB">Low-Carb</option>
+                  <option value="VEGAN">Vegan</option>
+                  <option value="VEGETARIAN">Vegetarian</option>
+                  <option value="KETO">Keto</option>
+                  <option value="GLUTEN_FREE">Gluten-Free</option>
+                  <option value="HIGH_PROTEIN">High-Protein</option>
+                  <option value="LOW_CARB">Low-Carb</option>
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -327,6 +347,10 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
               <code>1 cup sugar</code>
               <br />
               <code>2 tbsp olive oil</code>
+              <br />
+              You can add substitutes like:
+              <br />
+              <code>1 cup pizza/pepperoni</code>
             </Form.Text>
             <Form.Control
               as="textarea"
@@ -360,9 +384,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                   placeholder="e.g., 2, 4, 6"
                   min={0}
                   value={servings}
-                  onChange={(e) => setServings(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )}
+                  onChange={(e) =>
+                    setServings(e.target.value === '' ? '' : Number(e.target.value))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -374,9 +398,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                   placeholder="e.g., 15, 20, 25"
                   min={0}
                   value={prepMinutes}
-                  onChange={(e) => setPrepMinutes(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )}
+                  onChange={(e) =>
+                    setPrepMinutes(e.target.value === '' ? '' : Number(e.target.value))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -388,9 +412,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                   placeholder="e.g., 15, 30, 45"
                   min={0}
                   value={cookMinutes}
-                  onChange={(e) => setCookMinutes(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )}
+                  onChange={(e) =>
+                    setCookMinutes(e.target.value === '' ? '' : Number(e.target.value))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -405,9 +429,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                   placeholder="e.g., 1, 5, 10"
                   min={0}
                   value={proteinGrams}
-                  onChange={(e) => setProteinGrams(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )}
+                  onChange={(e) =>
+                    setProteinGrams(e.target.value === '' ? '' : Number(e.target.value))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -419,9 +443,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                   placeholder="e.g., 2, 4, 8"
                   min={0}
                   value={carbsGrams}
-                  onChange={(e) => setCarbsGrams(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )}
+                  onChange={(e) =>
+                    setCarbsGrams(e.target.value === '' ? '' : Number(e.target.value))
+                  }
                 />
               </Form.Group>
             </Col>
@@ -433,9 +457,9 @@ export default function EditRecipeModal({ show, onHide, recipe }: EditRecipeModa
                   placeholder="e.g., 3, 6, 9"
                   min={0}
                   value={fatGrams}
-                  onChange={(e) => setFatGrams(
-                    e.target.value === '' ? '' : Number(e.target.value),
-                  )}
+                  onChange={(e) =>
+                    setFatGrams(e.target.value === '' ? '' : Number(e.target.value))
+                  }
                 />
               </Form.Group>
             </Col>

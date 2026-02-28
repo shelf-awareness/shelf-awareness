@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Container, Row, Col, Image, Badge, Button } from 'react-bootstrap';
 import { CheckCircleFill, XCircleFill, ExclamationCircleFill } from 'react-bootstrap-icons';
 import { notFound } from 'next/navigation';
-import { getRecipeById } from '@/lib/recipes';
+import { getRecipeById, getSubstitutions } from '@/lib/recipes';
 import { convertUnits } from '@/lib/unitConverter';
 import { getServerSession } from 'next-auth';
 import { getUserProduceByEmail } from '@/lib/dbActions';
@@ -11,6 +11,9 @@ import UploadDishButton from '@/components/recipes/UploadDishButton';
 import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
 import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
 
+const getMainIngredientName = (name: string) => {
+  return name.split('/')[0].trim();
+};
 
 type PageProps = { params: Promise<{ id: string }> };
 export const dynamic = 'force-dynamic';
@@ -34,13 +37,34 @@ export default async function RecipeDetailPage({ params }: PageProps) {
   // Create a set of pantry item names (lowercase for case-insensitive matching)
   const pantryNames = new Set(pantry.map((p) => p.name.toLowerCase()));
 
+  const substitutionMap = new Map<string, string[]>();
+
+if (email) {
+  const subs = await getSubstitutions(email);
+
+  subs.forEach((s) => {
+    const key = s.fromName.trim().toLowerCase();
+    const val = s.toName.trim();
+
+    const arr = substitutionMap.get(key) ?? [];
+    // prevent duplicates
+    if (!arr.some((x) => x.toLowerCase() === val.toLowerCase())) {
+      arr.push(val);
+    }
+    substitutionMap.set(key, arr);
+  });
+}
+
   const displayOwner = recipe.owner?.includes('admin@foo.com') ? ['Pantry Pals Team'] : recipe.owner;
 
   // Only use ingredientItems from the relation
   const ingredientItems = recipe.ingredientItems ?? [];
 
   // Missing item names (for AddToShoppingList)
-  const missingItems = ingredientItems.filter((item: any) => !pantryNames.has(item.name.toLowerCase()));
+  const missingItems = ingredientItems.filter((item: any) => {
+  const main = getMainIngredientName(item.name).toLowerCase();
+  return !pantryNames.has(main);
+});
   
   const dietaryDisplayMap: Record<string, string> = {
     VEGAN: 'Vegan',
@@ -377,11 +401,12 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                   }}
                 >
                   {ingredientItems.map((item: any) => {
-                    const hasItem = pantryNames.has(item.name.toLowerCase());
+                    const mainName = getMainIngredientName(item.name);
+                    const hasItem = pantryNames.has(mainName.toLowerCase());
                     let hasEnough = false;
                     let convertedUnit = 0;
                     for (let p of pantry){
-                      if (hasItem && p.name.toLowerCase() === item.name.toLowerCase()){
+                      if (hasItem && p.name.toLowerCase() === mainName.toLowerCase()){
                         convertedUnit += convertUnits(p.quantity, p.unit, item.unit);
                          
                       }
@@ -397,9 +422,34 @@ export default async function RecipeDetailPage({ params }: PageProps) {
                     if (item.unit) {
                       parts.push(item.unit);
                     }
-                    parts.push(item.name);
+                      parts.push(mainName);
 
-                    const label = parts.join(' ');
+                    let label = parts.join(' ');
+
+
+                    const rowSubs =
+  (item.substitutes ?? '')
+    .split('|')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+const globalSubs =
+  substitutionMap.get(mainName.trim().toLowerCase()) ?? [];
+
+const finalSubs = rowSubs.length > 0 ? rowSubs : globalSubs;
+
+
+const deduped: string[] = [];
+finalSubs.forEach((s) => {
+  if (!deduped.some((x) => x.toLowerCase() === s.toLowerCase())) {
+    deduped.push(s);
+  }
+});
+
+if (deduped.length > 0) {
+  label += ` or ${deduped.join(' or ')}`;
+}
+
 
                     return (
                       <li key={item.id ?? `${item.name}-${item.unit ?? ''}`} style={{ marginBottom: '0.75rem' }}>

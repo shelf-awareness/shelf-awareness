@@ -76,6 +76,19 @@ export default function AddRecipeModal({ show, onHide }: Props) {
     setImageAlt('');
   }, []);
 
+
+  const splitNameAndSubs = (raw: string) => {
+  const parts = raw
+    .split('/')
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  return {
+    main: parts[0] ?? '',
+    subs: parts.slice(1),
+  };
+};
+
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -95,19 +108,24 @@ export default function AddRecipeModal({ show, onHide }: Props) {
           if (hasNumericQty && parts.length >= 3) {
             const quantity = qty;
             const unit = parts[1];
-            const name = parts.slice(2).join(' ');
+            const rawName = parts.slice(2).join(' ');
+            const { main, subs } = splitNameAndSubs(rawName);
 
-            return {
-              name,
-              quantity,
-              unit,
-              order: index,
-            };
+          return {
+            name: main,
+            substitutes: subs,
+            quantity,
+            unit,
+            order: index,
+};
           }
 
           // fallback: entire line is name only
+          const { main, subs } = splitNameAndSubs(line);
+
           return {
-            name: line,
+            name: main,
+            substitutes: subs,
             quantity: null,
             unit: null,
             order: index,
@@ -309,6 +327,14 @@ export default function AddRecipeModal({ show, onHide }: Props) {
               <code>1 cup sugar</code>
               <br />
               <code>2 tbsp olive oil</code>
+              <br />
+              If you want to add substitutes, use a slash to separate them:
+              <br />
+              Examples:
+              <br />
+              <code>1 cup onion/shallots</code>
+              <br />
+              <code>2 pcs tomatoes/red peppers</code>
             </Form.Text>
             <Form.Control
               as="textarea"

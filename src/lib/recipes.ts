@@ -12,6 +12,7 @@ type SessionLike = {
 
 export type IngredientItemInput = {
   name: string;
+  substitutes?: string[];
   quantity?: number | null;
   unit?: string | null;
   order?: number | null;
@@ -57,12 +58,25 @@ function normalizeIngredientItems(
         quantity = item.quantity;
       }
 
-      return {
-        name,
-        quantity,
-        unit,
-        order: item.order ?? index,
-      };
+      const rawSubs = (item as any).substitutes;
+
+const substitutes: string[] = Array.isArray(rawSubs)
+  ? rawSubs
+  : typeof rawSubs === 'string'
+    ? rawSubs.split('|') // encoded format from EditRecipeModal
+    : [];
+
+const cleanedSubs = substitutes
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+        return {
+          name,
+          substitutes,
+          quantity,
+          unit,
+          order: item.order ?? index,
+          };
     })
     .filter((item) => item.name.length > 0);
 }
@@ -125,6 +139,15 @@ export async function getRecipeById(id: number) {
   });
 }
 
+export async function getSubstitutions(owner: string) {
+  return prisma.ingredientSubstitution.findMany({
+    where: {
+      OR: [{ owner }, { owner: null }],
+    },
+    select: { fromName: true, toName: true },
+  });
+}
+
 /** Create a new recipe (any logged-in user can create). */
 export async function createRecipe(input: RecipeInput) {
   const session = (await getServerSession()) as SessionLike;
@@ -136,22 +159,46 @@ export async function createRecipe(input: RecipeInput) {
     email,
   );
 
-  return prisma.recipe.create({
-    data: {
-      ...recipeData,
-      ingredientItems:
-        ingredientItems.length > 0
-          ? {
+const recipe = await prisma.recipe.create({
+  data: {
+    ...recipeData,
+    ingredientItems:
+      ingredientItems.length > 0
+        ? {
             create: ingredientItems.map((item) => ({
-              name: item.name,
-              quantity: item.quantity ?? null,
-              unit: item.unit ?? null,
-              order: item.order ?? 0,
-            })),
+            name: item.name,
+            substitutes: Array.isArray(item.substitutes)
+         ? (item.substitutes.join('|') || null)
+         : (item.substitutes ?? null),
+            quantity: item.quantity ?? null,
+            unit: item.unit ?? null,
+            order: item.order ?? 0,
+          })),
           }
-          : undefined,
-    },
+        : undefined,
+  },
+});
+
+
+const subRows = ingredientItems.flatMap((item) => {
+  const fromName = item.name.trim();
+  const subs = item.substitutes ?? [];
+
+  return subs.map((toName) => ({
+    fromName,
+    toName: toName.trim(),
+    owner: email,
+  }));
+});
+
+if (subRows.length > 0) {
+  await prisma.ingredientSubstitution.createMany({
+    data: subRows,
+    skipDuplicates: true,
   });
+}
+
+return recipe;
 }
 
 /** Update an existing recipe (owner or admin@foo.com only). */
@@ -207,6 +254,9 @@ export async function updateRecipe(id: number, input: RecipeInput) {
         deleteMany: {}, // delete all existing rows for this recipe
         create: ingredientItems.map((item) => ({
           name: item.name,
+          substitutes: Array.isArray(item.substitutes)
+        ? (item.substitutes.join('|') || null)
+        : (item.substitutes ?? null),
           quantity: item.quantity ?? null,
           unit: item.unit ?? null,
           order: item.order ?? 0,
