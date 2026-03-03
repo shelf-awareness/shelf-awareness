@@ -34,10 +34,9 @@ const authOptions: NextAuthOptions = {
         });
         if (!foundUser) return null;
 
-        // Case 1: Login after email verification (no password provided)
         if (!credentials.password) {
           if (!foundUser.emailVerified) {
-            throw new Error('User not verified'); // <- frontend expects this string
+            throw new Error('User not verified');
           }
           return {
             id: foundUser.id.toString(),
@@ -46,12 +45,12 @@ const authOptions: NextAuthOptions = {
           };
         }
 
-        // Case 2: Normal login with password
+
         const isValid = await compare(credentials.password, foundUser.password);
         if (!isValid) return null;
 
         if (!foundUser.emailVerified) {
-          throw new Error('User not verified'); // <- frontend expects this string
+          throw new Error('User not verified'); 
         }
 
         return {
