@@ -142,7 +142,7 @@ export async function addProduce(produce: {
     }
   }
 
-  redirect('/view-pantry');
+  return  {ok:true};
 }
 
 /**

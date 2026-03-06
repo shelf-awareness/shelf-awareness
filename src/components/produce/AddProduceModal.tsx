@@ -195,7 +195,9 @@ export default function AddProduceModal({ show, onHide, produce }: AddProduceMod
       await swal('Success', 'Your item has been added', 'success', { timer: 2000 });
       handleClose();
       router.refresh();
-    } catch {
+      router.push('/view-pantry');
+    } catch (err) {
+      console.error('addProduce failed:', err);
       await swal('Error', 'Failed to add item', 'error');
     }
   };
