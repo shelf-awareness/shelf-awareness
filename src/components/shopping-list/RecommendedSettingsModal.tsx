@@ -7,7 +7,7 @@ interface SettingsModalProps {
   show: boolean;
   onHide: () => void;
   currentSettings: { lowStock: number; expDays: number };
-  onSave: () => void;
+  onSave: (newSettings: { lowStock: number; expDays: number }) => void;
 }
 
 export default function RecommendedSettingsModal({
@@ -21,15 +21,16 @@ export default function RecommendedSettingsModal({
   const [expValue, setExpValue] = useState<number>(currentSettings.expDays);
   const [expUnit, setExpUnit] = useState<'days' | 'weeks' | 'months' | 'years'>('days');
 
-  useEffect(() => {
-    const days = currentSettings.expDays;
+useEffect(() => {
+  setLowStock(currentSettings.lowStock);
 
+  const days = currentSettings.expDays;
     if (days % 365 === 0) {
       setExpValue(days / 365);
       setExpUnit('years');
     } else if (days % 30 === 0) {
       setExpValue(days / 30);
-      setExpUnit('months');
+     setExpUnit('months');
     } else if (days % 7 === 0) {
       setExpValue(days / 7);
       setExpUnit('weeks');
@@ -37,8 +38,7 @@ export default function RecommendedSettingsModal({
       setExpValue(days);
       setExpUnit('days');
     }
-  }, [currentSettings]);
-
+  }, [currentSettings]); // only track object reference
   const convertToDays = useCallback(() => {
     switch (expUnit) {
       case 'weeks':
@@ -56,15 +56,17 @@ export default function RecommendedSettingsModal({
     (e: React.FormEvent) => {
       e.preventDefault();
 
-      const totalDays = convertToDays();
+      if (lowStock < 0) return alert('Low stock must be 0 or more');
+      if (expValue < 1) return alert('Expiring threshold must be at least 1');
 
+      const totalDays = convertToDays();
       localStorage.setItem('recommended_lowStock', String(lowStock));
       localStorage.setItem('recommended_expDays', String(totalDays));
 
-      onSave();
+      onSave({ lowStock, expDays: totalDays });
       onHide();
     },
-    [convertToDays, lowStock, onHide, onSave],
+    [convertToDays, lowStock, expValue, onHide, onSave],
   );
 
   return (

@@ -62,11 +62,25 @@ const AddToShoppingListModal = ({
   });
 
   useEffect(() => {
-    if (!show) reset({ name: prefillName, proteinGrams:0 });
-  }, [show, reset, prefillName]);
+    if (!show)
+      reset({
+        name: prefillName,
+        quantity: 0,
+        unit: '',
+        price: 0,
+        proteinGrams: 0,
+      });
+  }, [show, prefillName, reset]);
 
   const handleClose = () => {
-    reset({ name: prefillName, proteinGrams:0 });
+    if (!show)
+      reset({
+        name: prefillName,
+        quantity: 0,
+        unit: '',
+        price: 0,
+        proteinGrams: 0,
+      });
     onHide();
   };
 
@@ -88,7 +102,7 @@ const AddToShoppingListModal = ({
       await addShoppingListItem({
         name: data.name.trim(),
         quantity: Number(data.quantity),
-        unit: data.unit || '',
+        unit: data.unit?.trim() || '',
         price,
         proteinGrams,
         shoppingListId: Number(data.shoppingListId),

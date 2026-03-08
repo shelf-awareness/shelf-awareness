@@ -9,7 +9,7 @@ import { Button, Col, Modal, Row, Table } from 'react-bootstrap';
 import { BagCheckFill } from 'react-bootstrap-icons';
 import AddToShoppingListModal from './AddToShoppingListModal';
 import EditShoppingListItemModal from './EditShoppingListItemModal';
-
+import { FaPencilAlt, FaTrash } from 'react-icons/fa';
 import { ShoppingListWithProtein } from '../../types/shoppingList';
 
 // interface ShoppingListItem {
@@ -51,11 +51,12 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
 
   // Update items when the shopping list changes
   useEffect(() => {
-    if (shoppingList?.items) {
-      setItems(shoppingList.items);
-      const saved = localStorage.getItem(`checkboxes-${shoppingList.id}`);
-      if (saved) setCheckedState(JSON.parse(saved));
-    }
+    if (!shoppingList) return;
+
+    setItems(shoppingList.items ?? []);
+
+    const saved = localStorage.getItem(`checkboxes-${shoppingList.id}`);
+    setCheckedState(saved ? JSON.parse(saved) : {});
   }, [shoppingList]);
 
   const handleRestockChange = async (itemId: number, restockTrigger: string) => {
@@ -119,10 +120,10 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
           {items.length > 0 ? (
             <Row>
               <Col>
-                <Table striped bordered hover size="sm" responsive className="text-center">
+                <Table striped bordered hover size="sm" responsive >
                   <thead>
                     <tr>
-                      <th>
+                      <th className="text-center">
                         <BagCheckFill color="black" size={18} />
                       </th>
                       <th>Item</th>
@@ -136,7 +137,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
                   <tbody>
                     {items.map((item) => (
                       <tr key={item.id}>
-                        <td>
+                        <td className="text-center">
                           <input
                             type="checkbox"
                             checked={!!checkedState[item.id]}
@@ -156,39 +157,20 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
                           >
                             <option value="empty">When empty</option>
                             <option value="half">When half gone</option>
-                            <option value="custom">Custom % left</option>
                           </select>
 
-                          {item.restockTrigger === 'custom' && (
-                            <input
-                              type="number"
-                              min="1"
-                              max="100"
-                              value={item.customThreshold || ''}
-                              onChange={(e) =>
-                                handleThresholdChange(item.id, parseFloat(e.target.value))}
-                              className="form-control form-control-sm mt-1"
-                              placeholder="% left"
-                            />
-                          )}
+                          )
                         </td>
-                        <td className="d-flex gap-2 justify-content-center">
-                          <Button
-                            variant="edit"
-                            size="sm"
+                        <td className="d-flex gap-3 justify-content-center align-items-center">
+                          <FaPencilAlt
+                            style={{ cursor: 'pointer' }}
                             onClick={() => setEditingItem(item)}
-                          >
-                            Edit
-                          </Button>
+                          />
 
-                          <Button
-                            variant="danger"
-                            size="sm"
+                          <FaTrash
+                            style={{ cursor: 'pointer', color: 'red' }}
                             onClick={() => handleDeleteItem(item.id)}
-                            disabled={deletingItemId === item.id}
-                          >
-                            {deletingItemId === item.id ? 'Deleting...' : 'Delete'}
-                          </Button>
+                          />
                         </td>
                       </tr>
                     ))}

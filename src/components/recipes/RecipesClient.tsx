@@ -176,7 +176,7 @@ const toggleDietary = (tag: string) => {
                         key={tag}
                         type="checkbox"
                         id={`diet-${tag}`}
-                        label={tag.replace('_', ' ')}
+                        label={tag.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
                         checked={selectedDietary.includes(tag)}
                         onChange={() => toggleDietary(tag)}
                         className="mt-1"
@@ -257,7 +257,7 @@ const toggleDietary = (tag: string) => {
           variant="outline-success"
           onClick={() => toggleDietary(tag)}
         >
-          {tag.replace('_', ' ')} ✕
+          {tag.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())} ✕
         </Button>
         ))}
       </div>

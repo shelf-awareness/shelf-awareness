@@ -297,15 +297,9 @@ export default function AddRecipeModal({ show, onHide }: Props) {
                 >
                   {dietaryOptions.map((option) => (
                     <option key={option} value={option}>
-                      {option.replace('_', ' ')}
+                      {option.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase())}
                     </option>
                   ))}
-                  <option value="VEGAN">Vegan</option>
-                  <option value="VEGETARIAN">Vegetarian</option>
-                  <option value="KETO">Keto</option>
-                  <option value="GLUTEN_FREE">Gluten-Free</option>
-                  <option value="HIGH_PROTEIN">High-Protein</option>
-                  <option value="LOW_CARB">Low-Carb</option>
                 </Form.Select>
                   <Form.Text className="text-muted">
                     Hold Ctrl (Windows) or Cmd (Mac) to select multiple

@@ -157,7 +157,7 @@ export default function RecipeCard({
               </Badge>
               {dietTags.map((tag) => (
                 <Badge key={tag} bg="secondary" pill className="me-2 mb-2">
-                  {tag}
+                  {tag.replaceAll('_', ' ').toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase())}
                 </Badge>
               ))}
             </div>
