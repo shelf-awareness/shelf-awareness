@@ -15,6 +15,27 @@ type Props = {
   missingItems: MissingItem[];
 };
 
+// Move these outside the component
+const mainNameOf = (name: string) => name.split('/')[0].trim();
+
+const keyFor = (item: MissingItem) => mainNameOf(item.name).toLowerCase();
+
+const formatItemLabel = (item: MissingItem) => {
+  const parts: string[] = [];
+  if (item.quantity != null) {
+    parts.push(
+      Number.isInteger(item.quantity)
+        ? String(item.quantity)
+        : String(item.quantity),
+    );
+  }
+  if (item.unit) {
+    parts.push(item.unit);
+  }
+  parts.push(mainNameOf(item.name));
+  return parts.join(' ');
+};
+
 export default function AddToShoppingList({ missingItems }: Props) {
   // keyed by item name (lowercased)
   const [adding, setAdding] = useState<Record<string, boolean>>({});
@@ -22,25 +43,7 @@ export default function AddToShoppingList({ missingItems }: Props) {
   const [addingAll, setAddingAll] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-const keyFor = (item: MissingItem) => mainNameOf(item.name).toLowerCase();
-
-  const mainNameOf = (name: string) => name.split('/')[0].trim();
-
-  const formatItemLabel = (item: MissingItem) => {
-    const parts: string[] = [];
-    if (item.quantity != null) {
-      parts.push(
-        Number.isInteger(item.quantity)
-          ? String(item.quantity)
-          : String(item.quantity),
-      );
-    }
-    if (item.unit) {
-      parts.push(item.unit);
-    }
-    parts.push(mainNameOf(item.name));
-    return parts.join(' ');
-  };
+  
 
   const addOne = useCallback(async (item: MissingItem) => {
     const key = keyFor(item);

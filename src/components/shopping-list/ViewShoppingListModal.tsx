@@ -141,6 +141,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
     setSelectedLocation(firstLocation);
 
     // fetch storages for first location
+    // eslint-disable-next-line max-len
     const storageRes = await fetch(`/api/storage?location=${encodeURIComponent(firstLocation)}&owner=${encodeURIComponent(email)}`);
     const storageData = await storageRes.json();
     setStorages(storageData);
@@ -180,6 +181,7 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList }: ViewShoppingListM
     const email = session?.user?.email;
     if (!email || !locationName) return;
 
+    // eslint-disable-next-line max-len
     const res = await fetch(`/api/storage?location=${encodeURIComponent(locationName)}&owner=${encodeURIComponent(email)}`);
     const data = await res.json();
     setStorages(data);
