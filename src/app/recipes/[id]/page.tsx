@@ -42,7 +42,7 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 if (email) {
   const subs = await getSubstitutions(email);
 
-  subs.forEach((s) => {
+  subs.forEach((s: { fromName: string; toName: string }) => {
     const key = s.fromName.trim().toLowerCase();
     const val = s.toName.trim();
 
@@ -430,7 +430,7 @@ if (email) {
                     const rowSubs =
   (item.substitutes ?? '')
     .split('|')
-    .map((s) => s.trim())
+    .map((s: string) => s.trim())
     .filter(Boolean);
 
 const globalSubs =
@@ -440,7 +440,7 @@ const finalSubs = rowSubs.length > 0 ? rowSubs : globalSubs;
 
 
 const deduped: string[] = [];
-finalSubs.forEach((s) => {
+finalSubs.forEach((s: string) => {
   if (!deduped.some((x) => x.toLowerCase() === s.toLowerCase())) {
     deduped.push(s);
   }

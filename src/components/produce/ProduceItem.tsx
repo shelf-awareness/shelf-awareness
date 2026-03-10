@@ -21,6 +21,7 @@ const ProduceItem = ({
   owner,
   image,
   restockThreshold = 1,
+  proteinGrams = null,  // add this
 }: ProduceRelations & { restockThreshold?: number }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -111,6 +112,7 @@ const ProduceItem = ({
           owner,
           image,
           restockThreshold: safeRestock,
+          proteinGrams,
         }}
       />
 
@@ -130,6 +132,7 @@ const ProduceItem = ({
           owner,
           image,
           restockThreshold: safeRestock,
+          proteinGrams,
         }}
       />
     </>
