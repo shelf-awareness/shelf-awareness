@@ -11,6 +11,7 @@ import { ShoppingListWithProtein } from '../../types/shoppingList';
 
 type ShoppingListCardProps = {
   shoppingList: ShoppingListWithProtein;
+  onListDeleted?: (id: number) => void;
 };
 
 type Item = ShoppingListWithProtein['items'][number];
@@ -26,7 +27,7 @@ const formatDate = (d?: Date | string | null) => {
   });
 };
 
-export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps) {
+export default function ShoppingListCard({ shoppingList, onListDeleted }: ShoppingListCardProps) {
   const [items, setItems] = useState<Item[]>(shoppingList.items ?? []);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(shoppingList.name);
@@ -173,6 +174,7 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
         show={showDeleteModal}
         onHide={() => setShowDeleteModal(false)}
         shoppingList={shoppingList}
+        onListDeleted={onListDeleted}
       />
     </Card>
   );

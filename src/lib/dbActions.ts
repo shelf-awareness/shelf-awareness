@@ -287,9 +287,12 @@ export async function addShoppingList(data: { name: string; owner: string }) {
     throw new Error('A list with this name already exists.');
   }
 
-  await prisma.shoppingList.create({
+  const newList = await prisma.shoppingList.create({
     data: { name, owner },
+    include: { items: true },
   });
+
+  return newList;
 }
 
 /**
@@ -332,7 +335,6 @@ export async function getBudgetByUserId(userId: number) {
  * Deletes a shopping list and its items.
  */
 export async function deleteShoppingList(id: number) {
-  // delete items first to maintain relational integrity
   await prisma.shoppingListItem.deleteMany({
     where: { shoppingListId: id },
   });
@@ -340,8 +342,6 @@ export async function deleteShoppingList(id: number) {
   await prisma.shoppingList.delete({
     where: { id },
   });
-
-  redirect('/shopping-list');
 }
 
 /**

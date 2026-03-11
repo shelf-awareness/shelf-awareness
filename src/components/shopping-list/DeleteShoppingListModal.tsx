@@ -9,9 +9,10 @@ interface DeleteShoppingListModalProps {
   show: boolean;
   onHide: () => void;
   shoppingList: any;
+  onListDeleted?: (id: number) => void;
 }
 
-const DeleteShoppingListModal = ({ show, onHide, shoppingList }: DeleteShoppingListModalProps) => {
+const DeleteShoppingListModal = ({ show, onHide, shoppingList, onListDeleted }: DeleteShoppingListModalProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -20,6 +21,8 @@ const DeleteShoppingListModal = ({ show, onHide, shoppingList }: DeleteShoppingL
       setIsDeleting(true);
       startTransition(async () => {
         await deleteShoppingList(shoppingList.id);
+        onListDeleted?.(shoppingList.id);
+        onHide();
       });
     } catch (err) {
       console.error('Error deleting shopping list:', err);

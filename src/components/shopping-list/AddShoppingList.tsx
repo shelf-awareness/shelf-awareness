@@ -7,12 +7,12 @@ import swal from 'sweetalert';
 import { AddShoppingListSchema } from '@/lib/validationSchemas';
 import { addShoppingList } from '@/lib/dbActions';
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 
 interface Props {
   show: boolean;
   onHide: () => void;
   owner: string;
+  onListCreated?: (list: any) => void;
 }
 
 type FormValues = {
@@ -20,11 +20,12 @@ type FormValues = {
   owner: string;
 };
 
-export default function AddShoppingList({ show, onHide, owner }: Props) {
+export default function AddShoppingList({ show, onHide, owner, onListCreated }: Props) {
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: yupResolver(AddShoppingListSchema),
@@ -35,18 +36,19 @@ export default function AddShoppingList({ show, onHide, owner }: Props) {
   });
 
   useEffect(() => {
-    if (!show) reset();
-  }, [show, reset]);
-  const router = useRouter();
+    if (!show) reset({ name: '', owner });
+    else setValue('owner', owner);
+  }, [show, reset, setValue, owner]);
+
   const onSubmit = async (data: FormValues) => {
     try {
-      await addShoppingList({
+      const newList = await addShoppingList({
         name: data.name.trim(),
         owner: data.owner,
       });
 
+      onListCreated?.({ ...newList, totalProtein: 0 });
       swal('Success', 'Shopping list created!', 'success', { timer: 2000 });
-      router.refresh();
       onHide();
     } catch (err: any) {
       console.error(err);
@@ -74,7 +76,7 @@ export default function AddShoppingList({ show, onHide, owner }: Props) {
           </Form.Group>
 
           {/* OWNER HIDDEN */}
-          <input type="hidden" {...register('owner')} value={owner} />
+          <input type="hidden" {...register('owner')} />
 
           <Row className="pt-3 mobile grid">
             <Col>

@@ -73,6 +73,10 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
     }
   };
 
+  const handleListDeleted = useCallback((id: number) => {
+    setShoppingLists((prev) => prev.filter((list) => list.id !== id));
+  }, []);
+
   const handleListCreated = useCallback((newList: ShoppingListWithProtein) => {
     setShoppingLists((prev) => [newList, ...prev]);
   }, []);
@@ -218,6 +222,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
             show={showCreateList}
             onHide={() => setShowCreateList(false)}
             owner={session?.user?.email ?? ''}
+            onListCreated={handleListCreated}
           />
         </Col>
 
@@ -299,7 +304,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
             <Row>
               {filteredLists.map((list) => (
                 <Col key={list.id} md={6} className="mb-4">
-                  <ShoppingListCard shoppingList={list} />
+                  <ShoppingListCard shoppingList={list} onListDeleted={handleListDeleted} />
                 </Col>
               ))}
             </Row>
