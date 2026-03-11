@@ -1,11 +1,14 @@
 import { getServerSession } from 'next-auth';
 import { Container } from 'react-bootstrap';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 import authOptions from '@/lib/authOptions';
 import ShoppingListClient from '@/components/shopping-list/ShoppingListClient';
 
 type SessionUser = { id: string; email: string; randomKey: string };
+
+type ShoppingListWithItems = Prisma.ShoppingListGetPayload<{ include: { items: true } }>;
 
 const ViewShoppingListPage = async () => {
   const session = (await getServerSession(authOptions)) as { user: SessionUser } | null;
@@ -22,7 +25,7 @@ const ViewShoppingListPage = async () => {
   });
 
   // --- add protein totals + convert Decimal → plain number ---
-  const shoppingListsWithProtein = shoppingLists.map((list) => {
+  const shoppingListsWithProtein = shoppingLists.map((list: ShoppingListWithItems) => {
     const items = list.items.map((item) => ({
       id: item.id,
       shoppingListId: item.shoppingListId,
