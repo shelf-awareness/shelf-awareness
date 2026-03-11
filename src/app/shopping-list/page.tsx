@@ -21,26 +21,30 @@ const ViewShoppingListPage = async () => {
     orderBy: [{ createdAt: 'desc' }],
   });
 
-  // --- add protein totals + convert Decimal → number ---
-  const shoppingListsWithProtein = shoppingLists.map((list: { items: any[]; }) => {
+  // --- add protein totals + convert Decimal → plain number ---
+  const shoppingListsWithProtein = shoppingLists.map((list) => {
     const items = list.items.map((item) => ({
-      ...item,
-      price: item.price ? Number(item.price) : null,
+      id: item.id,
+      shoppingListId: item.shoppingListId,
+      name: item.name,
+      quantity: item.quantity,
+      unit: item.unit,
+      proteinGrams: item.proteinGrams ?? null,
+      price: item.price != null ? Number(item.price.toString()) : null,
+      restockTrigger: item.restockTrigger ?? null,
+      customThreshold: item.customThreshold ?? null,
     }));
 
-    // const totalProtein = items.reduce((sum, item) => {
-    //   const protein = item.proteinGrams ?? 0;
-    //   return sum + protein * item.quantity;
-    // }, 0);
-
-    const totalProtein = list.items.reduce(
-      (sum: number, item: { proteinGrams: any; quantity: number }) =>
-        sum + (item.proteinGrams ? Number(item.proteinGrams) * item.quantity : 0),
-      0
+    const totalProtein = items.reduce(
+      (sum, item) => sum + (item.proteinGrams ?? 0) * item.quantity,
+      0,
     );
 
     return {
-      ...list,
+      id: list.id,
+      name: list.name,
+      owner: list.owner,
+      createdAt: list.createdAt,
       items,
       totalProtein,
     };

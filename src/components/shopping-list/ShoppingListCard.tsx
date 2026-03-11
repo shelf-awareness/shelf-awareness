@@ -9,14 +9,11 @@ import DeleteShoppingListModal from './DeleteShoppingListModal';
 
 import { ShoppingListWithProtein } from '../../types/shoppingList';
 
-// type ShoppingListCardProps = {
-//   shoppingList: any;
-// };
-
 type ShoppingListCardProps = {
   shoppingList: ShoppingListWithProtein;
 };
 
+type Item = ShoppingListWithProtein['items'][number];
 
 const formatDate = (d?: Date | string | null) => {
   if (!d) return 'Not Available';
@@ -30,6 +27,7 @@ const formatDate = (d?: Date | string | null) => {
 };
 
 export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps) {
+  const [items, setItems] = useState<Item[]>(shoppingList.items ?? []);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(shoppingList.name);
   const [tempName, setTempName] = useState(shoppingList.name);
@@ -55,12 +53,17 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
   const [showViewModal, setShowViewModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const totalItems = shoppingList.items?.length || 0;
+  const totalItems = items.length;
 
-  const totalCost = shoppingList.items?.reduce((sum: number, item: any) => {
+  const totalCost = items.reduce((sum: number, item: Item) => {
     const price = item.price ? parseFloat(item.price.toString()) : 0;
     return sum + price * item.quantity;
-  }, 0) || 0;
+  }, 0);
+
+  const totalProtein = items.reduce(
+    (sum, item) => sum + (item.proteinGrams ?? 0) * item.quantity,
+    0,
+  );
 
   return (
     // TODO: Refine the resizing logic of the cards and reduce whitespace for mobile viewports
@@ -138,7 +141,7 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
           </ListGroup.Item>
           <ListGroup.Item className="bg-light">
             <strong>Total Protein:</strong>{' '}
-            {shoppingList.totalProtein.toFixed(1)} g
+            {totalProtein.toFixed(1)} g
           </ListGroup.Item>
         </ListGroup>
       </Card.Body>
@@ -162,7 +165,8 @@ export default function ShoppingListCard({ shoppingList }: ShoppingListCardProps
       <ViewShoppingListModal
         show={showViewModal}
         onHide={() => setShowViewModal(false)}
-        shoppingList={shoppingList}
+        shoppingList={{ ...shoppingList, items, totalProtein }}
+        onItemsChange={setItems}
       />
 
       <DeleteShoppingListModal

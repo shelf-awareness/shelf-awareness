@@ -31,6 +31,7 @@ interface Props {
   shoppingLists: SL[];
   sidePanel: boolean;
   prefillName: string;
+  onItemAdded?: (item: any) => void;
 }
 
 const AddToShoppingListModal = ({
@@ -39,6 +40,7 @@ const AddToShoppingListModal = ({
   shoppingLists,
   sidePanel = false,
   prefillName,
+  onItemAdded,
 }: Props) => {
   const router = useRouter();
   const { data: session } = useSession();
@@ -99,7 +101,7 @@ const AddToShoppingListModal = ({
         ? data.proteinGrams
         : parseFloat(data.proteinGrams || '0');
 
-      await addShoppingListItem({
+      const newItem = await addShoppingListItem({
         name: data.name.trim(),
         quantity: Number(data.quantity),
         unit: data.unit?.trim() || '',
@@ -108,9 +110,10 @@ const AddToShoppingListModal = ({
         shoppingListId: Number(data.shoppingListId),
       });
 
+      onItemAdded?.(newItem);
       swal('Success', 'Item added to your shopping list', 'success', { timer: 2000 });
       handleClose();
-      router.refresh();
+      if (!onItemAdded) router.refresh();
     } catch (err: any) {
       console.error(err);
       swal('Error', err?.message || 'Something went wrong', 'error');

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
-import { Row, Col, Form, Button } from 'react-bootstrap';
+import { Row, Col, Form, Button, Dropdown } from 'react-bootstrap';
+import { SortDown } from 'react-bootstrap-icons';
 import { getBudgetByUserId } from '@/lib/dbActions';
 import AddShoppingList from './AddShoppingList';
 import ShoppingListCard from './ShoppingListCard';
@@ -13,19 +14,28 @@ import RecipesModal from '../recipes/RecipesModal';
 
 import { ShoppingListWithProtein } from '../../types/shoppingList';
 
-// type ShoppingListViewProps = {
-//   initialShoppingLists: any[];
-// };
-
 type ShoppingListViewProps = {
   initialShoppingLists: ShoppingListWithProtein[];
 };
 
+type SortKey = 'totalItems' | 'totalCost' | 'totalProtein';
+type SortDir = 'asc' | 'desc';
+
+const SORT_OPTIONS: { key: SortKey; dir: SortDir; label: string }[] = [
+  { key: 'totalItems',   dir: 'asc',  label: 'Total Items: Low → High' },
+  { key: 'totalItems',   dir: 'desc', label: 'Total Items: High → Low' },
+  { key: 'totalCost',    dir: 'asc',  label: 'Estimated Cost: Low → High' },
+  { key: 'totalCost',    dir: 'desc', label: 'Estimated Cost: High → Low' },
+  { key: 'totalProtein', dir: 'asc',  label: 'Total Protein: Low → High' },
+  { key: 'totalProtein', dir: 'desc', label: 'Total Protein: High → Low' },
+];
 
 export default function ShoppingListView({ initialShoppingLists }: ShoppingListViewProps) {
   const { data: session } = useSession();
   const [shoppingLists, setShoppingLists] = useState<ShoppingListWithProtein[]>(initialShoppingLists);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortKey, setSortKey] = useState<SortKey | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>('asc');
   const [show, setShow] = useState(false);
   const [showCreateList, setShowCreateList] = useState(false);
   const [showUpdateBudget, setShowUpdateBudget] = useState(false);
@@ -39,7 +49,6 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
         setLoadingBudget(false);
         return;
       }
-
       try {
         const budgetStr = await getBudgetByUserId(Number(session.user.id));
         const budgetAmount = parseFloat(budgetStr || '0');
@@ -50,28 +59,46 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
         setLoadingBudget(false);
       }
     };
-
     fetchBudget();
   }, [session?.user?.id]);
 
   const refetchBudget = async () => {
-  if (!session?.user?.id) return;
-  try {
-    const budgetStr = await getBudgetByUserId(Number(session.user.id));
-    const budgetAmount = parseFloat(budgetStr || '0');
-    setBudget(`$${budgetAmount.toFixed(2)}`);
-  } catch (error) {
-    console.error('Error refetching budget:', error);
-  }
-};
-
+    if (!session?.user?.id) return;
+    try {
+      const budgetStr = await getBudgetByUserId(Number(session.user.id));
+      const budgetAmount = parseFloat(budgetStr || '0');
+      setBudget(`$${budgetAmount.toFixed(2)}`);
+    } catch (error) {
+      console.error('Error refetching budget:', error);
+    }
+  };
 
   const handleListCreated = useCallback((newList: ShoppingListWithProtein) => {
     setShoppingLists((prev) => [newList, ...prev]);
   }, []);
 
+  const getListValue = (list: ShoppingListWithProtein, key: SortKey) => {
+    if (key === 'totalItems') return list.items.length;
+    if (key === 'totalCost') return list.items.reduce(
+      (sum, item) => sum + (item.price ? Number(item.price) : 0) * item.quantity, 0,
+    );
+    if (key === 'totalProtein') return list.totalProtein;
+    return 0;
+  };
+
   const searchLower = searchTerm.toLowerCase();
-  const filteredLists = shoppingLists.filter((list) => list.name.toLowerCase().includes(searchLower));
+  const filteredLists = shoppingLists
+    .filter((list) => list.name.toLowerCase().includes(searchLower))
+    .slice()
+    .sort((a, b) => {
+      if (!sortKey) return 0;
+      const diff = getListValue(a, sortKey) - getListValue(b, sortKey);
+      return sortDir === 'asc' ? diff : -diff;
+    });
+
+  const activeSort = sortKey
+    ? SORT_OPTIONS.find((o) => o.key === sortKey && o.dir === sortDir)
+    : null;
 
   return (
     <>
@@ -80,14 +107,59 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
         className="mb-4 d-flex justify-content-center align-items-center text-center"
         style={{ minHeight: '50px' }}
       >
-        <Col xs={12} md={6} lg={4} className="mb-2">
-          <Form.Control
-            type="text"
-            placeholder="Search shopping lists..."
-            className="mobile-search"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        {/* Search box with embedded sort dropdown */}
+        <Col xs={12} md={5} lg={4} className="mb-2">
+          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ced4da', borderRadius: '0.375rem', backgroundColor: 'white', paddingRight: '0.5rem' }}>
+            <Form.Control
+              type="text"
+              placeholder="Search shopping lists..."
+              className="mobile-search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{ border: 'none', boxShadow: 'none', flex: 1 }}
+            />
+            <Dropdown>
+              <Dropdown.Toggle
+                variant="link"
+                bsPrefix="p-0 border-0 bg-transparent"
+                style={{
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: sortKey ? 'var(--light-blue, #0d6efd)' : '#6c757d',
+                  boxShadow: 'none',
+                }}
+                title="Sort lists"
+              >
+                <SortDown size={18} />
+              </Dropdown.Toggle>
+              <Dropdown.Menu align="end">
+                <Dropdown.Header>Sort by</Dropdown.Header>
+                {SORT_OPTIONS.map((opt) => (
+                  <Dropdown.Item
+                    key={`${opt.key}-${opt.dir}`}
+                    active={sortKey === opt.key && sortDir === opt.dir}
+                    onClick={() => { setSortKey(opt.key); setSortDir(opt.dir); }}
+                  >
+                    {opt.label}
+                  </Dropdown.Item>
+                ))}
+                {sortKey && (
+                  <>
+                    <Dropdown.Divider />
+                    <Dropdown.Item onClick={() => setSortKey(null)} className="text-muted">
+                      Clear sort
+                    </Dropdown.Item>
+                  </>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+          {activeSort && (
+            <div style={{ position: 'absolute', fontSize: '0.75rem', color: '#6c757d', marginTop: '2px', textAlign: 'left' }}>
+              Sorted by: {activeSort.label}
+            </div>
+          )}
         </Col>
 
         <Col xs="auto" className="mb-2">
@@ -110,6 +182,21 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
             shoppingLists={shoppingLists}
             sidePanel={false}
             prefillName=""
+            onItemAdded={(newItem) => {
+              setShoppingLists((prev) =>
+                prev.map((list) => {
+                  if (list.id !== newItem.shoppingListId) return list;
+                  const exists = list.items.find((i) => i.id === newItem.id);
+                  const updatedItems = exists
+                    ? list.items.map((i) => (i.id === newItem.id ? { ...i, quantity: newItem.quantity } : i))
+                    : [...list.items, newItem];
+                  const totalProtein = updatedItems.reduce(
+                    (sum, i) => sum + (i.proteinGrams ?? 0) * i.quantity, 0,
+                  );
+                  return { ...list, items: updatedItems, totalProtein };
+                }),
+              );
+            }}
           />
         </Col>
 
@@ -127,7 +214,6 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           >
             + New List
           </Button>
-
           <AddShoppingList
             show={showCreateList}
             onHide={() => setShowCreateList(false)}
@@ -150,12 +236,11 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           >
             + Set Budget
           </Button>
-
           <UpdateBudget
             show={showUpdateBudget}
             onHide={() => setShowUpdateBudget(false)}
             userID={Number(session?.user?.id ?? 0)}
-            onBudgetUpdated={refetchBudget} 
+            onBudgetUpdated={refetchBudget}
           />
         </Col>
 
@@ -224,10 +309,10 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
         {/* RIGHT SIDE — Recommended Items */}
         <Col xs={12} md={4} className="mt-4 mt-md-0">
           {session?.user?.email && (
-          <RecommendedWidget
-            owner={session?.user?.email ?? ''}
-            shoppingLists={shoppingLists}
-          />
+            <RecommendedWidget
+              owner={session?.user?.email ?? ''}
+              shoppingLists={shoppingLists}
+            />
           )}
         </Col>
       </Row>
