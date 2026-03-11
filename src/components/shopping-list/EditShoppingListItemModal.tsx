@@ -96,7 +96,8 @@ export default function EditShoppingListItemModal({
 
           <Form.Group className="mt-3">
             <Form.Label>Protein (grams)</Form.Label>
-            <Form.Control name="proteinGrams" type="number" step="0.1" min="0" value={form.proteinGrams} onChange={handleChange} placeholder="0" />
+            <Form.Control name="proteinGrams" type="number" step="0.1" min="0" value={form.proteinGrams} 
+            onChange={handleChange} placeholder="0" />
           </Form.Group>
 
           <Form.Group className="mt-3">
@@ -107,7 +108,8 @@ export default function EditShoppingListItemModal({
               <option value="custom">Custom % left</option>
             </Form.Select>
             {form.restockTrigger === 'custom' && (
-              <Form.Control className="mt-2" name="customThreshold" type="number" placeholder="% left" value={form.customThreshold} onChange={handleChange} />
+              <Form.Control className="mt-2" name="customThreshold" type="number" placeholder="% left" 
+              value={form.customThreshold} onChange={handleChange} />
             )}
           </Form.Group>
         </Form>

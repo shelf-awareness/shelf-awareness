@@ -113,7 +113,8 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
       >
         {/* Search box with embedded sort dropdown */}
         <Col xs={12} md={5} lg={4} className="mb-2">
-          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ced4da', borderRadius: '0.375rem', backgroundColor: 'white', paddingRight: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ced4da', 
+            borderRadius: '0.375rem', backgroundColor: 'white', paddingRight: '0.5rem' }}>
             <Form.Control
               type="text"
               placeholder="Search shopping lists..."
@@ -160,7 +161,8 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
             </Dropdown>
           </div>
           {activeSort && (
-            <div style={{ position: 'absolute', fontSize: '0.75rem', color: '#6c757d', marginTop: '2px', textAlign: 'left' }}>
+            <div style={{ position: 'absolute', fontSize: '0.75rem', color: '#6c757d', 
+            marginTop: '2px', textAlign: 'left' }}>
               Sorted by: {activeSort.label}
             </div>
           )}

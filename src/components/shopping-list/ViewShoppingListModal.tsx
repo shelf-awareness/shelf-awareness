@@ -183,7 +183,8 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList, onItemsChange }: Vi
     if (shoppingList) {
       localStorage.removeItem(`checkboxes-${shoppingList.id}`);
     }
-    swal('Success', `${checkedIds.length} item${checkedIds.length !== 1 ? 's' : ''} moved to your pantry!`, 'success', { timer: 2000 });
+    swal('Success', `${checkedIds.length} item${checkedIds.length !== 1 ? 's' : ''} 
+      moved to your pantry!`, 'success', { timer: 2000 });
   };
 
   const handleLocationChange = async (locationName: string) => {
