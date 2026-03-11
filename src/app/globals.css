@@ -217,3 +217,8 @@ footer a {
   padding: 0.75rem;
   background: #fff;
 }
+
+/* Sidebar portion for the user's profile page */
+.profile-sidebar {
+  background-color: #A1A1A1;
+}

@@ -59,6 +59,9 @@ const NavBar: React.FC = () => {
 
               <Nav>
                 <NavDropdown id="login-dropdown" title={currentUser}>
+                  <NavDropdown.Item as={Link} id="profile-dropdown" href="/profile">
+                    Profile
+                  </NavDropdown.Item>
                   <NavDropdown.Item as={Link} id="login-dropdown-sign-out" href="/auth/signout">
                     <BoxArrowRight />
                     <span className="ms-2">Sign Out</span>
