@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Footer from '@/components/Footer';
 import NavBar from '@/components/Navbar';
 import Providers from './providers';
+import 'leaflet/dist/leaflet.css';
 
 const saira = Saira({ subsets: ['latin'] });
 
