@@ -20,22 +20,22 @@ export default function DashboardMenu({ ownerEmail, recipes, produce }: Dashboar
   const item = { hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.45 } } };
   const menuItems = [
     {
-      label: 'View Pantry',
+      label: 'View Shelf',
       href: '/view-pantry',
       icon: <BoxSeam size={38} />,
-      color: 'var(--hunter-green)',
+      color: 'var(--azure-blue)',
     },
     {
       label: 'Shopping List',
       href: '/shopping-list',
       icon: <CartCheck size={38} />,
-      color: 'var(--hunter-green)',
+      color: 'var(--azure-blue)',
     },
     {
       label: 'Recipes',
       href: '/recipes',
       icon: <BookHalf size={38} />,
-      color: 'var(--hunter-green)',
+      color: 'var(--azure-blue)',
     },
   ];
 
@@ -46,12 +46,12 @@ export default function DashboardMenu({ ownerEmail, recipes, produce }: Dashboar
           <motion.div variants={parent} initial="hidden" animate="show">
             <motion.h1
               className="fw-bold mb-3"
-              style={{ color: 'var(--brunswick-green)' }}
+              style={{ color: 'var(--azure-blue)' }}
               variants={item}
             >
               Welcome to your
               {' '}
-              <span style={{ color: 'var(--fern-green)' }}>Dashboard</span>
+              <span style={{ color: 'var(--prussian-blue)' }}>Dashboard</span>
             </motion.h1>
 
             <motion.p

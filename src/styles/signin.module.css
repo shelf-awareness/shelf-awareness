@@ -24,14 +24,14 @@
 
 .title {
   font-size: 1.8rem;
-  color: var(--hunter-green);
+  color: var(--prussian-blue);
   margin-bottom: 15px;
   font-weight: bold;
 }
 
 .descriptionCentered {
   font-size: 1rem;
-  color: var(--fern-green);
+  color: var(--azure-blue);
   margin: 10px 0 20px;
 }
 

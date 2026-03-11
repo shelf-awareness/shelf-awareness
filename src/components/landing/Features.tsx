@@ -7,25 +7,25 @@ const features = [
     title: 'Track Your Pantry Shelf',
     description:
       'Easily keep track of your pantry, fridge, freezer, and spices, so you always know what you have.',
-    icon: '/apple.png',
+    icon: '/trackpantry.png',
   },
   {
     title: 'Reduce Food Waste',
     description:
       'Get expiration reminders and suggestions to finish food before it spoils.',
-    icon: '/banana.png',
+    icon: '/reducewaste.png',
   },
   {
     title: 'Generate Shopping Lists',
     description:
       'Automatically create shopping lists based on low or missing items in your pantry.',
-    icon: '/carrot.png',
+    icon: '/shoppinglist.png',
   },
   {
     title: 'Discover Recipes',
     description:
       'Find recipes based on ingredients you already have, reducing waste and meal prep stress.',
-    icon: '/chickenbreast.png',
+    icon: '/discovery.png',
   },
 ];
 
@@ -38,8 +38,8 @@ export default function Features() {
             <Image
               src={feature.icon}
               alt={feature.title}
-              width={80}
-              height={80}
+              width={212}
+              height={116}
               className="feature-icon"
             />
 

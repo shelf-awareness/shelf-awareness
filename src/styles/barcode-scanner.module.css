@@ -4,7 +4,7 @@
   align-items: center;
   padding: 1rem;
   border-radius: 0.5rem;
-  background-color: var(--brunswick-green);
+  background-color: var(--prussian-blue);
   color: var(--timberwolf);
 }
 
@@ -12,12 +12,12 @@
   width: 100%;
   max-width: 400px;
   border-radius: 8px;
-  border: 2px solid var(--fern-green);
+  border: 2px solid var(--light-blue);
 }
 
 .closeButton {
   margin-top: 1rem;
-  background-color: var(--fern-green);
+  background-color: var(--light-blue);
   border-color: var(--sage);
   color: var(--timberwolf);
   font-weight: bold;
@@ -27,7 +27,7 @@
 }
 
 .closeButton:hover {
-  background-color: var(--sage);
+  background-color: var(--light-blue);
 }
 
 .errorText {

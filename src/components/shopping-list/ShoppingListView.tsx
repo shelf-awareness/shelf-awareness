@@ -94,7 +94,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           <Button
             onClick={() => setShow(true)}
             style={{
-              backgroundColor: 'var(--fern-green)',
+              backgroundColor: 'var(--light-blue)',
               height: '34px',
               padding: '4px 12px',
               display: 'flex',
@@ -117,7 +117,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           <Button
             onClick={() => setShowCreateList(true)}
             style={{
-              backgroundColor: 'var(--fern-green)',
+              backgroundColor: 'var(--light-blue)',
               height: '34px',
               padding: '4px 12px',
               display: 'flex',
@@ -140,7 +140,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           <Button
             onClick={() => setShowUpdateBudget(true)}
             style={{
-              backgroundColor: 'var(--fern-green)',
+              backgroundColor: 'var(--light-blue)',
               height: '34px',
               padding: '4px 12px',
               display: 'flex',
@@ -163,7 +163,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
           <Button
             onClick={() => setShowRecipesModal(true)}
             style={{
-              backgroundColor: 'var(--fern-green)',
+              backgroundColor: 'var(--light-blue)',
               height: '34px',
               padding: '4px 12px',
               display: 'flex',
@@ -184,7 +184,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
         <Col xs="auto" className="mb-2">
           <div
             style={{
-              backgroundColor: 'var(--fern-green)',
+              backgroundColor: 'var(--light-blue)',
               color: 'white',
               padding: '8px 16px',
               borderRadius: '4px',

@@ -29,7 +29,7 @@ export default function SignOutPage() {
       <div className={styles.formWrapper}>
         <h1 className={styles.title}>Sign Out</h1>
         <p className={styles.descriptionCentered}>
-          Are you sure you want to sign out of your Pantry Pal account?
+          Are you sure you want to sign out of your Shelf Awareness account?
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '25px' }}>
@@ -37,7 +37,7 @@ export default function SignOutPage() {
             type="button"
             data-testid="signout-button"
             className={styles.button}
-            style={{ backgroundColor: 'var(--fern-green)' }}
+            style={{ backgroundColor: 'var(--azure-blue)' }}
             onClick={handleSignOut}
             disabled={isSigningOut}
           >
@@ -48,8 +48,8 @@ export default function SignOutPage() {
             type="button"
             className={styles.button}
             style={{
-              backgroundColor: 'var(--sage)',
-              color: 'var(--brunswick-green)',
+              backgroundColor: 'var(--light-blue)',
+              color: 'var(--prussian-blue)',
             }}
             onClick={() => router.push('/dashboard')}
             disabled={isSigningOut}

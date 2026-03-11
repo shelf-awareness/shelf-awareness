@@ -79,7 +79,7 @@ function PantryClient({ initialProduce, initialLocations, owner }: PantryClientP
                           text-center 
                           text-md-start 
                           gap-2">
-            <h1>Your Pantry at a Glance</h1>
+            <h1>Your Shelf at a Glance</h1>
             <Button className="btn-add" onClick={() => setShowAddProduceModal(true)}>
               + Add Item
             </Button>

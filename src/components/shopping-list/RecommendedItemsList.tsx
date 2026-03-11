@@ -28,7 +28,7 @@ export default function RecommendedItemsList({ items, onAdd }: RecommendedItemsL
 
             <button
               type="button"
-              className="btn btn-sm btn-outline-success"
+              className="btn btn-sm btn-outline-primary"
               onClick={() => onAdd(item)}
             >
               +
