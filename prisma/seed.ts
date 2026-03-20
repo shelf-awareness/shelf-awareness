@@ -9,7 +9,25 @@ import * as config from '../config/settings.development.json';
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
 });
+const mapUnit = (unit: string | null | undefined) => {
+  if (!unit) return 'ITEM';
 
+  switch (unit.toLowerCase()) {
+    case 'g':
+    case 'grams':
+      return 'G';
+    case 'oz':
+      return 'OZ';
+    case 'lb':
+      return 'LB';
+    case 'ml':
+      return 'ML';
+    case 'cup':
+      return 'CUP';
+    default:
+      return 'ITEM';
+  }
+};
 const prisma = new PrismaClient({
   adapter,
   log: ['query'], // optional, like in lib/prisma.ts
@@ -96,8 +114,8 @@ async function main() {
         type: produce.type,
         locationId: location.id,
         storageId: storage.id,
-        quantity: produce.quantity,
-        unit: produce.unit,
+        quantityValue: produce.quantity,
+        quantityUnit: mapUnit(produce.unit),        
         expiration: produce.expiration ? new Date(produce.expiration) : null,
         owner: produce.owner,
         image: produce.image ?? null,
@@ -130,8 +148,8 @@ async function main() {
         create: {
           shoppingListId: createdList.id,
           name: item.name,
-          quantity: item.quantity,
-          unit: item.unit,
+          quantityValue: item.quantity,
+          quantityUnit: mapUnit(item.unit),
           price: item.price,
         },
       });
@@ -225,8 +243,8 @@ async function main() {
             data: {
               recipeId: recipe.id,
               name: item.name,
-              quantity: item.quantity,
-              unit: item.unit,
+              quantityValue: item.quantity ?? 0,
+              quantityUnit: mapUnit(item.unit ?? undefined),
               order: index,
             },
           });

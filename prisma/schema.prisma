@@ -11,6 +11,15 @@ enum Role {
   ADMIN
 }
 
+enum QuantityUnit {
+  G
+  OZ
+  LB
+  ML
+  CUP
+  ITEM
+}
+
 model User {
   id            Int      @id @default(autoincrement())
   email         String   @unique
@@ -59,9 +68,11 @@ model Produce {
   storageId        Int
   location         Location @relation(fields: [locationId], references: [id])
   storage          Storage  @relation(fields: [storageId], references: [id])
-  quantity         Float
   proteinGrams     Float?
-  unit             String
+
+  quantityValue Float
+  quantityUnit  QuantityUnit
+
   expiration       DateTime?
   owner            String
   image            String?
@@ -111,9 +122,11 @@ model ShoppingListItem {
   id              Int      @id @default(autoincrement())
   shoppingListId  Int
   name            String // name of the item (not linked to pantry)
-  quantity        Float
   proteinGrams    Float?   // grams of protein per unit
-  unit            String?
+
+  quantityValue Float
+  quantityUnit  QuantityUnit?
+
   price           Decimal? @db.Decimal(10, 2)
   restockTrigger  String?
   customThreshold Float?
@@ -170,8 +183,10 @@ model RecipeIngredient {
   recipe    Recipe   @relation(fields: [recipeId], references: [id])
 
   name      String
-  quantity  Float?
-  unit      String?
+
+  quantityValue Float?
+  quantityUnit  QuantityUnit?
+
   order     Int?
   substitutes  String?
 
