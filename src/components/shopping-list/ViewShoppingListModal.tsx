@@ -269,8 +269,6 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList, onItemsChange }: Vi
                             <option value="empty">When empty</option>
                             <option value="half">When half gone</option>
                           </select>
-
-                          )
                         </td>
                         <td className="d-flex gap-3 justify-content-center align-items-center">
                           <FaPencilAlt
