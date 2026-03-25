@@ -1,25 +1,45 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
+import { geocodeAddress } from '@/lib/geocode';
 
+// GET all locations for an owner
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const locationName = searchParams.get('location');
   const owner = searchParams.get('owner');
 
-  if (!locationName || !owner) {
-    return NextResponse.json({ error: 'Missing location or owner' }, { status: 400 });
+  if (!owner) {
+    return NextResponse.json({ error: 'Missing owner' }, { status: 400 });
   }
 
-  const storages = await prisma.storage.findMany({
-    where: {
-      location: {
-        name: { equals: locationName, mode: 'insensitive' },
-        owner: { equals: owner, mode: 'insensitive' },
-      },
-    },
-    select: { name: true },
+  const locations = await prisma.location.findMany({
+    where: { owner },
+    select: { id: true, name: true, address: true, latitude: true, longitude: true },
     orderBy: { name: 'asc' },
   });
 
-  return NextResponse.json(storages.map((s: { name: string }) => s.name));
+  return NextResponse.json(locations);
+}
+
+// POST create a new location
+export async function POST(request: Request) {
+  const body = await request.json();
+  const { name, owner, address } = body;
+
+  if (!name || !owner || !address) {
+    return NextResponse.json({ error: 'name, owner, and address are required' }, { status: 400 });
+  }
+
+  const coords = await geocodeAddress(address);
+
+  const location = await prisma.location.create({
+    data: {
+      name,
+      owner,
+      address,
+      latitude: coords?.lat ?? null,
+      longitude: coords?.lng ?? null,
+    },
+  });
+
+  return NextResponse.json(location, { status: 201 });
 }

@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 'use client';
 
-import { Card, Container, Button, CardGroup } from 'react-bootstrap';
+import { Card, Container, Button, Form, Row, Col } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import EditProfileModal from './EditProfileModal';

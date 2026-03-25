@@ -4,6 +4,7 @@ import { Prisma, QuantityUnit } from '@prisma/client';
 import { hash, compare } from 'bcrypt';
 import { redirect } from 'next/navigation';
 import { prisma } from './prisma';
+import { geocodeAddress } from './geocode';
 
 /**
  * Creates a new user.
@@ -77,7 +78,7 @@ export async function addProduce(produce: {
   const location = await prisma.location.upsert({
     where: { name_owner: { name: produce.location, owner: produce.owner } },
     update: {},
-    create: { name: produce.location, owner: produce.owner },
+    create: { name: produce.location, owner: produce.owner, address: null },
   });
 
   // Upsert or find Storage by name + locationId
@@ -160,7 +161,7 @@ export async function editProduce(
   const location = await prisma.location.upsert({
     where: { name_owner: { name: produce.location as string, owner: produce.owner as string } },
     update: {},
-    create: { name: produce.location as string, owner: produce.owner as string },
+    create: { name: produce.location as string, owner: produce.owner as string, address: null },
   });
 
   const storage = await prisma.storage.upsert({
@@ -241,7 +242,11 @@ export async function deleteProduce(id: number) {
 }
 
 export async function getUserProduceByEmail(owner: string) {
-  const items = await prisma.produce.findMany({
+  const items: {
+    name: string;
+    quantityValue: number;
+    quantityUnit: QuantityUnit | null;
+  }[] = await prisma.produce.findMany({
     where: { owner },
     select: { 
       name: true,
@@ -250,7 +255,6 @@ export async function getUserProduceByEmail(owner: string) {
     },
   });
 
-  // Map DB → frontend format
   return items.map((item) => ({
     name: item.name,
     quantity: item.quantityValue,
@@ -261,19 +265,25 @@ export async function getUserProduceByEmail(owner: string) {
 /**
  * Adds a new location.
  */
-export async function addLocation(location: { name: string; owner: string }) {
-  // Normalize input (trim whitespace)
-  const name = location.name.trim();
-  const owner = location.owner.trim();
+export async function addLocation(data: { name: string; owner: string; address?: string }) {
+  let latitude: number | null = null;
+  let longitude: number | null = null;
 
-  // Create the location if it doesn’t already exist
-  const newLocation = await prisma.location.upsert({
-    where: { name_owner: { name, owner } },
-    update: {}, // do nothing if exists
-    create: { name, owner },
+  if (data.address?.trim()) {
+    const coords = await geocodeAddress(data.address);
+    latitude = coords?.lat ?? null;
+    longitude = coords?.lng ?? null;
+  }
+
+  await prisma.location.create({
+    data: {
+      name: data.name,
+      owner: data.owner,
+      address: data.address ?? null,
+      latitude,
+      longitude,
+    },
   });
-
-  return newLocation;
 }
 
 /**

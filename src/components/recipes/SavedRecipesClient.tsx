@@ -5,14 +5,18 @@ import { Row, Col, Form, Button } from "react-bootstrap";
 import { useSession } from "next-auth/react";
 import RecipeCard from "./RecipeCard";
 import UnsaveButton from "@/components/recipes/UnsaveButton";
-import { Produce } from "@prisma/client";
+import { QuantityUnit } from "@prisma/client";
 
 export default function SavedRecipesClient() {
   const { data: session } = useSession();
   const currentUserEmail = session?.user?.email ?? null;
-
+  type PantryItem = {
+    name: string;
+    quantity: number;
+    unit: QuantityUnit | null;
+  };
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [pantry, setPantry] = useState<Produce[]>([]);
+  const [pantry, setPantry] = useState<PantryItem[]>([]);
   const [search, setSearch] = useState("");
   const [editMode, setEditMode] = useState(false);
   const dietaryOptions = [
@@ -53,8 +57,17 @@ export default function SavedRecipesClient() {
         // 2️⃣ Fetch full produce items for pantry
         const pantryRes = await fetch(`/api/produce?owner=${encodeURIComponent(currentUserEmail)}`);
         if (!pantryRes.ok) throw new Error(await pantryRes.text());
-        const pantryData: Produce[] = await pantryRes.json();
-        setPantry(Array.isArray(pantryData) ? pantryData : []);
+        const pantryData = await pantryRes.json();
+
+        const mappedPantry: PantryItem[] = Array.isArray(pantryData)
+          ? pantryData.map((p: any) => ({
+            name: p.name,
+            quantity: p.quantityValue,
+            unit: p.quantityUnit,
+          }))
+        : [];
+
+        setPantry(mappedPantry);
       } catch (error) {
         console.error("SavedRecipesClient load error:", error);
       }

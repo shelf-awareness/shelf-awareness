@@ -11,9 +11,15 @@ export async function GET(request: Request) {
 
   const locations = await prisma.location.findMany({
     where: { owner },
-    select: { name: true },
+    select: {
+      id: true,
+      name: true,
+      address: true,
+      latitude: true,
+      longitude: true,
+    },
     orderBy: { name: 'asc' },
   });
 
-  return NextResponse.json(locations.map((l: { name: string }) => l.name));
+  return NextResponse.json(locations);
 }

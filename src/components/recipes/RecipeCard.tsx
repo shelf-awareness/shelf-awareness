@@ -10,9 +10,8 @@ import { useState } from 'react';
 import React from 'react';
 import EditRecipeModal from '@/components/recipes/EditRecipeModal';
 import { PencilSquare, Trash } from 'react-bootstrap-icons';
-import { Produce } from '@prisma/client';
 import { convertUnits } from '@/lib/unitConverter';
-
+import { QuantityUnit } from '@prisma/client';
 
 export type IngredientItemCard = {
   id?: number;
@@ -41,7 +40,11 @@ export type RecipeCardProps = {
   fatGrams?: number | null;
   sourceUrl?: string | null;
   pantryNames: Set<string>;
-  pantryItems: Produce[]; // pantryItems is passed as an array of Produce objects
+  pantryItems: {
+  name: string;
+  quantity: number;
+  unit: QuantityUnit | null;
+}[];
   onSelect?: (recipe: { id: number; title: string; ingredientItems: IngredientItemCard[] }) => void;
 };
 
@@ -187,7 +190,7 @@ export default function RecipeCard({
                     let convertedUnit = 0;
                     for (let p of pantryItems){
                       if (hasItem && p.name.toLowerCase() === item.name.toLowerCase()){
-                        convertedUnit += convertUnits(p.quantityValue, p.quantityUnit, item.unit);
+                        convertedUnit += convertUnits(p.quantity, p.unit, item.unit);
                          
                       }
                     }
