@@ -163,7 +163,8 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList, onItemsChange }: Vi
     const firstLocation = locationNames[0] ?? 'Default Pantry';
     setSelectedLocation(firstLocation);
 
-    const storageRes = await fetch(`/api/storage?location=${encodeURIComponent(firstLocation)}&owner=${encodeURIComponent(email)}`);
+    const storageUrl = `/api/storage?location=${encodeURIComponent(firstLocation)}&owner=${encodeURIComponent(email)}`;
+    const storageRes = await fetch(storageUrl);
     const storageData = await storageRes.json();
     setStorages(storageData);
     setSelectedStorage(storageData[0] ?? 'Default Shelf');
