@@ -6,9 +6,9 @@ import { useSession } from 'next-auth/react';
 import { getRecipes } from '@/lib/recipes';
 import { getUserProduceByEmail, createShoppingListFromRecipe } from '@/lib/dbActions';
 import RecipeCard from './RecipeCard';
-import { Produce } from '@prisma/client';
 import { IngredientItemCard } from './RecipeCard';
 import { ShoppingListWithProtein } from '../../types/shoppingList';
+import { QuantityUnit } from '@prisma/client';  
 
 interface RecipesModalProps {
   show: boolean;
@@ -16,16 +16,23 @@ interface RecipesModalProps {
   onListCreated: (newList: ShoppingListWithProtein) => void;
 }
 
+type PantryItem = {
+  name: string;
+  quantity: number;
+  unit: QuantityUnit | null;
+};
+
 type PendingRecipe = {
   id: number;
   title: string;
   ingredientItems: IngredientItemCard[];
 };
 
+
 export default function RecipesModal({ show, onHide, onListCreated }: RecipesModalProps) {
   const { data: session } = useSession();
   const [recipes, setRecipes] = useState<any[]>([]);
-  const [pantryItems, setPantryItems] = useState<Produce[]>([]);
+  const [pantryItems, setPantryItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [creating, setCreating] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -49,7 +56,7 @@ export default function RecipesModal({ show, onHide, onListCreated }: RecipesMod
             : Promise.resolve([]),
         ]);
         setRecipes(fetchedRecipes);
-        setPantryItems(fetchedProduce as Produce[]);
+        setPantryItems(fetchedProduce);
       } catch (err) {
         console.error('Failed to fetch recipes or pantry:', err);
       } finally {
