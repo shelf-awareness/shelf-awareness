@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 'use client';
 
-import { Card, Container, Button, CardGroup } from 'react-bootstrap';
+import { Card, Container, Button, Form, Row, Col } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import EditProfileModal from './EditProfileModal';
@@ -19,70 +19,98 @@ export default function ProfilePageClient({ user, budget }: ProfileProps) {
   return (
     <main>
       <Container className="mb-5 mt-5">
-        <Card className="d-flex" style={{ width: '100%' }}>
+        <Card className="d-flex" style={{width: '100%'}}>
           <Card.Header className="justify-content-center text-center align-items-center">
             <h2>My Profile</h2>
-          </Card.Header>
-          <Card.Body>
-            <CardGroup>
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Text>
-                  <h3> Personal Information </h3>
-                </Card.Text>
-              </Card>
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Title>Email Address</Card.Title>
-                <Card.Text>
-                  {owner || 'Email'}
-                </Card.Text>
-              </Card>
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Title>Display Name</Card.Title>
-                <Card.Text>
-                  {'display name'}
-                </Card.Text>
-              </Card>
-            </CardGroup>
+            </Card.Header>
+              <Row>
+                <Col lg={3}>
+                  <Card.Body>
+                    <Card className="mt-2 p-3 shadow-sm">
+                      <Card.Img className="rounded-circle" src="https://img.freepik.com/free-psd/gradient-abstract-logo_23-2150689652.jpg?semt=ais_hybrid&w=740" alt="Profile Picture" />
+                        <Card.Body> </Card.Body>
+                    </Card>
+                  </Card.Body>
+                </Col>
 
-            <CardGroup className="mt-2">
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Text>
-                  <h3> Miscellaneous </h3>
-                </Card.Text>
-              </Card>
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Title>Budget</Card.Title>
-                <Card.Text>
-                  {budget !== null ? `$${budget}` : 'None'}
-                </Card.Text>
-              </Card>
-            </CardGroup>
+                <Col lg={9}>
+                  <h5 className="mt-2 ms-1">Profile Information</h5>
+                  <Card className="m-3">
+                    <Form>
+                      <Row className="m-3">
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>Username</Form.Label>
+                            <Form.Control
+                              value={owner || 'Email'}
+                              disabled
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>Display Name</Form.Label>
+                            <Form.Control
+                              value={owner || 'Email'}
+                              disabled
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>                                    
+                    </Form>
+                  </Card>
+                  <hr />
 
-            <CardGroup className="mt-2">
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Text>
-                  <h3> Macro Goals </h3>
-                </Card.Text>
-              </Card>
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Title>Protein Goal</Card.Title>
-                <Card.Text>
-                  {'0'}
-                </Card.Text>
-              </Card>
-              <Card className="mt-2 p-3 shadow-sm">
-                <Card.Title>Carb Goal</Card.Title>
-                <Card.Text>
-                  {'0'}
-                </Card.Text>
-              </Card>
-            </CardGroup>
-          </Card.Body>
-          <Card.Footer>
-            <Button variant="primary" onClick={() => setShowProfileModal(true)}>
-              Edit Profile
-            </Button>
-          </Card.Footer>
+                  <h5 className="mt-1 ms-1">Miscellaneous</h5>
+                  <Card className="m-3">
+                    <Form>
+                      <Row className="m-3">
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>Budget</Form.Label>
+                              <Form.Control
+                                value={budget !== null ? `$${budget}` : 'None...'}
+                                disabled
+                              />
+                            </Form.Group>
+                        </Col>
+                      </Row>                                    
+                    </Form>
+                  </Card>
+
+                  <hr />
+                  <h5 className="mt-1 ms-1">Macro Goals</h5>
+                  <Card className="m-3">
+                    <Form>
+                      <Row className="m-3">
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>Protein Goal</Form.Label>
+                            <Form.Control
+                              value={0}
+                              disabled
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>Carb Goal</Form.Label>
+                              <Form.Control
+                                value={0}
+                                disabled
+                              />
+                            </Form.Group>
+                        </Col>
+                      </Row>                                    
+                    </Form>
+                  </Card>
+                </Col>
+              </Row>
+              <Card.Footer>
+                <Button variant="primary" onClick={() => setShowProfileModal(true)}>
+                  Edit Profile
+                </Button>
+              </Card.Footer>
         </Card>
       </Container>
 
