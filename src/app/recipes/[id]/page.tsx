@@ -10,6 +10,7 @@ import AddToShoppingList from '@/components/recipes/AddToShoppingList';
 import UploadDishButton from '@/components/recipes/UploadDishButton';
 import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
 import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
+import CookRecipeButton from '@/components/recipes/CookRecipeButton';
 
 const getMainIngredientName = (name: string) => {
   return name.split('/')[0].trim();
@@ -352,6 +353,16 @@ if (email) {
                 View Original Recipe →
               </Button>
             )}
+
+            <div className="mt-3">
+              <CookRecipeButton
+                owner={email}
+                title={recipe.title}
+                proteinGrams={recipe.proteinGrams ?? null}
+                carbsGrams={recipe.carbsGrams ?? null}
+                fatGrams={recipe.fatGrams ?? null}
+              />
+            </div>
 
             <div className="mt-3">
               <SavedRecipeButton recipeId={recipe.id} owner={email} />
