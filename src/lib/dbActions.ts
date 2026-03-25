@@ -241,7 +241,11 @@ export async function deleteProduce(id: number) {
 }
 
 export async function getUserProduceByEmail(owner: string) {
-  const items = await prisma.produce.findMany({
+  const items: {
+    name: string;
+    quantityValue: number;
+    quantityUnit: QuantityUnit | null;
+  }[] = await prisma.produce.findMany({
     where: { owner },
     select: { 
       name: true,
@@ -250,7 +254,6 @@ export async function getUserProduceByEmail(owner: string) {
     },
   });
 
-  // Map DB → frontend format
   return items.map((item) => ({
     name: item.name,
     quantity: item.quantityValue,
