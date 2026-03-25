@@ -87,6 +87,9 @@ model Location {
   id         Int        @id @default(autoincrement())
   name       String
   owner      String
+  address    String?    
+  latitude   Float?
+  longitude  Float?
   storages   Storage[]
   produces   Produce[]
   createdAt  DateTime   @default(now())

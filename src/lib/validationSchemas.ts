@@ -45,7 +45,8 @@ export const EditProduceSchema = Yup.object({
 
 export const AddLocationSchema = Yup.object({
   name: Yup.string().required('Location name is required'),
-  owner: Yup.string().required('Owner is required'),
+  owner: Yup.string().required(),
+  address: Yup.string(), // optional — no marker shown if blank
 });
 
 export const AddShoppingListSchema = Yup.object({

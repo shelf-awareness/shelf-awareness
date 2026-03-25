@@ -155,18 +155,18 @@ const ViewShoppingListModal = ({ show, onHide, shoppingList, onItemsChange }: Vi
 
     const res = await fetch(`/api/locations?owner=${email}`);
     const data = await res.json();
-    setLocations(data);
 
-    const firstLocation = data[0] ?? 'Default Pantry';
+    // Extract just the names since the rest of this flow only needs strings
+    const locationNames: string[] = data.map((l: { name: string }) => l.name);
+
+    setLocations(locationNames);
+    const firstLocation = locationNames[0] ?? 'Default Pantry';
     setSelectedLocation(firstLocation);
 
-    // fetch storages for first location
-    // eslint-disable-next-line max-len
     const storageRes = await fetch(`/api/storage?location=${encodeURIComponent(firstLocation)}&owner=${encodeURIComponent(email)}`);
     const storageData = await storageRes.json();
     setStorages(storageData);
     setSelectedStorage(storageData[0] ?? 'Default Shelf');
-
     setShowLocationModal(true);
   };
 
