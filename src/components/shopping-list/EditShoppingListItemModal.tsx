@@ -3,6 +3,7 @@
 import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
 import { QuantityUnit } from '@prisma/client';
+import { InputGroup } from 'react-bootstrap';
 
 type SavedItem = {
   id: number;
@@ -30,9 +31,11 @@ export default function EditShoppingListItemModal({
 }: EditModalProps) {
   const [form, setForm] = useState({
     name: item.name,
-    quantity: item.quantityValue.toString(),
+    quantity: item.quantityValue?.toString() ?? '',
     quantityUnit: item.quantityUnit ?? '',
-    price: item.price ?? '',
+    price: item.price !== null && item.price !== undefined
+  ? Number(item.price).toFixed(2)
+  : '',
     proteinGrams: item.proteinGrams ?? '',
     restockTrigger: item.restockTrigger ?? 'empty',
     customThreshold: item.customThreshold ?? '',
@@ -99,7 +102,10 @@ export default function EditShoppingListItemModal({
 
           <Form.Group className="mt-3">
             <Form.Label>Price</Form.Label>
-            <Form.Control name="price" type="number" step="0.01" value={form.price} onChange={handleChange} />
+            <InputGroup>
+            <InputGroup.Text>$</InputGroup.Text>
+              <Form.Control name="price" type="number" step="0.01" value={form.price} onChange={handleChange}/>
+            </InputGroup>
           </Form.Group>
 
           <Form.Group className="mt-3">

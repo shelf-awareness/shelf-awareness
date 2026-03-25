@@ -61,8 +61,8 @@ export default function ShoppingListCard({ shoppingList, onListDeleted }: Shoppi
   const totalItems = items.length;
 
   const totalCost = items.reduce((sum: number, item: Item) => {
-    const price = item.price ? parseFloat(item.price.toString()) : 0;
-    return sum + price * item.quantityValue;
+  const price = item.price ? parseFloat(item.price.toString()) : 0;
+  return sum + price;
   }, 0);
 
   const totalProtein = items.reduce(

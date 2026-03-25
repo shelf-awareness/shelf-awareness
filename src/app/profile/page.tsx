@@ -1,10 +1,9 @@
-
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/authOptions';
-import ProfilePageClient from "@/components/profile/ProfilePageClient";
+import ProfilePageClient from '@/components/profile/ProfilePageClient';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 import { Container } from 'react-bootstrap';
-
+import { prisma } from '@/lib/prisma';
 
 const ProfilePage = async () => {
   const session = await getServerSession(authOptions);
@@ -16,16 +15,23 @@ const ProfilePage = async () => {
 
   const user = session?.user?.email || '';
 
+  const userData = await prisma.user.findUnique({
+    where: { email: user },
+    select: { budget: true },
+  });
+  const budget = userData?.budget ? Number(userData.budget) : null;
+
   return (
     <main>
-      <Container> 
+      <Container>
         <ProfilePageClient
           user={user}
-         />
+          budget={budget}
+        />
       </Container>
     </main>
+  );
+};
 
-  )
-}
 
 export default ProfilePage;
