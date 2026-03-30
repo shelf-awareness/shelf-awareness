@@ -10,6 +10,8 @@ import AddToShoppingList from '@/components/recipes/AddToShoppingList';
 import UploadDishButton from '@/components/recipes/UploadDishButton';
 import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
 import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
+import MadeThisButton from '@/components/recipes/MadeThisButton';
+import { prisma } from '@/lib/prisma';
 
 const getMainIngredientName = (name: string) => {
   return name.split('/')[0].trim();
@@ -28,6 +30,23 @@ export default async function RecipeDetailPage({ params }: PageProps) {
 
   const session = await getServerSession();
   const email = session?.user?.email ?? null;
+
+  let initialMadeCount = 0; // default to 0 if not logged in or no usage record
+if (email) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+    select: { id: true },
+  });
+
+  if (user) {
+    const usage = await prisma.recipeUsage.findUnique({
+      where: { userId_recipeId: { userId: user.id, recipeId: recipe.id } },
+      select: { count: true },
+    });
+
+    initialMadeCount = usage?.count ?? 0;
+  }
+}
 
   let pantry: any[] = [];
   if (email) {
@@ -338,7 +357,11 @@ if (email) {
                 </div>
               </div>
             )}
-
+            <div>
+              <MadeThisButton 
+              recipeId={recipe.id}
+              initialCount={initialMadeCount} />
+            </div>
             {recipe.sourceUrl && (
               <Button
                 as="a"
