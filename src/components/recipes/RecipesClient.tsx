@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Row, Col, Button, Form, Dropdown, Container } from 'react-bootstrap';
 import AddRecipeModal from '@/components/recipes/AddRecipeModal';
 import { useSession } from 'next-auth/react';
@@ -30,6 +30,9 @@ export default function RecipesClient({
   const isAdmin = serverIsAdmin || currentUserEmail === 'admin@foo.com';
   const canAdd = serverCanAdd || !!currentUserEmail;
 
+  const [sort, setSort] = useState<'newest' | 'popular' | 'quickest' | 'az'>('newest');
+  const [popularRecipes, setPopularRecipes] = useState<any[]>([]);
+  const [popularLoading, setPopularLoading] = useState(false);
   const [showCanMake, setShowCanMake] = useState(false);
   const [showWithinBudget, setShowWithinBudget] = useState(false);
   const [search, setSearch] = useState('');
@@ -129,7 +132,77 @@ const toggleDietary = (tag: string) => {
     if (!editMode) return filteredRecipes;
     return filteredRecipes.filter((r) => canEditRecipe(r.owner));
   }, [filteredRecipes, editMode, canEditRecipe]);
+  const sortedRecipes = useMemo(() => {
+    const arr = [...recipesToShow];
 
+    if (sort === 'newest') {
+      return arr.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+
+    if (sort === 'quickest') {
+      return arr.sort((a, b) => {
+        const aTotal = (a.prepMinutes ?? 0) + (a.cookMinutes ?? 0);
+        const bTotal = (b.prepMinutes ?? 0) + (b.cookMinutes ?? 0);
+        return aTotal - bTotal;
+      });
+    }
+
+    if (sort === 'az') {
+      return arr.sort((a, b) => a.title.localeCompare(b.title));
+    }
+
+    return arr;
+  }, [recipesToShow, sort]);
+
+  const displayedRecipes = useMemo(() => {
+  if (sort !== 'popular') {
+    return sortedRecipes;
+  }
+
+  const filteredIds = new Set(recipesToShow.map((r) => r.id));
+  return popularRecipes.filter((r) => filteredIds.has(r.id));
+}, [sort, sortedRecipes, popularRecipes, recipesToShow]);
+
+
+  useEffect(() => {
+  if (sort !== 'popular') return;
+
+  let ignore = false;
+
+  const fetchPopularRecipes = async () => {
+    try {
+      setPopularLoading(true);
+
+      const res = await fetch('/api/recipes/popular');
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data?.error ?? 'Failed to fetch popular recipes');
+      }
+
+      if (!ignore) {
+        setPopularRecipes(data);
+      }
+    } catch (error) {
+      console.error('Failed to load popular recipes:', error);
+      if (!ignore) {
+        setPopularRecipes([]);
+      }
+    } finally {
+      if (!ignore) {
+        setPopularLoading(false);
+      }
+    }
+  };
+
+  fetchPopularRecipes();
+
+  return () => {
+    ignore = true;
+  };
+}, [sort]);
   return (
     <>
       {/* Top controls row */}
@@ -192,16 +265,53 @@ const toggleDietary = (tag: string) => {
             </Dropdown.Menu>
           </Dropdown>
         </div>
-        <div className="flex-grow-1 d-flex justify-content-center mb-2 mb-md-0">
-          <Form style={{ width: '100%', maxWidth: 400 }}>
-          <Form.Control
-            type="text"
-            placeholder="Search recipes..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            />
-          </Form>
-        </div>
+        <div className="flex-grow-1 d-flex align-items-center justify-content-center mb-2 mb-md-0">
+  <div className="d-flex align-items-center" style={{ width: 450 }}>
+    
+    {/* SEARCH (fixed width) */}
+    <Form style={{ width: 350 }}>
+      <Form.Control
+        type="text"
+        placeholder="Search recipes..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+    </Form>
+
+    {/* SORT (fixed spacing, no influence on search width) */}
+    <div className="ms-2">
+      <Dropdown align="end">
+        <Dropdown.Toggle variant="secondary">
+          Sort: {
+            sort === 'newest'
+              ? 'Newest'
+              : sort === 'popular'
+              ? 'Most Popular'
+              : sort === 'quickest'
+              ? 'Quickest'
+              : 'A–Z'
+          }
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item active={sort === 'newest'} onClick={() => setSort('newest')}>
+            Newest
+          </Dropdown.Item>
+          <Dropdown.Item active={sort === 'popular'} onClick={() => setSort('popular')}>
+            Most Popular
+          </Dropdown.Item>
+          <Dropdown.Item active={sort === 'quickest'} onClick={() => setSort('quickest')}>
+            Quickest
+          </Dropdown.Item>
+          <Dropdown.Item active={sort === 'az'} onClick={() => setSort('az')}>
+            A–Z
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    </div>
+
+  </div>
+</div>
 
         <div className="d-flex gap-2 flex-wrap justify-content-center">
           {canAdd && (
@@ -238,9 +348,9 @@ const toggleDietary = (tag: string) => {
       )}
       {/* Recipe cards */}
       <Row xs={1} md={2} lg={3} className="g-4">
-        {recipesToShow.length > 0 ? (
-          recipesToShow.map((r) => {
-            const owner = r.owner ?? 'Pantry Pals Team';
+        {displayedRecipes.length > 0 ? (
+          displayedRecipes.map((r) => {
+            const owner = r.owner ?? 'Shelf Awareness Team';
             const canEdit = canEditRecipe(owner);
 
             return (
