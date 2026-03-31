@@ -114,8 +114,8 @@ export default function AddRecipeModal({ show, onHide }: Props) {
           return {
             name: main,
             substitutes: subs,
-            quantity,
-            unit,
+            quantityValue: quantity,
+            quantityUnit: unit,
             order: index,
 };
           }
@@ -126,8 +126,8 @@ export default function AddRecipeModal({ show, onHide }: Props) {
           return {
             name: main,
             substitutes: subs,
-            quantity: null,
-            unit: null,
+            quantityValue: null,
+            quantityUnit: null,
             order: index,
           };
         });

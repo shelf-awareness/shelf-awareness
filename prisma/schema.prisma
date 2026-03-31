@@ -30,6 +30,12 @@ model User {
   updatedAt     DateTime @updatedAt
   budget        Decimal?  @db.Decimal(10, 2)
 
+  // Daily macro targets (grams, except calories)
+  proteinGoal   Int?
+  carbsGoal     Int?
+  fatGoal       Int?
+  caloriesGoal  Int?
+
   emailVerificationCodes EmailVerificationCode[]
   passwordResetTokens    PasswordResetToken[]
   savedRecipes SavedRecipe[]
