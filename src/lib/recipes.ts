@@ -73,8 +73,8 @@ const cleanedSubs = substitutes
         return {
           name,
           substitutes,
-          quantity,
-          unit,
+          quantityValue: quantity,
+          quantityUnit: unit,
           order: item.order ?? index,
           };
     })
@@ -170,8 +170,8 @@ const recipe = await prisma.recipe.create({
             substitutes: Array.isArray(item.substitutes)
          ? (item.substitutes.join('|') || null)
          : (item.substitutes ?? null),
-            quantity: item.quantityValue ?? null,
-            unit: item.quantityUnit ?? null,
+            quantityValue: item.quantityValue ?? null,
+            quantityUnit: item.quantityUnit ?? null,
             order: item.order ?? 0,
           })),
           }
@@ -257,8 +257,8 @@ export async function updateRecipe(id: number, input: RecipeInput) {
           substitutes: Array.isArray(item.substitutes)
         ? (item.substitutes.join('|') || null)
         : (item.substitutes ?? null),
-          quantity: item.quantityValue ?? null,
-          unit: item.quantityUnit ?? null,
+          quantityValue: item.quantityValue ?? null,
+          quantityUnit: item.quantityUnit ?? null,
           order: item.order ?? 0,
         })),
       },

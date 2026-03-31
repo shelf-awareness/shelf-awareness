@@ -10,6 +10,7 @@ import AddToShoppingList from '@/components/recipes/AddToShoppingList';
 import UploadDishButton from '@/components/recipes/UploadDishButton';
 import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
 import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
+import CookRecipeButton from '@/components/recipes/CookRecipeButton';
 import MadeThisButton from '@/components/recipes/MadeThisButton';
 import { prisma } from '@/lib/prisma';
 
@@ -31,23 +32,6 @@ export default async function RecipeDetailPage({ params }: PageProps) {
   const session = await getServerSession();
   const email = session?.user?.email ?? null;
 
-  let initialMadeCount = 0; // default to 0 if not logged in or no usage record
-if (email) {
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { id: true },
-  });
-
-  if (user) {
-    const usage = await prisma.recipeUsage.findUnique({
-      where: { userId_recipeId: { userId: user.id, recipeId: recipe.id } },
-      select: { count: true },
-    });
-
-    initialMadeCount = usage?.count ?? 0;
-  }
-}
-
   let pantry: any[] = [];
   if (email) {
     pantry = await getUserProduceByEmail(email);
@@ -55,6 +39,23 @@ if (email) {
   
   // Create a set of pantry item names (lowercase for case-insensitive matching)
   const pantryNames = new Set(pantry.map((p) => p.name.toLowerCase()));
+
+  let initialMadeCount = 0;
+  if (email) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: { id: true },
+    });
+
+    if (user) {
+      const usage = await prisma.recipeUsage.findUnique({
+        where: { userId_recipeId: { userId: user.id, recipeId: recipe.id } },
+        select: { count: true },
+      });
+
+      initialMadeCount = usage?.count ?? 0;
+    }
+  }
 
   const substitutionMap = new Map<string, string[]>();
 
@@ -357,11 +358,7 @@ if (email) {
                 </div>
               </div>
             )}
-            <div>
-              <MadeThisButton 
-              recipeId={recipe.id}
-              initialCount={initialMadeCount} />
-            </div>
+
             {recipe.sourceUrl && (
               <Button
                 as="a"
@@ -375,6 +372,23 @@ if (email) {
                 View Original Recipe →
               </Button>
             )}
+
+            <div className="mt-3">
+              <CookRecipeButton
+                owner={email}
+                title={recipe.title}
+                proteinGrams={recipe.proteinGrams ?? null}
+                carbsGrams={recipe.carbsGrams ?? null}
+                fatGrams={recipe.fatGrams ?? null}
+              />
+            </div>
+
+            <div className="mt-3">
+              <MadeThisButton
+                recipeId={recipe.id}
+                initialCount={initialMadeCount}
+              />
+            </div>
 
             <div className="mt-3">
               <SavedRecipeButton recipeId={recipe.id} owner={email} />
