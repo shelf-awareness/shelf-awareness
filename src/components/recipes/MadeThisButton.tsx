@@ -104,7 +104,8 @@ export default function MadeThisButton({
         right.innerHTML = `<div style="font-size:0.8rem;color:#6c757d;">No macro data for this recipe.</div>`;
       } else {
         right.innerHTML = `
-          <div style="font-size:0.8rem;color:#6c757d;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.4rem;">Added to Daily Macros</div>
+          <div style="font-size:0.8rem;color:#6c757d;text-transform:uppercase;letter-spacing:0.05em;
+          margin-bottom:0.4rem;">Added to Daily Macros</div>
           ${macroLines
             .map(
               (line) =>
