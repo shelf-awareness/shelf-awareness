@@ -4,6 +4,7 @@ import { DietaryCategory } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { D } from 'react-router/dist/development/instrumentation-DvHY1sgY';
+import { Prisma } from '@prisma/client';
 
 // Minimal shape so TS knows about session.user.email
 type SessionLike = {
@@ -35,6 +36,17 @@ export type RecipeInput = {
   carbsGrams?: number;
   fatGrams?: number;
   sourceUrl?: string;
+};
+type RecipeWithItems = Prisma.RecipeGetPayload<{
+  include: {
+    ingredientItems: true;
+  };
+}>;
+type UsageRow = {
+  recipeId: number;
+  _sum: {
+    count: number | null;
+  };
 };
 
 /**
@@ -264,4 +276,52 @@ export async function updateRecipe(id: number, input: RecipeInput) {
       },
     },
   });
+}
+export async function getTrendingRecipes() {
+  const sharedRecipes: RecipeWithItems[] = await prisma.recipe.findMany({
+    where: {
+      owner: 'admin@foo.com',
+    },
+    include: {
+      ingredientItems: true,
+    },
+  });
+
+  const sharedRecipeIds = sharedRecipes.map((recipe) => recipe.id);
+
+  if (sharedRecipeIds.length === 0) {
+    return [];
+  }
+
+  const usageRows: UsageRow[] = await prisma.recipeUsage.groupBy({
+    by: ['recipeId'],
+    where: {
+      recipeId: {
+        in: sharedRecipeIds,
+      },
+    },
+    _sum: {
+      count: true,
+    },
+    orderBy: {
+      _sum: {
+        count: 'desc',
+      },
+    },
+    take: 3,
+  });
+
+  const usageMap = new Map<number, number>(
+    usageRows.map((row) => [row.recipeId, row._sum.count ?? 0]),
+  );
+
+  const trendingRecipes = sharedRecipes
+    .filter((recipe) => usageMap.has(recipe.id))
+    .map((recipe) => ({
+      ...recipe,
+      cookCount: usageMap.get(recipe.id) ?? 0,
+    }))
+    .sort((a, b) => (b.cookCount ?? 0) - (a.cookCount ?? 0));
+
+  return trendingRecipes;
 }

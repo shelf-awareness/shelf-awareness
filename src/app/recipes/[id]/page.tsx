@@ -74,7 +74,7 @@ if (email) {
   });
 }
 
-  const displayOwner = recipe.owner?.includes('admin@foo.com') ? ['Pantry Pals Team'] : recipe.owner;
+  const displayOwner = recipe.owner?.includes('admin@foo.com') ? ['Shelf Awareness Team'] : recipe.owner;
 
   // Only use ingredientItems from the relation
   const ingredientItems = recipe.ingredientItems ?? [];
