@@ -23,6 +23,7 @@ const ProfilePage = async () => {
       carbsGoal: true,
       fatGoal: true,
       caloriesGoal: true,
+      dietPref: true,
     },
   });
 
@@ -32,12 +33,15 @@ const ProfilePage = async () => {
   const fatGoal      = userData?.fatGoal      ?? null;
   const caloriesGoal = userData?.caloriesGoal ?? null;
 
+  const dietPref = userData?.dietPref || [];
+
   return (
     <main>
       <Container>
         <ProfilePageClient
           user={user}
           budget={budget}
+          dietPref={dietPref}
           proteinGoal={proteinGoal}
           carbsGoal={carbsGoal}
           fatGoal={fatGoal}

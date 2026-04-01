@@ -29,6 +29,7 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   budget        Decimal?  @db.Decimal(10, 2)
+  dietPref      DietaryCategory[]
 
   // Daily macro targets (grams, except calories)
   proteinGoal   Int?

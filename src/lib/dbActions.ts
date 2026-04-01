@@ -1,10 +1,11 @@
 'use server';
 
-import { Prisma, QuantityUnit } from '@prisma/client';
+import { DietaryCategory, Prisma, QuantityUnit } from '@prisma/client';
 import { hash, compare } from 'bcrypt';
 import { redirect } from 'next/navigation';
 import { prisma } from './prisma';
 import { geocodeAddress } from './geocode';
+import { UpdateDietPrefSchema } from "@/lib/validationSchemas";
 
 /**
  * Creates a new user.
@@ -489,4 +490,29 @@ export async function createShoppingListFromRecipe(data: {
       include: { items: true },
     });
   });
+}
+
+/**
+ * Add dietary preferences to a user's profile.
+ */ 
+export async function updateDietPreferences(userId: number, input: unknown) {
+  try {
+    const validated = await UpdateDietPrefSchema.validate(input, {
+      abortEarly: false,
+    });
+
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        dietPref: validated.dietPref,
+      },
+    });
+
+    return { success: true, data: updatedUser };
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.errors ?? "Validation failed",
+    };
+  }
 }
