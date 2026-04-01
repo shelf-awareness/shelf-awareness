@@ -56,30 +56,10 @@ export default function EditProfileModal({
     return (
         <Modal show={show} onHide={onHide} centered backdrop="static">
             <Modal.Header closeButton>
-                <Modal.Title>Edit Profile</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
-                {err && <Alert variant="danger">{err}</Alert>}
 
-                <Form onSubmit={handleSubmit}>
-                    <Form.Group className="mb-3">
-                        <Form.Label>Email Address</Form.Label>
-                        <Form.Control type="email" value={email} disabled />
-                        <Form.Text className="text-muted">
-                            Email cannot be changed
-                        </Form.Text>
-                    </Form.Group>
-
-                    <div className="d-flex justify-content-between mt-4">
-                        <Button type="submit" className="btn-add" disabled={isLoading}>
-                            {isLoading ? 'Saving…' : 'Save Changes'}
-                        </Button>
-                        <Button variant="secondary" type="button" onClick={onHide}>
-                            Cancel
-                        </Button>
-                    </div>
-                </Form>
             </Modal.Body>
         </Modal>
     );

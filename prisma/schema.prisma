@@ -29,6 +29,7 @@ model User {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   budget        Decimal?  @db.Decimal(10, 2)
+  dietPref      DietaryCategory[]
 
   emailVerificationCodes EmailVerificationCode[]
   passwordResetTokens    PasswordResetToken[]

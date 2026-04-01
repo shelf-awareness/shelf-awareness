@@ -1,4 +1,4 @@
-import { QuantityUnit } from '@prisma/client';
+import { QuantityUnit, DietaryCategory } from '@prisma/client';
 import * as Yup from 'yup';
 
 export const AddProduceSchema = Yup.object({
@@ -108,4 +108,15 @@ export const UpdateBudgetSchema = Yup.object({
     .typeError('Budget must be a number')
     .positive('Budget must be greater than 0')
     .required('Budget is required'),
+});
+
+export const UpdateDietPrefSchema = Yup.object({
+  dietPref: Yup.array()
+    .of(
+      Yup.mixed<DietaryCategory>()
+        .oneOf(Object.values(DietaryCategory))
+        .required()
+    )
+    .default([])
+    .required(),
 });

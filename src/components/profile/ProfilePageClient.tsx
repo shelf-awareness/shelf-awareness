@@ -5,14 +5,18 @@ import { Card, Container, Button, Form, Row, Col } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import EditProfileModal from './EditProfileModal';
+import EditDietPrefModal from './EditDietPrefModal';
+import { DietaryCategory } from '@prisma/client';
 
 interface ProfileProps {
   user: string;
   budget: number | null;
+  dietPref: DietaryCategory[];
 }
 
-export default function ProfilePageClient({ user, budget }: ProfileProps) {
+export default function ProfilePageClient({ user, budget, dietPref }: ProfileProps) {
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const  [showDietModal, setShowDietModal] = useState(false);
   const { data: session } = useSession();
   const owner = session?.user?.email || user || '';
 
@@ -33,6 +37,9 @@ export default function ProfilePageClient({ user, budget }: ProfileProps) {
                   </Card.Body>
                 </Col>
 
+                {/* NOTE: For formatting purposes, the Form component is used merely to organize and display the content.
+                    There is no actual form with functionality and the input fields are disabled. 
+                */}
                 <Col lg={9}>
                   <h5 className="mt-2 ms-1">Profile Information</h5>
                   <Card className="m-3">
@@ -51,7 +58,7 @@ export default function ProfilePageClient({ user, budget }: ProfileProps) {
                           <Form.Group>
                             <Form.Label>Display Name</Form.Label>
                             <Form.Control
-                              value={owner || 'Email'}
+                              value={'Display Name'}
                               disabled
                             />
                           </Form.Group>
@@ -73,6 +80,22 @@ export default function ProfilePageClient({ user, budget }: ProfileProps) {
                                 disabled
                               />
                             </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>Dietary Preferences</Form.Label>
+                            <div className="d-flex flex-wrap gap-1" style={{ minHeight: '2.5rem' }}>
+                              {dietPref.length > 0 ? (
+                                dietPref.map((pref) => (
+                                  <span key={pref} className="badge bg-secondary">
+                                    {pref.replace(/_/g, ' ')}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="text-muted">None...</span>
+                              )}
+                            </div>
+                          </Form.Group>
                         </Col>
                       </Row>                                    
                     </Form>
@@ -110,6 +133,9 @@ export default function ProfilePageClient({ user, budget }: ProfileProps) {
                 <Button variant="primary" onClick={() => setShowProfileModal(true)}>
                   Edit Profile
                 </Button>
+                <Button variant="secondary" className="ms-2" onClick={() => setShowDietModal(true)}>
+                  Edit Dietary Preferences
+                </Button>
               </Card.Footer>
         </Card>
       </Container>
@@ -118,6 +144,12 @@ export default function ProfilePageClient({ user, budget }: ProfileProps) {
         show={showProfileModal}
         onHide={() => setShowProfileModal(false)}
         email={owner}
+      />
+
+      <EditDietPrefModal
+        show={showDietModal}
+        onHide={() => setShowDietModal(false)}
+        currentDietPref={dietPref}
       />
     </main>
   );

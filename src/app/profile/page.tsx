@@ -17,9 +17,11 @@ const ProfilePage = async () => {
 
   const userData = await prisma.user.findUnique({
     where: { email: user },
-    select: { budget: true },
+    select: { budget: true, dietPref: true },
   });
   const budget = userData?.budget ? Number(userData.budget) : null;
+
+  const dietPref = userData?.dietPref || [];
 
   return (
     <main>
@@ -27,6 +29,7 @@ const ProfilePage = async () => {
         <ProfilePageClient
           user={user}
           budget={budget}
+          dietPref={dietPref}
         />
       </Container>
     </main>
