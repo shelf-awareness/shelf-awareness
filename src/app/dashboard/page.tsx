@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 import authOptions from '@/lib/authOptions';
-import { getRecipes } from '@/lib/recipes';
+import { getRecipes, getTrendingRecipes } from '@/lib/recipes';
 import { getUserProduceByEmail } from '@/lib/dbActions';
 import { prisma } from '@/lib/prisma';
 import DashboardMenu from '../../components/dashboard/DashboardMenu';
@@ -16,6 +16,10 @@ const DashboardPage = async () => {
 
   const email = session?.user?.email || '';
 
+  // Fetch recipes and produce server-side (same pattern as recipes/page.tsx)
+  const recipes = await getRecipes();
+  const pantry = email ? await getUserProduceByEmail(email) : [];
+  const trendingRecipes = await getTrendingRecipes();
   const [recipes, pantry, userData] = await Promise.all([
     getRecipes(),
     email ? getUserProduceByEmail(email) : Promise.resolve([]),
@@ -38,6 +42,7 @@ const DashboardPage = async () => {
         ownerEmail={email}
         recipes={recipes}
         produce={pantry}
+        trendingRecipes={trendingRecipes}
         proteinGoal={userData?.proteinGoal   ?? null}
         carbsGoal={userData?.carbsGoal       ?? null}
         fatGoal={userData?.fatGoal           ?? null}

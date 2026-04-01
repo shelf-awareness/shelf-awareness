@@ -8,22 +8,21 @@ import {
   BookHalf,
 } from 'react-bootstrap-icons';
 import QuickAlerts from './QuickAlerts';
+import TrendingRecipeCard from './TrendingRecipeCard';
 import MacroTracker from './MacroTracker';
 
 interface DashboardMenuProps {
   ownerEmail: string;
   recipes: any[];
   produce: any[];
-  proteinGoal: number | null;
-  carbsGoal: number | null;
-  fatGoal: number | null;
-  caloriesGoal: number | null;
+  trendingRecipes: any[];
 }
 
 export default function DashboardMenu({
   ownerEmail,
   recipes,
   produce,
+  trendingRecipes,
   proteinGoal,
   carbsGoal,
   fatGoal,
@@ -89,6 +88,51 @@ export default function DashboardMenu({
         />
 
         <QuickAlerts ownerEmail={ownerEmail} recipes={recipes} produce={produce} />
+        <div className="text-center mt-5 mb-3">
+          <h2 className="fw-bold" style={{ color: 'var(--prussian-blue)' }}>
+            🔥 Trending Recipes
+          </h2>
+          <p style={{ color: 'var(--hunter-green)', fontSize: '0.95rem' }}>
+            The most-made recipes curated by the Shelf Awareness team!
+          </p>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '1.5rem',
+            alignItems: 'stretch',
+          }}
+        >
+          {trendingRecipes.length > 0 ? (
+            trendingRecipes.map((recipe, index) => (
+              <motion.div key={recipe.id} variants={item}>
+                <TrendingRecipeCard
+                  id={recipe.id}
+                  title={recipe.title}
+                  description={recipe.description}
+                  imageUrl={recipe.imageUrl}
+                  cookCount={recipe.cookCount}
+                  rank={index + 1}
+                />
+              </motion.div>
+            ))
+          ) : (
+            <motion.div
+              variants={item}
+              className="text-center"
+              style={{
+                gridColumn: '1 / -1',
+                background: 'white',
+                borderRadius: '18px',
+                padding: '2rem',
+                boxShadow: '0 6px 14px rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              <p className="mb-0 text-muted">No trending recipes yet.</p>
+            </motion.div>
+          )}
+        </div>
 
         {/* Dashboard cards */}
         <motion.div
