@@ -10,7 +10,6 @@ import AddToShoppingList from '@/components/recipes/AddToShoppingList';
 import UploadDishButton from '@/components/recipes/UploadDishButton';
 import ViewDishImagesButton from '@/components/recipes/ViewDishImagesButton';
 import SavedRecipeButton from '@/components/recipes/SavedRecipesButton';
-import CookRecipeButton from '@/components/recipes/CookRecipeButton';
 import MadeThisButton from '@/components/recipes/MadeThisButton';
 import { prisma } from '@/lib/prisma';
 
@@ -374,19 +373,13 @@ if (email) {
             )}
 
             <div className="mt-3">
-              <CookRecipeButton
-                owner={email}
-                title={recipe.title}
-                proteinGrams={recipe.proteinGrams ?? null}
-                carbsGrams={recipe.carbsGrams ?? null}
-                fatGrams={recipe.fatGrams ?? null}
-              />
-            </div>
-
-            <div className="mt-3">
               <MadeThisButton
                 recipeId={recipe.id}
                 initialCount={initialMadeCount}
+                owner={email}
+                proteinGrams={recipe.proteinGrams ?? null}
+                carbsGrams={recipe.carbsGrams ?? null}
+                fatGrams={recipe.fatGrams ?? null}
               />
             </div>
 
