@@ -16,6 +16,10 @@ interface DashboardMenuProps {
   recipes: any[];
   produce: any[];
   trendingRecipes: any[];
+  proteinGoal: number | null;
+  carbsGoal: number | null;
+  fatGoal: number | null;
+  caloriesGoal: number | null;
 }
 
 export default function DashboardMenu({

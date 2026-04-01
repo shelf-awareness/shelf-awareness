@@ -17,8 +17,8 @@ const DashboardPage = async () => {
   const email = session?.user?.email || '';
 
   // Fetch recipes and produce server-side (same pattern as recipes/page.tsx)
-  const recipes = await getRecipes();
-  const pantry = email ? await getUserProduceByEmail(email) : [];
+  //const recipes = await getRecipes();
+  //const pantry = email ? await getUserProduceByEmail(email) : [];
   const trendingRecipes = await getTrendingRecipes();
   const [recipes, pantry, userData] = await Promise.all([
     getRecipes(),
