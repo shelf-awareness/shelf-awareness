@@ -17,8 +17,8 @@ export async function GET(req: NextRequest) {
         id: true,
         name: true,
         type: true,
-        quantity: true,
-        unit: true,
+        quantityValue: true,
+        quantityUnit: true,
         expiration: true,
         restockThreshold: true,
         customThreshold: true,
@@ -30,13 +30,15 @@ export async function GET(req: NextRequest) {
     });
 
     // Map to friendly structure for frontend
-    // eslint-disable-next-line max-len
-    const result = produce.map((p: { id: any; name: any; type: any; quantity: any; unit: any; expiration: any; restockThreshold: any; customThreshold: any; restockTrigger: any; image: any; location: { name: any; }; storage: { name: any; }; }) => ({
+    const result = produce.map((p: { id: any; name: any; type: any; 
+      quantityValue: any; quantityUnit: any; expiration: any; 
+      restockThreshold: any; customThreshold: any; restockTrigger: any; 
+      image: any; location: { name: any; }; storage: { name: any; }; }) => ({
       id: p.id,
       name: p.name,
       type: p.type,
-      quantity: p.quantity,
-      unit: p.unit,
+      quantityValue: p.quantityValue,
+      quantityUnit: p.quantityUnit,
       expiration: p.expiration,
       restockThreshold: p.restockThreshold,
       customThreshold: p.customThreshold,

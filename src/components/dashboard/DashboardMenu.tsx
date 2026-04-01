@@ -8,14 +8,27 @@ import {
   BookHalf,
 } from 'react-bootstrap-icons';
 import QuickAlerts from './QuickAlerts';
+import MacroTracker from './MacroTracker';
 
 interface DashboardMenuProps {
   ownerEmail: string;
   recipes: any[];
   produce: any[];
+  proteinGoal: number | null;
+  carbsGoal: number | null;
+  fatGoal: number | null;
+  caloriesGoal: number | null;
 }
 
-export default function DashboardMenu({ ownerEmail, recipes, produce }: DashboardMenuProps) {
+export default function DashboardMenu({
+  ownerEmail,
+  recipes,
+  produce,
+  proteinGoal,
+  carbsGoal,
+  fatGoal,
+  caloriesGoal,
+}: DashboardMenuProps) {
   const parent = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
   const item = { hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.45 } } };
   const menuItems = [
@@ -66,6 +79,14 @@ export default function DashboardMenu({ ownerEmail, recipes, produce }: Dashboar
             </motion.p>
           </motion.div>
         </div>
+
+        <MacroTracker
+          ownerEmail={ownerEmail}
+          proteinGoal={proteinGoal}
+          carbsGoal={carbsGoal}
+          fatGoal={fatGoal}
+          caloriesGoal={caloriesGoal}
+        />
 
         <QuickAlerts ownerEmail={ownerEmail} recipes={recipes} produce={produce} />
 
