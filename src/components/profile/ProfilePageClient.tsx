@@ -79,95 +79,55 @@ export default function ProfilePageClient({
                 </Card>
               </Card.Body>
             </Col>
-
-            {/* Info column */}
+            
+            {/* NOTE: For formatting purposes, the Form component is used merely to organize and display the content.
+                There is no actual form with functionality and the input fields are disabled. 
+            */}
             <Col lg={9}>
               <h5 className="mt-2 ms-1">Profile Information</h5>
-              <Card className="m-3">
-                <Form>
-                  <Row className="m-3">
-                    <Col md={6}>
-                      <Form.Group>
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control value={owner || 'Email'} disabled />
-                      </Form.Group>
-                    </Col>
-                    <Col md={6}>
-                      <Form.Group>
-                        <Form.Label>Display Name</Form.Label>
-                        <Form.Control value={owner || 'Email'} disabled />
-                      </Form.Group>
-                    </Col>
-                  </Row>
+                <Card className="m-3">
+                  <Form>
+                    <Row className="m-3">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>Username</Form.Label>
+                          <Form.Control
+                            value={owner || 'Email'}
+                            disabled
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>Display Name</Form.Label>
+                          <Form.Control
+                            value={'Display Name'}
+                            disabled
+                          />
+                        </Form.Group>
+                      </Col>
+                    </Row>                                    
                 </Form>
               </Card>
-
+              
               <hr />
 
               <h5 className="mt-1 ms-1">Miscellaneous</h5>
-              <Card className="m-3">
-                <Form>
-                  <Row className="m-3">
-                    <Col md={6}>
-                      <Form.Group>
-                        <Form.Label>Budget</Form.Label>
-                        <Form.Control
-                          value={budget !== null ? `$${budget}` : 'None...'}
-                          disabled
-                        />
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Form>
-              </Card>
-
-                {/* NOTE: For formatting purposes, the Form component is used merely to organize and display the content.
-                    There is no actual form with functionality and the input fields are disabled. 
-                */}
-                <Col lg={9}>
-                  <h5 className="mt-2 ms-1">Profile Information</h5>
-                  <Card className="m-3">
-                    <Form>
-                      <Row className="m-3">
-                        <Col md={6}>
-                          <Form.Group>
-                            <Form.Label>Username</Form.Label>
+                <Card className="m-3">
+                  <Form>
+                    <Row className="m-3">
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>Budget</Form.Label>
                             <Form.Control
-                              value={owner || 'Email'}
+                              value={budget !== null ? `$${budget}` : 'None...'}
                               disabled
                             />
                           </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                          <Form.Group>
-                            <Form.Label>Display Name</Form.Label>
-                            <Form.Control
-                              value={'Display Name'}
-                              disabled
-                            />
-                          </Form.Group>
-                        </Col>
-                      </Row>                                    
-                    </Form>
-                  </Card>
-                  <hr />
-
-                  <h5 className="mt-1 ms-1">Miscellaneous</h5>
-                  <Card className="m-3">
-                    <Form>
-                      <Row className="m-3">
-                        <Col md={6}>
-                          <Form.Group>
-                            <Form.Label>Budget</Form.Label>
-                              <Form.Control
-                                value={budget !== null ? `$${budget}` : 'None...'}
-                                disabled
-                              />
-                            </Form.Group>
-                        </Col>
-                        <Col md={6}>
-                          <Form.Group>
-                            <Form.Label>Dietary Preferences</Form.Label>
+                      </Col>
+                      <Col md={6}>
+                        <Form.Group>
+                          <Form.Label>Dietary Preferences</Form.Label>
                             <div className="d-flex flex-wrap gap-1" style={{ minHeight: '2.5rem' }}>
                               {dietPref.length > 0 ? (
                                 dietPref.map((pref) => (
@@ -178,14 +138,14 @@ export default function ProfilePageClient({
                               ) : (
                                 <span className="text-muted">None...</span>
                               )}
-                            </div>
-                          </Form.Group>
-                        </Col>
-                      </Row>                                    
-                    </Form>
-                  </Card>
+                          </div>
+                      </Form.Group>
+                    </Col>
+                  </Row>                                    
+                </Form>
+              </Card>
 
-                  <hr />
+              <hr />
 
 
               <h5 className="mt-1 ms-1">Macro Goals</h5>
