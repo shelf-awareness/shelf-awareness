@@ -3,6 +3,7 @@ import { loggedInProtectedPage } from '@/lib/page-protection';
 import authOptions from '@/lib/authOptions';
 import { getRecipes, getTrendingRecipes } from '@/lib/recipes';
 import { getUserProduceByEmail } from '@/lib/dbActions';
+import { prisma } from '@/lib/prisma';
 import DashboardMenu from '../../components/dashboard/DashboardMenu';
 
 export const dynamic = 'force-dynamic';
@@ -19,6 +20,21 @@ const DashboardPage = async () => {
   const recipes = await getRecipes();
   const pantry = email ? await getUserProduceByEmail(email) : [];
   const trendingRecipes = await getTrendingRecipes();
+  const [recipes, pantry, userData] = await Promise.all([
+    getRecipes(),
+    email ? getUserProduceByEmail(email) : Promise.resolve([]),
+    email
+      ? prisma.user.findUnique({
+          where: { email },
+          select: {
+            proteinGoal:  true,
+            carbsGoal:    true,
+            fatGoal:      true,
+            caloriesGoal: true,
+          },
+        })
+      : Promise.resolve(null),
+  ]);
 
   return (
     <main>
@@ -27,6 +43,10 @@ const DashboardPage = async () => {
         recipes={recipes}
         produce={pantry}
         trendingRecipes={trendingRecipes}
+        proteinGoal={userData?.proteinGoal   ?? null}
+        carbsGoal={userData?.carbsGoal       ?? null}
+        fatGoal={userData?.fatGoal           ?? null}
+        caloriesGoal={userData?.caloriesGoal ?? null}
       />
     </main>
   );

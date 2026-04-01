@@ -17,9 +17,23 @@ const ProfilePage = async () => {
 
   const userData = await prisma.user.findUnique({
     where: { email: user },
-    select: { budget: true },
+    select: {
+      budget: true,
+      proteinGoal: true,
+      carbsGoal: true,
+      fatGoal: true,
+      caloriesGoal: true,
+      dietPref: true,
+    },
   });
-  const budget = userData?.budget ? Number(userData.budget) : null;
+
+  const budget       = userData?.budget       ? Number(userData.budget)       : null;
+  const proteinGoal  = userData?.proteinGoal  ?? null;
+  const carbsGoal    = userData?.carbsGoal    ?? null;
+  const fatGoal      = userData?.fatGoal      ?? null;
+  const caloriesGoal = userData?.caloriesGoal ?? null;
+
+  const dietPref = userData?.dietPref || [];
 
   return (
     <main>
@@ -27,6 +41,11 @@ const ProfilePage = async () => {
         <ProfilePageClient
           user={user}
           budget={budget}
+          dietPref={dietPref}
+          proteinGoal={proteinGoal}
+          carbsGoal={carbsGoal}
+          fatGoal={fatGoal}
+          caloriesGoal={caloriesGoal}
         />
       </Container>
     </main>

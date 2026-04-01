@@ -9,6 +9,7 @@ import {
 } from 'react-bootstrap-icons';
 import QuickAlerts from './QuickAlerts';
 import TrendingRecipeCard from './TrendingRecipeCard';
+import MacroTracker from './MacroTracker';
 
 interface DashboardMenuProps {
   ownerEmail: string;
@@ -17,7 +18,16 @@ interface DashboardMenuProps {
   trendingRecipes: any[];
 }
 
-export default function DashboardMenu({ ownerEmail, recipes, produce, trendingRecipes }: DashboardMenuProps) {
+export default function DashboardMenu({
+  ownerEmail,
+  recipes,
+  produce,
+  trendingRecipes,
+  proteinGoal,
+  carbsGoal,
+  fatGoal,
+  caloriesGoal,
+}: DashboardMenuProps) {
   const parent = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
   const item = { hidden: { opacity: 0, y: 18 }, show: { opacity: 1, y: 0, transition: { duration: 0.45 } } };
   const menuItems = [
@@ -68,6 +78,14 @@ export default function DashboardMenu({ ownerEmail, recipes, produce, trendingRe
             </motion.p>
           </motion.div>
         </div>
+
+        <MacroTracker
+          ownerEmail={ownerEmail}
+          proteinGoal={proteinGoal}
+          carbsGoal={carbsGoal}
+          fatGoal={fatGoal}
+          caloriesGoal={caloriesGoal}
+        />
 
         <QuickAlerts ownerEmail={ownerEmail} recipes={recipes} produce={produce} />
         <div className="text-center mt-5 mb-3">
