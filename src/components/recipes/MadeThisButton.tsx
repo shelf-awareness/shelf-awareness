@@ -37,6 +37,137 @@ export default function MadeThisButton({
     setCount(initialCount);
   }, [initialCount]);
 
+    const getRatingStatus = async () => {
+    const res = await fetch(`/api/recipes/${recipeId}/rating`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+
+    if (!res.ok) throw new Error(data?.error ?? "Failed to fetch rating status");
+
+    return {
+      hasRated: Boolean(data?.hasRated),
+      rating: data?.rating ?? null,
+    };
+  };
+
+  const submitRating = async (rating: number) => {
+    const res = await fetch(`/api/recipes/${recipeId}/rating`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rating }),
+    });
+
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
+
+    if (!res.ok) throw new Error(data?.error ?? "Failed to save rating");
+
+    return data;
+  };
+
+    const promptForRating = async () => {
+    let selectedRating = 0;
+
+    const wrapper = document.createElement("div");
+    wrapper.style.textAlign = "center";
+
+    const label = document.createElement("div");
+    label.style.cssText = "margin-bottom:0.75rem;font-size:0.95rem;color:#495057;";
+    label.textContent = "How would you rate this recipe?";
+    wrapper.appendChild(label);
+
+    const starsRow = document.createElement("div");
+    starsRow.style.cssText =
+      "display:flex;justify-content:center;gap:0.5rem;margin-bottom:0.75rem;";
+    wrapper.appendChild(starsRow);
+
+    const helper = document.createElement("div");
+    helper.style.cssText = "font-size:0.85rem;color:#007FFF;";
+    helper.textContent = "Select 1 to 5 stars";
+    wrapper.appendChild(helper);
+
+    const starButtons: HTMLButtonElement[] = [];
+
+    const paintStars = () => {
+      starButtons.forEach((btn, index) => {
+        btn.textContent = index < selectedRating ? "★" : "☆";
+        btn.style.color = index < selectedRating ? "#f5c518" : "#adb5bd";
+      });
+
+      helper.textContent =
+        selectedRating > 0 ? `${selectedRating}/5 selected` : "Select 1 to 5 stars";
+    };
+
+    for (let i = 1; i <= 5; i++) {
+      const star = document.createElement("button");
+      star.type = "button";
+      star.textContent = "☆";
+      star.style.cssText =
+        "font-size:2rem;background:none;border:none;cursor:pointer;line-height:1;";
+      star.onclick = () => {
+        selectedRating = i;
+        paintStars();
+      };
+
+      starButtons.push(star);
+      starsRow.appendChild(star);
+    }
+
+    paintStars();
+
+    const willSubmit = await swal({
+      title: "Rate this recipe",
+      content: wrapper as any,
+      buttons: {
+        cancel: {
+          text: "Maybe later",
+          value: null,
+          visible: true,
+          className: "swal-btn-cancel",
+        },
+        confirm: {
+          text: "Submit rating",
+          value: true,
+          visible: true,
+          className: "swal-btn-azure",
+        },
+      },
+    });
+
+    if (!willSubmit) return;
+
+    if (selectedRating < 1 || selectedRating > 5) {
+      await swal({
+        title: "No rating selected",
+        text: "Please choose a star rating from 1 to 5.",
+        icon: "warning",
+      });
+      return;
+    }
+
+    await submitRating(selectedRating);
+
+    await swal({
+      title: "Thanks!",
+      text: `You rated this recipe ${selectedRating}/5.`,
+      icon: "success",
+      timer: 1800,
+      buttons: false as any,
+    });
+  };
+
   const handleMadeThis = async () => {
     if (loading) return;
     setLoading(true);
@@ -57,6 +188,8 @@ export default function MadeThisButton({
       if (!res.ok) throw new Error(data?.error ?? "Failed to update");
 
       const newCount = data.count;
+      const firstTime = Boolean(data.firstTime);
+
       setCount(newCount);
       onIncrement?.(newCount);
 
@@ -118,13 +251,24 @@ export default function MadeThisButton({
       content.appendChild(left);
       content.appendChild(right);
 
-      swal({
+      await swal({
         title: "Logged!",
         icon: "success",
         content: content as any,
         timer: 2500,
         buttons: false as any,
       });
+            if (owner) {
+        try {
+          const ratingStatus = await getRatingStatus();
+
+          if (!ratingStatus.hasRated) {
+            await promptForRating();
+          }
+        } catch (error) {
+          console.error("Rating popup failed:", error);
+        }
+      }
     } catch (err: any) {
       swal({
         title: "Error",

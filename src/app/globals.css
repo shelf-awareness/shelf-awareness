@@ -222,3 +222,23 @@ footer a {
 .profile-sidebar {
   background-color: #A1A1A1;
 }
+
+.swal-button.swal-btn-azure {
+  background-color: #0078D4 !important;
+  color: white !important;
+  border: none !important;
+}
+
+.swal-button.swal-btn-azure:hover {
+  background-color: #106EBE !important;
+}
+
+.swal-button.swal-btn-azure:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 120, 212, 0.4) !important;
+}
+
+.swal-button.swal-btn-cancel {
+  background-color: #e9ecef !important;
+  color: #212529 !important;
+  border: none !important;
+}
