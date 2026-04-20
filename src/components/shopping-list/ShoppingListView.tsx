@@ -85,7 +85,8 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
     if (key === 'totalItems') return list.items.length;
     if (key === 'totalCost') return list.items.reduce(
       (sum, item) =>
-        sum + (item.price != null ? Number(item.price) : 0) * (item.quantityValue != null ? Number(item.quantityValue) : 0),
+        sum + (item.price != null ? Number(item.price) : 0) * (item.quantityValue
+           != null ? Number(item.quantityValue) : 0),
       0,
     );
     if (key === 'totalProtein') return list.totalProtein;
