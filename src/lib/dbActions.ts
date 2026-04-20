@@ -136,8 +136,8 @@ export async function addProduce(produce: {
         data: {
           shoppingListId: shoppingList.id,
           name: newProduce.name,
-          quantity: newProduce.restockThreshold ?? 1,
-          unit: newProduce.unit,
+          quantityValue: newProduce.restockThreshold ?? 1,
+          quantityUnit: newProduce.unit,
           price: null,
         },
       });
@@ -220,8 +220,8 @@ export async function editProduce(
         data: {
           shoppingListId: shoppingList.id,
           name: updatedProduce.name,
-          quantity: updatedProduce.restockThreshold ?? 1,
-          unit: updatedProduce.unit,
+          quantityValue: updatedProduce.restockThreshold ?? 1,
+          quantityUnit: updatedProduce.unit,
           price: null,
         },
       });
@@ -383,7 +383,7 @@ export async function addShoppingListItem(data: {
     },
     create: {
       name: data.name,
-      quantityValue: data.quantity, 
+      quantityValue: data.quantity,
       quantityUnit: data.unit || '',
       price: data.price ?? null,
       proteinGrams: data.proteinGrams ?? null,
@@ -391,6 +391,9 @@ export async function addShoppingListItem(data: {
     },
     update: {
       quantityValue: { increment: data.quantity },
+      quantityUnit: data.unit || '',
+      price: data.price ?? null,
+      proteinGrams: data.proteinGrams ?? null,
     },
   });
   console.log('✅ Added item to shopping list:', item);
@@ -407,9 +410,10 @@ export async function editShoppingListItem(
   item: {
     id: number;
     name?: string;
-    quantity?: number;
-    unit?: string | null;
+    quantityValue?: number;
+    quantityUnit?: string | null;
     price?: number | null;
+    proteinGrams?: number | null;
     restockTrigger?: string | null;
     customThreshold?: number | null;
   },
@@ -418,9 +422,10 @@ export async function editShoppingListItem(
     where: { id: item.id },
     data: {
       ...(item.name !== undefined && { name: item.name }),
-      ...(item.quantity !== undefined && { quantity: item.quantity }),
-      ...(item.unit !== undefined && { unit: item.unit }),
+      ...(item.quantityValue !== undefined && { quantityValue: item.quantityValue }),
+      ...(item.quantityUnit !== undefined && { quantityUnit: item.quantityUnit }),
       ...(item.price !== undefined && { price: item.price }),
+      ...(item.proteinGrams !== undefined && { proteinGrams: item.proteinGrams }),
       ...(item.restockTrigger !== undefined && {
         restockTrigger: item.restockTrigger,
       }),
@@ -468,7 +473,7 @@ export async function createShoppingListFromRecipe(data: {
     create: (arg0: { data: { name: string; owner: string; }; }) => any; 
     findUniqueOrThrow: (arg0: { where: { id: any; }; include: { items: boolean; }; }) => any; 
   }; shoppingListItem: { createMany: (arg0: { data: { shoppingListId: any; name: string; 
-    quantity: number; unit: string; }[]; }) => any; }; }) => {
+    quantityValue: number; quantityUnit: string; }[]; }) => any; }; }) => {
     const list = await tx.shoppingList.create({
       data: { name: listName, owner: data.owner },
     });
@@ -478,8 +483,8 @@ export async function createShoppingListFromRecipe(data: {
         data: data.ingredients.map((ingredient) => ({
           shoppingListId: list.id,
           name: ingredient.name,
-          quantity: ingredient.quantity ?? 1,
-          unit: ingredient.unit ?? '',
+          quantityValue: ingredient.quantity ?? 1,
+          quantityUnit: ingredient.unit ?? '',
         })),
       });
     }
