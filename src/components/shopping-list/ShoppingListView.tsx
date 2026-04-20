@@ -84,7 +84,10 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
   const getListValue = (list: ShoppingListWithProtein, key: SortKey) => {
     if (key === 'totalItems') return list.items.length;
     if (key === 'totalCost') return list.items.reduce(
-      (sum, item) => sum + (item.price ? Number(item.price) : 0) * item.quantityValue, 0,
+      (sum, item) =>
+        sum + (item.price != null ? Number(item.price) : 0) * (item.quantityValue
+           != null ? Number(item.quantityValue) : 0),
+      0,
     );
     if (key === 'totalProtein') return list.totalProtein;
     return 0;
@@ -207,10 +210,21 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
               if (list.id !== newItem.shoppingListId) return list;
               const exists = list.items.find((i) => i.id === newItem.id);
               const updatedItems = exists
-                ? list.items.map((i) => (i.id === newItem.id ? { ...i, quantity: newItem.quantity } : i))
+                ? list.items.map((i) => (
+                  i.id === newItem.id
+                    ? {
+                        ...i,
+                        quantityValue: newItem.quantityValue,
+                        quantityUnit: newItem.quantityUnit,
+                        price: newItem.price,
+                        proteinGrams: newItem.proteinGrams,
+                      }
+                    : i
+                ))
                 : [...list.items, newItem];
               const totalProtein = updatedItems.reduce(
-                (sum, i) => sum + (i.proteinGrams ?? 0) * i.quantity, 0,
+                (sum, i) => sum + (i.proteinGrams ?? 0) * i.quantityValue,
+                0,
               );
               return { ...list, items: updatedItems, totalProtein };
             }),

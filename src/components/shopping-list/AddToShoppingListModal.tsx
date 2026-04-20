@@ -188,7 +188,7 @@ const AddToShoppingListModal = ({
       <Row className="mb-3">
         <Col xs={12} sm={5}>
           <Form.Group>
-            <Form.Label>Price (optional)</Form.Label>
+            <Form.Label>Price Per Unit (optional)</Form.Label>
             <InputGroup>
               <InputGroup.Text>$</InputGroup.Text>
               <Form.Control

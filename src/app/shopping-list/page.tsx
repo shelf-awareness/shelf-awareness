@@ -30,8 +30,8 @@ const ViewShoppingListPage = async () => {
       id: item.id,
       shoppingListId: item.shoppingListId,
       name: item.name,
-      quantity: item.quantityValue,
-      unit: item.quantityUnit,
+      quantityValue: item.quantityValue,
+      quantityUnit: item.quantityUnit,
       proteinGrams: item.proteinGrams ?? null,
       price: item.price != null ? Number(item.price.toString()) : null,
       restockTrigger: item.restockTrigger ?? null,
@@ -39,7 +39,7 @@ const ViewShoppingListPage = async () => {
     }));
 
     const totalProtein = items.reduce(
-      (sum, item) => sum + (item.proteinGrams ?? 0) * item.quantity,
+      (sum, item) => sum + (item.proteinGrams ?? 0) * item.quantityValue,
       0,
     );
 
