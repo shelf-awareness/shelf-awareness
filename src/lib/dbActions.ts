@@ -115,7 +115,7 @@ export async function addProduce(produce: {
     },
   });
 
-  // Auto-add to shopping list if below threshold
+  // Auto- if below threshold
   if (newProduce.restockThreshold !== null && newProduce.quantity <= newProduce.restockThreshold) {
     const shoppingList = await prisma.shoppingList.upsert({
       where: { name_owner: { name: 'Auto Restock', owner: newProduce.owner } },
@@ -199,7 +199,7 @@ export async function editProduce(
     },
   });
 
-  // Auto-add to shopping list if below threshold
+  // Auto- if below threshold
   if (updatedProduce.restockThreshold !== null && updatedProduce.quantity <= updatedProduce.restockThreshold) {
     const shoppingList = await prisma.shoppingList.upsert({
       where: { name_owner: { name: 'Auto Restock', owner: updatedProduce.owner } },

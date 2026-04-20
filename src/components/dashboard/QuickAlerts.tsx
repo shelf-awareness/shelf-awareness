@@ -87,13 +87,13 @@ export default function QuickAlerts({ ownerEmail, recipes, produce }: QuickAlert
 
   if (loading) {
     return (
-      <Card className="mb-4 shadow-sm border-light">
+      <Card className="mb-4 shadow-sm border-light mx-auto" style={{ width: 'fit-content' }}>
         <Card.Body>
-          <div className="d-flex align-items-center mb-3">
+          <div className="d-flex justify-content-center align-items-center mb-3">
             <ExclamationTriangle className="me-2 text-warning" size={20} />
             <Card.Title className="mb-0">Quick Alerts</Card.Title>
           </div>
-          <div className="text-muted">
+          <div className="text-muted text-center">
             <Spinner animation="border" size="sm" className="me-2" />
             Loading alerts...
           </div>
@@ -121,8 +121,7 @@ export default function QuickAlerts({ ownerEmail, recipes, produce }: QuickAlert
     if (recipeCount === 1) {
       return (
         <>
-          You can make
-          {' '}
+          You can make{' '}
           <Link
             href={`/recipes/${availableRecipes[0].id}`}
             className="text-success text-decoration-none"
@@ -138,8 +137,7 @@ export default function QuickAlerts({ ownerEmail, recipes, produce }: QuickAlert
     if (recipeCount === 2) {
       return (
         <>
-          You can make
-          {' '}
+          You can make{' '}
           <Link
             href={`/recipes/${availableRecipes[0].id}`}
             className="text-success text-decoration-none"
@@ -148,10 +146,8 @@ export default function QuickAlerts({ ownerEmail, recipes, produce }: QuickAlert
             onMouseLeave={(e) => (e.currentTarget.style.fontWeight = '600')}
           >
             {availableRecipes[0].title}
-          </Link>
-          {' '}
-          and
-          {' '}
+          </Link>{' '}
+          and{' '}
           <Link
             href={`/recipes/${availableRecipes[1].id}`}
             className="text-success text-decoration-none"
@@ -167,8 +163,7 @@ export default function QuickAlerts({ ownerEmail, recipes, produce }: QuickAlert
 
     return (
       <>
-        You can make
-        {' '}
+        You can make{' '}
         <Link
           href={`/recipes/${availableRecipes[0].id}`}
           className="text-success text-decoration-none"
@@ -178,8 +173,7 @@ export default function QuickAlerts({ ownerEmail, recipes, produce }: QuickAlert
         >
           {availableRecipes[0].title}
         </Link>
-        ,
-        {' '}
+        ,{' '}
         <Link
           href={`/recipes/${availableRecipes[1].id}`}
           className="text-success text-decoration-none"
@@ -196,107 +190,113 @@ export default function QuickAlerts({ ownerEmail, recipes, produce }: QuickAlert
 
   const formatShoppingText = () => {
     if (!nextShoppingDate) return 'No shopping lists due yet';
-    if (nextShoppingDate === 'Today'
-        || nextShoppingDate === 'Tomorrow') {
+    if (nextShoppingDate === 'Today' || nextShoppingDate === 'Tomorrow') {
       return `Weekly grocery trip scheduled for ${nextShoppingDate.toLowerCase()}`;
     }
     return `Next shopping trip in ${nextShoppingDate}`;
   };
 
+  const hasExpiringItems = expiringItems.length > 0;
+  const hasLowStockItems = lowStockItems.length > 0;
+  const hasAvailableRecipes = recipeCount > 0;
+  const hasShoppingDue = nextShoppingDate !== null;
+
+  if (!hasExpiringItems && !hasLowStockItems && !hasAvailableRecipes && !hasShoppingDue) {
+    return null;
+  }
+
   return (
-    <Card className="mb-4 shadow-sm border-light">
+    <Card className="mb-4 shadow-sm border-light mx-auto" style={{ width: 'fit-content', maxWidth: '100%' }}>
       <Card.Body>
-        <div className="d-flex align-items-center mb-4">
+        <div className="d-flex justify-content-center align-items-center mb-4">
           <ExclamationTriangle className="me-2 text-warning" size={20} />
           <Card.Title className="mb-0">Quick Alerts</Card.Title>
         </div>
 
-        <Row xs={1} md={4} className="g-4">
-          {/* Expiring Soon */}
-          <Col>
-            <Link href="/view-pantry" className="text-success text-decoration-none fw-semibold">
-              <Card className="h-100 border-start border-4 border-warning shadow-sm">
-                <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <div className="d-flex align-items-center">
-                      <Clock className="me-2 text-secondary" />
-                      <Card.Subtitle className="fw-semibold text-dark">Expiring Soon</Card.Subtitle>
+        <Row className="g-4 justify-content-center">
+          {hasExpiringItems && (
+            <Col xs="auto">
+              <Link href="/view-pantry" className="text-success text-decoration-none fw-semibold">
+                <Card className="h-100 border-start border-4 border-warning shadow-sm" style={{ width: '18rem' }}>
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <div className="d-flex align-items-center">
+                        <Clock className="me-2 text-secondary" />
+                        <Card.Subtitle className="fw-semibold text-dark">Expiring Soon</Card.Subtitle>
+                      </div>
+                      <Badge bg="warning" text="dark">
+                        {expiringItems.length} {expiringItems.length === 1 ? 'item' : 'items'}
+                      </Badge>
                     </div>
-                    <Badge bg="warning" text="dark">
-                      {expiringItems.length}
-                      {' '}
-                      {expiringItems.length === 1 ? 'item' : 'items'}
-                    </Badge>
-                  </div>
-                  <Card.Text className="text-muted small mb-0">{formatExpiringText()}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Link>
-          </Col>
+                    <Card.Text className="text-muted small mb-0">{formatExpiringText()}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Link>
+            </Col>
+          )}
 
-          {/* Low Stock */}
-          <Col>
-            <Link href="/view-pantry" className="text-danger text-decoration-none fw-semibold">
-              <Card className="h-100 border-start border-4 border-danger shadow-sm">
-                <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <div className="d-flex align-items-center">
-                      <ExclamationTriangle className="me-2 text-secondary" />
-                      <Card.Subtitle className="fw-semibold text-dark">Low Stock</Card.Subtitle>
+          {hasLowStockItems && (
+            <Col xs="auto">
+              <Link href="/view-pantry" className="text-danger text-decoration-none fw-semibold">
+                <Card className="h-100 border-start border-4 border-danger shadow-sm" style={{ width: '18rem' }}>
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <div className="d-flex align-items-center">
+                        <ExclamationTriangle className="me-2 text-secondary" />
+                        <Card.Subtitle className="fw-semibold text-dark">Low Stock</Card.Subtitle>
+                      </div>
+                      <Badge bg="danger">
+                        {lowStockItems.length} {lowStockItems.length === 1 ? 'item' : 'items'}
+                      </Badge>
                     </div>
-                    <Badge bg="danger">
-                      {lowStockItems.length}
-                      {' '}
-                      {lowStockItems.length === 1 ? 'item' : 'items'}
-                    </Badge>
-                  </div>
-                  <Card.Text className="text-muted small mb-0">{formatLowStockText()}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Link>
-          </Col>
+                    <Card.Text className="text-muted small mb-0">{formatLowStockText()}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Link>
+            </Col>
+          )}
 
-          {/* Recipes Available */}
-          <Col>
-            <Link href="/recipes" className="text-danger text-decoration-none fw-semibold">
-              <Card className="h-100 border-start border-4 border-success shadow-sm">
-                <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <div className="d-flex align-items-center">
-                      <Search className="me-2 text-secondary" />
-                      <Card.Subtitle className="fw-semibold text-dark">Recipes Available</Card.Subtitle>
+          {hasAvailableRecipes && (
+            <Col xs="auto">
+              <Link href="/recipes" className="text-danger text-decoration-none fw-semibold">
+                <Card className="h-100 border-start border-4 border-success shadow-sm" style={{ width: '18rem' }}>
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <div className="d-flex align-items-center">
+                        <Search className="me-2 text-secondary" />
+                        <Card.Subtitle className="fw-semibold text-dark">Recipes Available</Card.Subtitle>
+                      </div>
+                      <Badge bg="success">
+                        {recipeCount} new
+                      </Badge>
                     </div>
-                    <Badge bg="success">
-                      {recipeCount}
-                      {' '}
-                      new
-                    </Badge>
-                  </div>
-                  <Card.Text className="text-muted small mb-0">{formatRecipesText()}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Link>
-          </Col>
+                    <Card.Text className="text-muted small mb-0">{formatRecipesText()}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Link>
+            </Col>
+          )}
 
-          {/* Shopping List Due */}
-          <Col>
-            <Link href="/shopping-list" className="text-danger text-decoration-none fw-semibold">
-              <Card className="h-100 border-start border-4 border-info shadow-sm">
-                <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <div className="d-flex align-items-center">
-                      <Cart className="me-2 text-secondary" />
-                      <Card.Subtitle className="fw-semibold text-dark">Shopping List Due</Card.Subtitle>
+          {hasShoppingDue && (
+            <Col xs="auto">
+              <Link href="/shopping-list" className="text-danger text-decoration-none fw-semibold">
+                <Card className="h-100 border-start border-4 border-info shadow-sm" style={{ width: '18rem' }}>
+                  <Card.Body>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <div className="d-flex align-items-center">
+                        <Cart className="me-2 text-secondary" />
+                        <Card.Subtitle className="fw-semibold text-dark">Shopping List Due</Card.Subtitle>
+                      </div>
+                      <Badge bg="info" text="dark">
+                        {nextShoppingDate || 'N/A'}
+                      </Badge>
                     </div>
-                    <Badge bg="info" text="dark">
-                      {nextShoppingDate || 'N/A'}
-                    </Badge>
-                  </div>
-                  <Card.Text className="text-muted small mb-0">{formatShoppingText()}</Card.Text>
-                </Card.Body>
-              </Card>
-            </Link>
-          </Col>
+                    <Card.Text className="text-muted small mb-0">{formatShoppingText()}</Card.Text>
+                  </Card.Body>
+                </Card>
+              </Link>
+            </Col>
+          )}
         </Row>
       </Card.Body>
     </Card>

@@ -5,7 +5,12 @@ import type { ProduceRelations } from '@/types/ProduceRelations';
 import { useEffect, useState } from 'react';
 import ProduceItem from './ProduceItem';
 
-const ProduceTable = ({ rows }: { rows: ProduceRelations[] }) => {
+type Props = {
+  rows: ProduceRelations[];
+  actionMode: 'none' | 'edit' | 'delete';
+};
+
+const ProduceTable = ({ rows, actionMode }: Props) => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -39,17 +44,24 @@ const ProduceTable = ({ rows }: { rows: ProduceRelations[] }) => {
             <th>Quantity</th>
             <th>Restock</th>
             <th>Expiration</th>
-            <th>Edit</th>
-            <th>Delete</th>
+            {actionMode === 'edit' && <th>Edit</th>}
+            {actionMode === 'delete' && <th>Delete</th>}
             <th>Add to Shopping List</th>
           </tr>
         </thead>
         <tbody>
           {rows.length ? (
-            rows.map((p) => <ProduceItem key={p.id} {...p} restockThreshold={p.restockThreshold ?? 1} />)
+            rows.map((p) => (
+              <ProduceItem
+                key={p.id}
+                {...p}
+                restockThreshold={p.restockThreshold ?? 1}
+                actionMode={actionMode}
+              />
+            ))
           ) : (
             <tr>
-              <td colSpan={9} className="text-center">
+              <td colSpan={actionMode === 'none' ? 7 : 8} className="text-center">
                 No items found
               </td>
             </tr>
