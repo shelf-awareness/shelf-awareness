@@ -103,8 +103,8 @@ const ProduceListWithGrouping: React.FC<{ initialProduce: ProduceRelations[] }> 
   const renderContent = () => {
     if (groupByStorage) {
       return view === 'table'
-        ? <GroupedSections groups={grouped} view="table" />
-        : <GroupedSections groups={grouped} view="cards" />;
+        ? <GroupedSections groups={grouped} view="table" actionMode={actionMode} />
+        : <GroupedSections groups={grouped} view="cards" actionMode={actionMode} />;
     }
     return view === 'table'
       ? <ProduceTable rows={filteredSorted} actionMode={actionMode} />
