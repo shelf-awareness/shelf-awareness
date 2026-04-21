@@ -13,7 +13,12 @@ export const AddProduceSchema = Yup.object({
     .transform((curr: Date | null, orig: string) => (orig === '' ? null : curr))
     .notRequired(),
   owner: Yup.string().required(),
-  image: Yup.string().nullable().notRequired(),
+  image: Yup.string()
+    .trim()
+    .nullable()
+    .notRequired()
+    .transform((value) => (value === '' ? null : value))
+    .url('Must be a valid URL'),  
   restockThreshold: Yup.number()
     .nullable()
     .transform((curr, orig) => (orig === '' ? null : curr))
