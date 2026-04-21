@@ -117,8 +117,8 @@ export default function SignInPage() {
               if (firstItem) {
                 const params = new URLSearchParams({
                   addItem: firstItem.name,
-                  quantity: String(firstItem.quantity || 1),
-                  unit: firstItem.unit || '',
+                  quantityValue: String(firstItem.quantity || 1),
+                  quantityUnit: firstItem.unit || '',
                 });
                 window.location.href = `/shopping-list?${params.toString()}`;
               } else {
