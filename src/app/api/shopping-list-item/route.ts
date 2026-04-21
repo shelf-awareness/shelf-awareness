@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { QuantityUnit } from '@prisma/client';
 
 type IncomingItem =
   | string
@@ -125,8 +126,8 @@ export async function POST(request: Request) {
       data: itemsToInsert.map((item) => ({
         shoppingListId: shoppingList.id,
         name: item.name,
-        quantity: item.quantity,
-        unit: item.unit,
+        quantityValue: item.quantity,
+        quantityUnit: item.unit ?? null,
       })),
     });
 

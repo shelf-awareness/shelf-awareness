@@ -18,18 +18,18 @@ async function testRestock() {
     await prisma.produce.upsert({
       where: { name_owner: { name: p.name, owner } },
       update: {
-        quantity: p.quantity,
+        quantityValue: p.quantity,
         restockTrigger: p.restockTrigger,
         restockThreshold: p.restockThreshold,
         customThreshold: p.customThreshold,
-        unit: p.unit,
+        quantityUnit: p.unit,
       },
       create: {
         name: p.name,
         owner,
         type: 'Test',
-        quantity: p.quantity,
-        unit: p.unit,
+        quantityValue: p.quantity,
+        quantityUnit: p.unit,
         restockTrigger: p.restockTrigger,
         restockThreshold: p.restockThreshold,
         customThreshold: p.customThreshold,
