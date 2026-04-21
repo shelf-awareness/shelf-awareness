@@ -137,7 +137,15 @@ export async function POST(request: Request) {
         shoppingListId: shoppingList.id,
         name: { in: itemsToInsert.map((i) => i.name) },
       },
-      select: { id: true, name: true },
+      select: {
+        id: true,
+        name: true,
+        quantityValue: true,
+        quantityUnit: true,
+        price: true,
+        proteinGrams: true,
+        shoppingListId: true,
+      },
     });
 
     return NextResponse.json({ success: true, created: createdItems });

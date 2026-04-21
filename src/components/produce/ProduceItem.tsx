@@ -21,8 +21,9 @@ const ProduceItem = ({
   owner,
   image,
   restockThreshold = 1,
-  proteinGrams = null,  // add this
-}: ProduceRelations & { restockThreshold?: number }) => {
+  proteinGrams = null,
+  actionMode,
+}: ProduceRelations & { restockThreshold?: number; actionMode: 'none' | 'edit' | 'delete' }) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [addingToList, setAddingToList] = useState(false);
@@ -73,16 +74,25 @@ const ProduceItem = ({
         </td>
         <td>{safeRestock}</td>
         <td>{expiration ? new Date(expiration).toISOString().split('T')[0] : 'N/A'}</td>
-        <td>
-          <Button size="sm" className="btn-edit" onClick={() => setShowEditModal(true)}>
-            <PencilSquare color="white" size={18} />
-          </Button>
-        </td>
-        <td>
-          <Button variant="danger" size="sm" className="btn-delete" onClick={() => setShowDeleteModal(true)}>
-            <Trash color="white" size={18} />
-          </Button>
-        </td>
+
+        {/* ONLY SHOW WHEN EDIT MODE */}
+        {actionMode === 'edit' && (
+          <td>
+            <Button size="sm" className="btn-edit" onClick={() => setShowEditModal(true)}>
+              <PencilSquare color="white" size={18} />
+            </Button>
+          </td>
+        )}
+
+        {/* ONLY SHOW WHEN DELETE MODE */}
+        {actionMode === 'delete' && (
+          <td>
+            <Button variant="danger" size="sm" className="btn-delete" onClick={() => setShowDeleteModal(true)}>
+              <Trash color="white" size={18} />
+            </Button>
+          </td>
+        )}
+
         <td>
           <Button
             variant="success"
@@ -95,7 +105,6 @@ const ProduceItem = ({
           </Button>
         </td>
       </tr>
-
 
       <EditProduceModal
         show={showEditModal}
@@ -115,7 +124,6 @@ const ProduceItem = ({
           proteinGrams,
         }}
       />
-
 
       <DeleteProduceModal
         show={showDeleteModal}

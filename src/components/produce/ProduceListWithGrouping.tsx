@@ -54,6 +54,7 @@ const ProduceListWithGrouping: React.FC<{ initialProduce: ProduceRelations[] }> 
   const [sort, setSort] = useState<SortType>('');
   const [groupByStorage, setGroupByStorage] = useState(false);
   const [view, setView] = useState<ViewMode>('table');
+  const [actionMode, setActionMode] = useState<'none' | 'edit' | 'delete'>('none');
 
   const filteredSorted = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -96,16 +97,17 @@ const ProduceListWithGrouping: React.FC<{ initialProduce: ProduceRelations[] }> 
     setSearch('');
     setSort('');
     setGroupByStorage(false);
+    setActionMode('none');
   };
 
   const renderContent = () => {
     if (groupByStorage) {
       return view === 'table'
-        ? <GroupedSections groups={grouped} view="table" />
-        : <GroupedSections groups={grouped} view="cards" />;
+        ? <GroupedSections groups={grouped} view="table" actionMode={actionMode} />
+        : <GroupedSections groups={grouped} view="cards" actionMode={actionMode} />;
     }
     return view === 'table'
-      ? <ProduceTable rows={filteredSorted} />
+      ? <ProduceTable rows={filteredSorted} actionMode={actionMode} />
       : <ProduceCardGrid rows={filteredSorted} />;
   };
 
@@ -121,6 +123,8 @@ const ProduceListWithGrouping: React.FC<{ initialProduce: ProduceRelations[] }> 
         view={view}
         setView={setView}
         clear={clear}
+        actionMode={actionMode}
+        setActionMode={setActionMode}
       />
       {renderContent()}
     </Container>

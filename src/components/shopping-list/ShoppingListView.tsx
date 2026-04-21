@@ -84,7 +84,10 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
   const getListValue = (list: ShoppingListWithProtein, key: SortKey) => {
     if (key === 'totalItems') return list.items.length;
     if (key === 'totalCost') return list.items.reduce(
-      (sum, item) => sum + (item.price ? Number(item.price) : 0) * item.quantityValue, 0,
+      (sum, item) =>
+        sum + (item.price != null ? Number(item.price) : 0) * (item.quantityValue
+           != null ? Number(item.quantityValue) : 0),
+      0,
     );
     if (key === 'totalProtein') return list.totalProtein;
     return 0;
@@ -106,12 +109,10 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
 
   return (
     <>
-      {/* Search + Buttons Row */}
+      {/* Search bar row */}
       <Row
         className="mb-4 d-flex justify-content-center align-items-center text-center"
-        style={{ minHeight: '50px' }}
       >
-        {/* Search box with embedded sort dropdown */}
         <Col xs={12} md={5} lg={4} className="mb-2">
           <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #ced4da', 
             borderRadius: '0.375rem', backgroundColor: 'white', paddingRight: '0.5rem' }}>
@@ -149,6 +150,7 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
                     {opt.label}
                   </Dropdown.Item>
                 ))}
+
                 {sortKey && (
                   <>
                     <Dropdown.Divider />
@@ -167,130 +169,165 @@ export default function ShoppingListView({ initialShoppingLists }: ShoppingListV
             </div>
           )}
         </Col>
-
-        <Col xs="auto" className="mb-2">
-          <Button
-            onClick={() => setShow(true)}
-            style={{
-              backgroundColor: 'var(--light-blue)',
-              height: '34px',
-              padding: '4px 12px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            className="btn-submit"
-          >
-            + Add Item to List
-          </Button>
-          <AddToShoppingListModal
-            show={show}
-            onHide={() => setShow(false)}
-            shoppingLists={shoppingLists}
-            sidePanel={false}
-            prefillName=""
-            onItemAdded={(newItem) => {
-              setShoppingLists((prev) =>
-                prev.map((list) => {
-                  if (list.id !== newItem.shoppingListId) return list;
-                  const exists = list.items.find((i) => i.id === newItem.id);
-                  const updatedItems = exists
-                    ? list.items.map((i) => (i.id === newItem.id ? { ...i, quantity: newItem.quantity } : i))
-                    : [...list.items, newItem];
-                  const totalProtein = updatedItems.reduce(
-                    (sum, i) => sum + (i.proteinGrams ?? 0) * i.quantity, 0,
-                  );
-                  return { ...list, items: updatedItems, totalProtein };
-                }),
-              );
-            }}
-          />
-        </Col>
-
-        <Col xs="auto" className="mb-2">
-          <Button
-            onClick={() => setShowCreateList(true)}
-            style={{
-              backgroundColor: 'var(--light-blue)',
-              height: '34px',
-              padding: '4px 12px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            className="btn-submit"
-          >
-            + New List
-          </Button>
-          <AddShoppingList
-            show={showCreateList}
-            onHide={() => setShowCreateList(false)}
-            owner={session?.user?.email ?? ''}
-            onListCreated={handleListCreated}
-          />
-        </Col>
-
-        {/* FUTURE FEATURE: SET BUDGET */}
-        <Col xs="auto" className="mb-2">
-          <Button
-            onClick={() => setShowUpdateBudget(true)}
-            style={{
-              backgroundColor: 'var(--light-blue)',
-              height: '34px',
-              padding: '4px 12px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            className="btn-submit"
-          >
-            + Set Budget
-          </Button>
-          <UpdateBudget
-            show={showUpdateBudget}
-            onHide={() => setShowUpdateBudget(false)}
-            userID={Number(session?.user?.id ?? 0)}
-            onBudgetUpdated={refetchBudget}
-          />
-        </Col>
-
-        <Col xs="auto" className="mb-2">
-          <Button
-            onClick={() => setShowRecipesModal(true)}
-            style={{
-              backgroundColor: 'var(--light-blue)',
-              height: '34px',
-              padding: '4px 12px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            className="btn-submit"
-          >
-            + Create From Recipe
-          </Button>
-        </Col>
-
-        <RecipesModal
-          show={showRecipesModal}
-          onHide={() => setShowRecipesModal(false)}
-          onListCreated={handleListCreated}
-        />
-
-        <Col xs="auto" className="mb-2">
-          <div
-            style={{
-              backgroundColor: 'var(--light-blue)',
-              color: 'white',
-              padding: '8px 16px',
-              borderRadius: '4px',
-              minWidth: '120px',
-              textAlign: 'center',
-            }}
-          >
-            <div style={{ fontSize: '12px', opacity: 0.9 }}>Budget</div>
-            <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
-              {loadingBudget ? 'Loading...' : budget}
-            </div>
-          </div>
-        </Col>
       </Row>
+
+{/* Buttons */}
+{/* Buttons */}
+<div
+  style={{
+    position: 'relative',
+    width: '100vw',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    minHeight: '50px',
+    marginBottom: '1.5rem',
+  }}
+>
+  <Row className="justify-content-center flex-wrap gap-2 m-0">
+    <Col xs="auto" className="mb-2">
+      <Button
+        onClick={() => setShow(true)}
+        style={{
+          backgroundColor: 'var(--light-blue)',
+          height: '34px',
+          padding: '4px 12px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+        className="btn-submit"
+      >
+        + Add Item to List
+      </Button>
+      <AddToShoppingListModal
+        show={show}
+        onHide={() => setShow(false)}
+        shoppingLists={shoppingLists}
+        sidePanel={false}
+        prefillName=""
+        onItemAdded={(newItem) => {
+          setShoppingLists((prev) =>
+            prev.map((list) => {
+              if (list.id !== newItem.shoppingListId) return list;
+              const exists = list.items.find((i) => i.id === newItem.id);
+              const updatedItems = exists
+                ? list.items.map((i) => (
+                  i.id === newItem.id
+                    ? {
+                        ...i,
+                        quantityValue: newItem.quantityValue,
+                        quantityUnit: newItem.quantityUnit,
+                        price: newItem.price,
+                        proteinGrams: newItem.proteinGrams,
+                      }
+                    : i
+                ))
+                : [...list.items, newItem];
+              const totalProtein = updatedItems.reduce(
+                (sum, i) => sum + (i.proteinGrams ?? 0) * i.quantityValue,
+                0,
+              );
+              return { ...list, items: updatedItems, totalProtein };
+            }),
+          );
+        }}
+      />
+    </Col>
+
+    <Col xs="auto" className="mb-2">
+      <Button
+        onClick={() => setShowCreateList(true)}
+        style={{
+          backgroundColor: 'var(--light-blue)',
+          height: '34px',
+          padding: '4px 12px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+        className="btn-submit"
+      >
+        + New List
+      </Button>
+      <AddShoppingList
+        show={showCreateList}
+        onHide={() => setShowCreateList(false)}
+        owner={session?.user?.email ?? ''}
+        onListCreated={handleListCreated}
+      />
+    </Col>
+
+    <Col xs="auto" className="mb-2">
+      <Button
+        onClick={() => setShowRecipesModal(true)}
+        style={{
+          backgroundColor: 'var(--light-blue)',
+          height: '34px',
+          padding: '4px 12px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+        className="btn-submit"
+      >
+        + Create From Recipe
+      </Button>
+    </Col>
+
+    <RecipesModal
+      show={showRecipesModal}
+      onHide={() => setShowRecipesModal(false)}
+      onListCreated={handleListCreated}
+    />
+  </Row>
+
+  <div
+    className="d-flex align-items-center gap-4"
+    style={{
+      position: 'absolute',
+      right: '80px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+    }}
+  >
+    <div className="mb-2">
+      <Button
+        onClick={() => setShowUpdateBudget(true)}
+        style={{
+          backgroundColor: 'var(--light-blue)',
+          height: '34px',
+          padding: '4px 12px',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+        className="btn-submit"
+      >
+        Set Budget
+      </Button>
+      <UpdateBudget
+        show={showUpdateBudget}
+        onHide={() => setShowUpdateBudget(false)}
+        userID={Number(session?.user?.id ?? 0)}
+        onBudgetUpdated={refetchBudget}
+      />
+    </div>
+
+    <div className="mb-2">
+      <div
+        style={{
+          backgroundColor: 'var(--light-blue)',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '4px',
+          minWidth: '120px',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: '12px', opacity: 0.9 }}>Budget</div>
+        <div style={{ fontSize: '16px', fontWeight: 'bold' }}>
+          {loadingBudget ? 'Loading...' : budget}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
       {/* MAIN LAYOUT: Lists left, Recommended right */}
       <Row className="d-flex flex-column flex-md-row">
