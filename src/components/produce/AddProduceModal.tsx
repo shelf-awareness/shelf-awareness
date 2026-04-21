@@ -16,7 +16,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { AddProduceSchema } from '@/lib/validationSchemas';
 import { addProduce } from '@/lib/dbActions';
 import { useRouter } from 'next/navigation';
-import ImagePickerModal from '@/components/images/ImagePickerModal';
 import BarcodeScanner from './BarcodeScanner';
 import '../../styles/buttons.css';
 
@@ -97,7 +96,6 @@ export default function AddProduceModal({ show, onHide, produce }: AddProduceMod
   const [selectedStorage, setSelectedStorage] = useState('');
   const [unitChoice, setUnitChoice] = useState('');
   const [showScanner, setShowScanner] = useState(false);
-  const [showPicker, setShowPicker] = useState(false);
   const [imageAlt, setImageAlt] = useState('');
 
   const fetchStorage = useCallback(
@@ -475,18 +473,10 @@ export default function AddProduceModal({ show, onHide, produce }: AddProduceMod
                 <InputGroup>
                   <Form.Control
                     type="text"
-                    placeholder="Pick an Image"
+                    placeholder="Enter image URL (https://...)"
                     isInvalid={!!errors.image}
                     {...register('image')}
                   />
-                  <Button
-                    variant="outline-secondary"
-                    type="button"
-                    style={{ display: 'inline-block', zIndex: 99 }}
-                    onClick={() => setShowPicker(true)}
-                  >
-                    Pick
-                  </Button>
                 </InputGroup>
                 <Form.Control.Feedback type="invalid">
                   {errors.image?.message as string}
@@ -528,15 +518,6 @@ export default function AddProduceModal({ show, onHide, produce }: AddProduceMod
           </Row>
         </Form>
       </Modal.Body>
-
-      <ImagePickerModal
-        show={showPicker}
-        onClose={() => setShowPicker(false)}
-        onSelect={(url, meta) => {
-          setValue('image', url, { shouldValidate: true, shouldDirty: true });
-          if (meta?.alt) setImageAlt(meta.alt);
-        }}
-      />
     </Modal>
   );
 }
