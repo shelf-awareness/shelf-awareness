@@ -247,12 +247,14 @@ export async function getUserProduceByEmail(owner: string) {
     name: string;
     quantityValue: number;
     quantityUnit: QuantityUnit | null;
+    expiration: Date | null;
   }[] = await prisma.produce.findMany({
     where: { owner },
     select: { 
       name: true,
       quantityValue: true,
       quantityUnit: true,
+      expiration: true,
     },
   });
 
@@ -260,6 +262,7 @@ export async function getUserProduceByEmail(owner: string) {
     name: item.name,
     quantity: item.quantityValue,
     unit: item.quantityUnit,
+    expiration: item.expiration ? item.expiration.toISOString() : null,
   }));
 }
 

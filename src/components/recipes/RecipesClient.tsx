@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { Row, Col, Button, Form, Dropdown, Container } from 'react-bootstrap';
+import { Row, Col, Button, Form, Dropdown, Container, Badge } from 'react-bootstrap';
 import AddRecipeModal from '@/components/recipes/AddRecipeModal';
 import { useSession } from 'next-auth/react';
-// import { getUserProduceByEmail } from '@/lib/dbActions';
 import * as Icon from  'react-bootstrap-icons';
 import RecipeCard from './RecipeCard';
 import '../../styles/buttons.css';
+import { getExpiringItemNames, matchRecipesWithExpiringPantry } from '@/lib/pantryUtils';
 
 type Props = {
   recipes: any[];
@@ -35,9 +35,14 @@ export default function RecipesClient({
   const [popularLoading, setPopularLoading] = useState(false);
   const [showCanMake, setShowCanMake] = useState(false);
   const [showWithinBudget, setShowWithinBudget] = useState(false);
+  const [showExpiringFilter, setShowExpiringFilter] = useState(false);
   const [search, setSearch] = useState('');
   const [showAdd, setShowAdd] = useState(false);
   const [editMode, setEditMode] = useState(false);
+
+  // Compute names of pantry items expiring within 7 days (issue-166)
+  const expiringNames = useMemo(() => getExpiringItemNames(produce), [produce]);
+
   const pantryNames = useMemo(
     () => new Set(produce.map((p) => p.name.toLowerCase())),
     [produce],
@@ -80,10 +85,16 @@ const toggleDietary = (tag: string) => {
     });
   }, [recipes, showCanMake, pantryNames]);
 
-  const dietaryFiltered = useMemo(() => {
-  if (selectedDietary.length === 0) return canMakeFiltered;
+  // issue-165 / issue-166: filter to recipes that use at least one expiring ingredient
+  const expiringFiltered = useMemo(() => {
+    if (!showExpiringFilter) return canMakeFiltered;
+    return matchRecipesWithExpiringPantry(canMakeFiltered, expiringNames);
+  }, [canMakeFiltered, showExpiringFilter, expiringNames]);
 
-  return canMakeFiltered.filter((r) => {
+  const dietaryFiltered = useMemo(() => {
+  if (selectedDietary.length === 0) return expiringFiltered;
+
+  return expiringFiltered.filter((r) => {
     const recipeDietary = Array.isArray(r.dietary)
       ? r.dietary
       : r.dietary
@@ -96,7 +107,7 @@ const toggleDietary = (tag: string) => {
       normalizedRecipeDietary.includes(tag.toUpperCase())
     );
   });
-}, [canMakeFiltered, selectedDietary]);
+}, [expiringFiltered, selectedDietary]);
   const filteredRecipes = useMemo(() => {
     const query = search.toLowerCase();
     if (!query) return dietaryFiltered;
@@ -260,6 +271,26 @@ const toggleDietary = (tag: string) => {
                       {showWithinBudget ? 'Show All Recipes' : 'Show Recipes Within Budget'}
                     </Button>
                   </Col>
+
+                  {/* Button 3 - Expiring soon filter (issue-165) */}
+                  <Col className="mb-2 mt-2">
+                    <Button
+                      variant={showExpiringFilter ? 'warning' : 'outline-dark'}
+                      onClick={() => setShowExpiringFilter((v) => !v)}
+                      disabled={expiringNames.size === 0}
+                      title={expiringNames.size === 0 ? 'No pantry items expiring soon' : undefined}
+                    >
+                      <Icon.ClockHistory className="me-1" />
+                      {showExpiringFilter ? 'Show All Recipes' : 'Use Expiring Items'}
+                    </Button>
+                    {expiringNames.size > 0 && (
+                      <div className="mt-1">
+                        <small className="text-muted">
+                          {expiringNames.size} item{expiringNames.size !== 1 ? 's' : ''} expiring soon
+                        </small>
+                      </div>
+                    )}
+                  </Col>
                 </Row>
               </Container>
             </Dropdown.Menu>
@@ -346,6 +377,25 @@ const toggleDietary = (tag: string) => {
         ))}
       </div>
       )}
+
+      {/* Expiring filter active banner (issue-165) */}
+      {showExpiringFilter && (
+        <div className="mb-3 d-flex align-items-center gap-2 p-2 rounded" style=
+        {{ background: '#fff3cd', border: '1px solid #ffc107' }}>
+          <Icon.ClockHistory className="text-warning" />
+          <span className="fw-semibold text-warning-emphasis">
+            Showing recipes that use your expiring pantry items
+          </span>
+          <Button
+            size="sm"
+            variant="outline-warning"
+            className="ms-auto"
+            onClick={() => setShowExpiringFilter(false)}
+          >
+            Clear ✕
+          </Button>
+        </div>
+      )}
       {/* Recipe cards */}
       <Row xs={1} md={2} lg={3} className="g-4">
         {displayedRecipes.length > 0 ? (
@@ -376,6 +426,7 @@ const toggleDietary = (tag: string) => {
                   sourceUrl={r.sourceUrl ?? null}
                   pantryNames={pantryNames}
                   pantryItems={pantryItems}
+                  expiringNames={expiringNames}
                   averageRating={r.averageRating ?? null}
                   ratingCount={r.ratingCount ?? 0}
                 />
@@ -383,9 +434,22 @@ const toggleDietary = (tag: string) => {
             );
           })
         ) : (
-          <p className="text-center text-muted w-100 py-4">
-            No recipes found. Try adjusting your filters or search.
-          </p>
+          <div className="text-center w-100 py-4">
+            {showExpiringFilter ? (
+              <div className="d-flex flex-column align-items-center gap-2">
+                <Icon.ClockHistory size={32} className="text-warning" />
+                <p className="text-muted mb-0 fw-semibold">No recipes match your expiring pantry items.</p>
+                <p className="text-muted small">Try adding more recipes or check back as items approach expiry.</p>
+                <Button size="sm" variant="outline-warning" onClick={() => setShowExpiringFilter(false)}>
+                  Show all recipes
+                </Button>
+              </div>
+            ) : (
+              <p className="text-muted mb-0">
+                No recipes found. Try adjusting your filters or search.
+              </p>
+            )}
+          </div>
         )}
       </Row>
 
