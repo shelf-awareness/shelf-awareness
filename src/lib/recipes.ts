@@ -128,13 +128,31 @@ function normalizeRecipeInput(
 
 /** Fetch all recipes (latest first). */
 export async function getRecipes() {
-  return prisma.recipe.findMany({
+  const recipes = await prisma.recipe.findMany({
     orderBy: { createdAt: 'desc' },
     include: {
       ingredientItems: {
         orderBy: { order: 'asc' },
       },
+      ratings: {
+        select: { rating: true },
+      },
     },
+  });
+
+  return recipes.map((recipe: (typeof recipes)[number]) => {
+    const ratingCount = recipe.ratings.length;
+
+    const averageRating =
+      ratingCount > 0
+        ? recipe.ratings.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / ratingCount
+        : null;
+
+    return {
+      ...recipe,
+      averageRating,
+      ratingCount,
+    };
   });
 }
 
@@ -278,14 +296,17 @@ export async function updateRecipe(id: number, input: RecipeInput) {
   });
 }
 export async function getTrendingRecipes() {
-  const sharedRecipes: RecipeWithItems[] = await prisma.recipe.findMany({
-    where: {
-      owner: 'admin@foo.com',
+  const sharedRecipes = await prisma.recipe.findMany({
+  where: {
+    owner: 'admin@foo.com',
+  },
+  include: {
+    ingredientItems: true,
+    ratings: {
+      select: { rating: true },
     },
-    include: {
-      ingredientItems: true,
-    },
-  });
+  },
+});
 
   const sharedRecipeIds = sharedRecipes.map((recipe) => recipe.id);
 
@@ -316,12 +337,26 @@ export async function getTrendingRecipes() {
   );
 
   const trendingRecipes = sharedRecipes
-    .filter((recipe) => usageMap.has(recipe.id))
-    .map((recipe) => ({
+  .filter((recipe) => usageMap.has(recipe.id))
+  .map((recipe) => {
+    const ratingCount = recipe.ratings.length;
+
+    const averageRating =
+      ratingCount > 0
+        ? recipe.ratings.reduce(
+            (sum: number, r: { rating: number }) => sum + r.rating,
+            0
+          ) / ratingCount
+        : null;
+
+    return {
       ...recipe,
       cookCount: usageMap.get(recipe.id) ?? 0,
-    }))
-    .sort((a, b) => (b.cookCount ?? 0) - (a.cookCount ?? 0));
+      averageRating,
+      ratingCount,
+    };
+  })
+  .sort((a, b) => (b.cookCount ?? 0) - (a.cookCount ?? 0));
 
   return trendingRecipes;
 }

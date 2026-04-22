@@ -376,6 +376,8 @@ const toggleDietary = (tag: string) => {
                   sourceUrl={r.sourceUrl ?? null}
                   pantryNames={pantryNames}
                   pantryItems={pantryItems}
+                  averageRating={r.averageRating ?? null}
+                  ratingCount={r.ratingCount ?? 0}
                 />
               </Col>
             );

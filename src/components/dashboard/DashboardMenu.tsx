@@ -118,6 +118,8 @@ export default function DashboardMenu({
                   imageUrl={recipe.imageUrl}
                   cookCount={recipe.cookCount}
                   rank={index + 1}
+                  averageRating={recipe.averageRating ?? null}
+                  ratingCount={recipe.ratingCount ?? 0}
                 />
               </motion.div>
             ))

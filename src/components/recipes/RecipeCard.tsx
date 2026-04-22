@@ -44,7 +44,9 @@ export type RecipeCardProps = {
   name: string;
   quantity: number;
   unit: QuantityUnit | null;
-}[];
+}[]
+  averageRating?: number | null;
+  ratingCount?: number;
   onSelect?: (recipe: { id: number; title: string; ingredientItems: IngredientItemCard[] }) => void;
 };
 
@@ -69,6 +71,8 @@ export default function RecipeCard({
   sourceUrl = null,
   pantryNames,
   pantryItems,
+  averageRating = null,
+  ratingCount = 0,
   onSelect,
 }: RecipeCardProps) {
   const dietTags = Array.isArray(dietary) ? dietary.filter(Boolean) : [];
@@ -104,6 +108,28 @@ export default function RecipeCard({
 
   const ownerLabel = Array.isArray(owner) ? owner.join(', ') : owner;
   const displayOwner = isAdminOwner ? 'Shelf Awareness Team' : ownerLabel;
+  const renderStars = (rating: number) => {
+  const full = Math.floor(rating);
+  const hasHalf = rating - full >= 0.5;
+
+  let stars = '';
+
+  for (let i = 0; i < full; i++) {
+    stars += '★';
+  }
+
+  if (hasHalf) {
+    stars += '⯨'; // half star-ish character
+  }
+
+  const remaining = 5 - full - (hasHalf ? 1 : 0);
+
+  for (let i = 0; i < remaining; i++) {
+    stars += '☆';
+  }
+
+  return stars;
+};
 
   return (
     <>
@@ -152,7 +178,24 @@ export default function RecipeCard({
                 {title}
               </Link>
             </Card.Title>
+            <div className="mb-2 d-flex align-items-center gap-2">
+              <span
+                style={{
+                  color: '#f5c518',
+                  fontSize: '0.95rem',
+                  letterSpacing: '1px',
+                  lineHeight: 1,
+                }}
+              >
+                {ratingCount > 0 ? renderStars(averageRating ?? 0) : '☆☆☆☆☆'}
+              </span>
 
+              <small className="text-muted">
+                {ratingCount > 0
+                  ? `${(averageRating ?? 0).toFixed(1)} (${ratingCount})`
+                  : 'No ratings yet'}
+              </small>
+            </div>
             {/* Cuisine + Dietary badges */}
             <div>
               <Badge bg="secondary" pill className="me-2 mb-2">
