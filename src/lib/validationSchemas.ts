@@ -125,3 +125,7 @@ export const UpdateDietPrefSchema = Yup.object({
     .default([])
     .required(),
 });
+
+export const UpdateProfileSchema = Yup.object({
+  displayName: Yup.string(),
+})

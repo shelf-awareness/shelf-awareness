@@ -7,6 +7,7 @@ import swal from 'sweetalert';
 import '@/styles/buttons.css';
 
 interface SavedValues {
+  displayName: string;
   budget: number | null;
   proteinGoal: number | null;
   carbsGoal: number | null;
@@ -19,6 +20,7 @@ interface EditProfileModalProps {
   onHide: () => void;
   onSaved: (values: SavedValues) => void;
   email: string;
+  displayName: string;
   budget: number | null;
   proteinGoal: number | null;
   carbsGoal: number | null;
@@ -69,13 +71,14 @@ function toNum(s: string): number | null {
 }
 
 export default function EditProfileModal({
-  show, onHide, onSaved, email,
+  show, onHide, onSaved, email, displayName: initialDisplayName,
   budget, proteinGoal, carbsGoal, fatGoal, caloriesGoal,
 }: EditProfileModalProps) {
   const router = useRouter();
   const [err, setErr] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [displayName, setDisplayName] = useState(initialDisplayName);
   const [protein,   setProtein]   = useState(toStr(proteinGoal));
   const [carbs,     setCarbs]     = useState(toStr(carbsGoal));
   const [fat,       setFat]       = useState(toStr(fatGoal));
@@ -84,6 +87,7 @@ export default function EditProfileModal({
 
   useEffect(() => {
     if (show) {
+      setDisplayName(initialDisplayName);
       setProtein(toStr(proteinGoal));
       setCarbs(toStr(carbsGoal));
       setFat(toStr(fatGoal));
@@ -91,7 +95,7 @@ export default function EditProfileModal({
       setBudgetStr(toStr(budget));
       setErr(null);
     }
-  }, [show, proteinGoal, carbsGoal, fatGoal, caloriesGoal, budget]);
+  }, [show, initialDisplayName, proteinGoal, carbsGoal, fatGoal, caloriesGoal, budget]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -115,6 +119,7 @@ export default function EditProfileModal({
       setIsLoading(true);
       try {
         const newValues: SavedValues = {
+          displayName:  displayName.trim(),
           proteinGoal:  toNum(protein),
           carbsGoal:    toNum(carbs),
           fatGoal:      toNum(fat),
@@ -143,7 +148,7 @@ export default function EditProfileModal({
         setIsLoading(false);
       }
     },
-    [onHide, onSaved, router, protein, carbs, fat, calories, budgetStr],
+    [onHide, onSaved, router, displayName, protein, carbs, fat, calories, budgetStr],
   );
 
   return (
@@ -157,9 +162,13 @@ export default function EditProfileModal({
 
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
-            <Form.Label>Email Address</Form.Label>
-            <Form.Control type="email" value={email} disabled />
-            <Form.Text className="text-muted">Email cannot be changed.</Form.Text>
+            <Form.Label>Display Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter your display name"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+            />
           </Form.Group>
 
           <Form.Group className="mb-3">
