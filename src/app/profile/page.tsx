@@ -19,6 +19,8 @@ const ProfilePage = async () => {
     where: { email: user },
     select: {
       budget: true,
+      displayName: true,
+      pfpURL: true,
       proteinGoal: true,
       carbsGoal: true,
       fatGoal: true,
@@ -33,6 +35,9 @@ const ProfilePage = async () => {
   const fatGoal      = userData?.fatGoal      ?? null;
   const caloriesGoal = userData?.caloriesGoal ?? null;
 
+  const displayName = userData?.displayName ?? "Display Name";
+  const pfpURL = userData?.pfpURL ?? "/default-pfp.png";
+
   const dietPref = userData?.dietPref || [];
 
   return (
@@ -46,6 +51,8 @@ const ProfilePage = async () => {
           carbsGoal={carbsGoal}
           fatGoal={fatGoal}
           caloriesGoal={caloriesGoal}
+          displayName={displayName}
+          pfpURL={pfpURL}
         />
       </Container>
     </main>

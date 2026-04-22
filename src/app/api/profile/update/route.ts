@@ -20,14 +20,31 @@ export async function PATCH(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { proteinGoal, carbsGoal, fatGoal, caloriesGoal, budget } = body;
+    const { displayName, proteinGoal, carbsGoal, fatGoal, caloriesGoal, budget } = body;
 
-    const data: Record<string, number | null> = {
+    const data: Record<string, string | number | null> = {
       proteinGoal:  parseGoal(proteinGoal,  0, 1000),
       carbsGoal:    parseGoal(carbsGoal,    0, 1000),
       fatGoal:      parseGoal(fatGoal,      0, 1000),
       caloriesGoal: parseGoal(caloriesGoal, 0, 10000),
     };
+
+    if (displayName !== undefined) {
+      const trimmed = displayName?.trim() || '';
+      if (!trimmed) {
+        return NextResponse.json(
+          { message: 'Display name cannot be empty' },
+          { status: 400 },
+        );
+      }
+      if (trimmed.length > 50) {
+        return NextResponse.json(
+          { message: 'Display name must be 50 characters or less' },
+          { status: 400 },
+        );
+      }
+      data.displayName = trimmed;
+    }
 
     if (budget !== undefined) {
       const b = Number(budget);

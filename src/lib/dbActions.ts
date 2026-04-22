@@ -529,3 +529,22 @@ export async function updateDietPreferences(userId: number, input: unknown) {
     };
   }
 }
+/**
+ * Updates a user's display name.
+ */
+export async function updateDisplayName(userId: number, newDisplayName: string) {
+  if (!newDisplayName.trim()) {
+    return { success: false, message: 'Display name cannot be empty.' };
+  }
+
+  if (newDisplayName.length > 50) {
+    return { success: false, message: 'Display name must be 50 characters or less.' };
+  }
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { displayName: newDisplayName.trim() },
+  });
+
+  return { success: true };
+}

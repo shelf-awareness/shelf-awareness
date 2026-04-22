@@ -2,14 +2,18 @@
 'use client';
 
 import { Card, Container, Button, Form, Row, Col } from 'react-bootstrap';
+import { Pen } from 'react-bootstrap-icons';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import EditProfileModal from './EditProfileModal';
 import EditDietPrefModal from './EditDietPrefModal';
+import UpdatePFPModal from './UpdatePFPModal';
 import { DietaryCategory } from '@prisma/client';
 
 interface ProfileProps {
   user: string;
+  displayName: string;
+  pfpURL: string;
   budget: number | null;
   dietPref: DietaryCategory[];
   proteinGoal: number | null;
@@ -21,6 +25,8 @@ interface ProfileProps {
 export default function ProfilePageClient({
   user,
   dietPref,
+  displayName,
+  pfpURL,
   budget: initialBudget,
   proteinGoal: initialProtein,
   carbsGoal: initialCarbs,
@@ -29,29 +35,38 @@ export default function ProfilePageClient({
 }: ProfileProps) {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const  [showDietModal, setShowDietModal] = useState(false);
+  const [showPFPModal, setShowPFPModal] = useState(false);
   const { data: session } = useSession();
   const owner = session?.user?.email || user || '';
 
   // Local state so the display updates immediately after a successful save
   // without having to wait for a full server round-trip.
-  const [budget,       setBudget]       = useState(initialBudget);
-  const [proteinGoal,  setProteinGoal]  = useState(initialProtein);
-  const [carbsGoal,    setCarbsGoal]    = useState(initialCarbs);
-  const [fatGoal,      setFatGoal]      = useState(initialFat);
-  const [caloriesGoal, setCaloriesGoal] = useState(initialCalories);
+  const [displayNameState, setDisplayNameState] = useState(displayName);
+  const [pfpURLState, setPfpURLState] = useState(pfpURL);
+  const [budget,           setBudget]           = useState(initialBudget);
+  const [proteinGoal,      setProteinGoal]      = useState(initialProtein);
+  const [carbsGoal,        setCarbsGoal]        = useState(initialCarbs);
+  const [fatGoal,          setFatGoal]          = useState(initialFat);
+  const [caloriesGoal,     setCaloriesGoal]     = useState(initialCalories);
 
   function handleSaved(saved: {
+    displayName: string;
     budget: number | null;
     proteinGoal: number | null;
     carbsGoal: number | null;
     fatGoal: number | null;
     caloriesGoal: number | null;
   }) {
+    setDisplayNameState(saved.displayName);
     setBudget(saved.budget);
     setProteinGoal(saved.proteinGoal);
     setCarbsGoal(saved.carbsGoal);
     setFatGoal(saved.fatGoal);
     setCaloriesGoal(saved.caloriesGoal);
+  }
+
+  function handlePFPSaved(newPfpURL: string) {
+    setPfpURLState(newPfpURL);
   }
 
   const fmt = (v: number | null, unit: string) =>
@@ -72,10 +87,19 @@ export default function ProfilePageClient({
                 <Card className="mt-2 p-3 shadow-sm">
                   <Card.Img
                     className="rounded-circle"
-                    src="https://img.freepik.com/free-psd/gradient-abstract-logo_23-2150689652.jpg?semt=ais_hybrid&w=740"
+                    src={pfpURLState}
                     alt="Profile Picture"
                   />
-                  <Card.Body> </Card.Body>
+                  <Card.Body>
+                    <Button
+                      variant="link"
+                      className="p-0 text-decoration-none"
+                      onClick={() => setShowPFPModal(true)}
+                      title="Change Profile Picture"
+                    >
+                      <Pen />
+                    </Button>
+                  </Card.Body>
                 </Card>
               </Card.Body>
             </Col>
@@ -101,7 +125,7 @@ export default function ProfilePageClient({
                         <Form.Group>
                           <Form.Label>Display Name</Form.Label>
                           <Form.Control
-                            value={'Display Name'}
+                            value={displayNameState}
                             disabled
                           />
                         </Form.Group>
@@ -200,6 +224,7 @@ export default function ProfilePageClient({
         onHide={() => setShowProfileModal(false)}
         onSaved={handleSaved}
         email={owner}
+        displayName={displayNameState}
         budget={budget}
         proteinGoal={proteinGoal}
         carbsGoal={carbsGoal}
@@ -211,6 +236,13 @@ export default function ProfilePageClient({
         show={showDietModal}
         onHide={() => setShowDietModal(false)}
         currentDietPref={dietPref}
+      />
+
+      <UpdatePFPModal
+        show={showPFPModal}
+        onHide={() => setShowPFPModal(false)}
+        onSaved={handlePFPSaved}
+        currentPfpURL={pfpURLState}
       />
     </main>
   );
