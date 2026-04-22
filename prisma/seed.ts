@@ -67,6 +67,7 @@ async function main() {
         password,
         role,
         emailVerified: true,
+        displayName: account.email,
       },
     });
   }
