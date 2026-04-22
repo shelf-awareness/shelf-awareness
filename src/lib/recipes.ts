@@ -48,6 +48,20 @@ type UsageRow = {
     count: number | null;
   };
 };
+type SharedRecipe = Prisma.RecipeGetPayload<{
+  include: {
+    ingredientItems: true;
+    ratings: {
+      select: { rating: true };
+    };
+  };
+}>;
+
+type TrendingRecipe = SharedRecipe & {
+  cookCount: number;
+  averageRating: number | null;
+  ratingCount: number;
+};
 
 /**
  * Normalize ingredientItems:
@@ -308,7 +322,7 @@ export async function getTrendingRecipes() {
   },
 });
 
-  const sharedRecipeIds = sharedRecipes.map((recipe) => recipe.id);
+  const sharedRecipeIds = sharedRecipes.map((recipe: SharedRecipe) => recipe.id);
 
   if (sharedRecipeIds.length === 0) {
     return [];
@@ -337,8 +351,8 @@ export async function getTrendingRecipes() {
   );
 
   const trendingRecipes = sharedRecipes
-  .filter((recipe) => usageMap.has(recipe.id))
-  .map((recipe) => {
+  .filter((recipe: SharedRecipe) => usageMap.has(recipe.id))
+  .map((recipe: SharedRecipe) => {
     const ratingCount = recipe.ratings.length;
 
     const averageRating =
@@ -356,7 +370,7 @@ export async function getTrendingRecipes() {
       ratingCount,
     };
   })
-  .sort((a, b) => (b.cookCount ?? 0) - (a.cookCount ?? 0));
+  .sort((a: TrendingRecipe, b: TrendingRecipe) => (b.cookCount ?? 0) - (a.cookCount ?? 0));
 
   return trendingRecipes;
 }
