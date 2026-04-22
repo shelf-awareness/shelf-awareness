@@ -13,6 +13,8 @@ type LocationValues = {
   name: string;
   owner: string;
   address: string;
+  latitude?: number | null;
+  longitude?: number | null;
 };
 
 interface AddLocationModalProps {
@@ -21,12 +23,30 @@ interface AddLocationModalProps {
   owner: string;
 }
 
+async function geocodeAddress(address: string) {
+  if (!address.trim()) return null;
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1`,
+      { headers: { 'Accept-Language': 'en' } },
+    );
+    const data = await res.json();
+    if (data.length === 0) return null;
+    return {
+      latitude: parseFloat(data[0].lat),
+      longitude: parseFloat(data[0].lon),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export default function AddLocationModal({ show, onHide, owner }: AddLocationModalProps) {
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LocationValues>({
     resolver: yupResolver(AddLocationSchema) as unknown as Resolver<LocationValues>,
     defaultValues: { name: '', owner, address: '' },
@@ -43,7 +63,12 @@ export default function AddLocationModal({ show, onHide, owner }: AddLocationMod
 
   const onSubmit: SubmitHandler<LocationValues> = async (data) => {
     try {
-      await addLocation(data);
+      const coords = await geocodeAddress(data.address);
+      await addLocation({
+        ...data,
+        latitude: coords?.latitude ?? null,
+        longitude: coords?.longitude ?? null,
+      });
       await swal('Success', 'Location added successfully!', 'success', { timer: 1800 });
       handleClose();
       window.location.reload();
@@ -102,10 +127,18 @@ export default function AddLocationModal({ show, onHide, owner }: AddLocationMod
 
           <Row className="d-flex justify-content-between mt-4">
             <Col xs={6}>
-              <Button type="submit" className="btn-submit">Add</Button>
+              <Button type="submit" className="btn-submit" disabled={isSubmitting}>
+                {isSubmitting ? 'Adding…' : 'Add'}
+              </Button>
             </Col>
             <Col xs={6}>
-              <Button type="button" variant="warning" onClick={() => reset()} className="btn-reset">
+              <Button
+                type="button"
+                variant="warning"
+                onClick={() => reset()}
+                className="btn-reset"
+                disabled={isSubmitting}
+              >
                 Reset
               </Button>
             </Col>

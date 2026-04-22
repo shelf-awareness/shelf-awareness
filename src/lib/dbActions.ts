@@ -266,25 +266,33 @@ export async function getUserProduceByEmail(owner: string) {
 /**
  * Adds a new location.
  */
-export async function addLocation(data: { name: string; owner: string; address?: string }) {
-  let latitude: number | null = null;
-  let longitude: number | null = null;
+export async function addLocation(location: {
+  name: string;
+  owner: string;
+  address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+}) {
+  const name = location.name.trim();
+  const owner = location.owner.trim();
 
-  if (data.address?.trim()) {
-    const coords = await geocodeAddress(data.address);
-    latitude = coords?.lat ?? null;
-    longitude = coords?.lng ?? null;
-  }
-
-  await prisma.location.create({
-    data: {
-      name: data.name,
-      owner: data.owner,
-      address: data.address ?? null,
-      latitude,
-      longitude,
+  const newLocation = await prisma.location.upsert({
+    where: { name_owner: { name, owner } },
+    update: {
+      address: location.address ?? null,
+      latitude: location.latitude ?? null,
+      longitude: location.longitude ?? null,
+    },
+    create: {
+      name,
+      owner,
+      address: location.address ?? null,
+      latitude: location.latitude ?? null,
+      longitude: location.longitude ?? null,
     },
   });
+
+  return newLocation;
 }
 
 /**
