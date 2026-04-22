@@ -4,12 +4,12 @@
 /* eslint-disable no-alert */
 
 import Link from 'next/link';
-import { Card, Image, Badge, Button, Row, Col } from 'react-bootstrap';
+import { Card, Image, Badge, Button, Row, Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import React from 'react';
 import EditRecipeModal from '@/components/recipes/EditRecipeModal';
-import { PencilSquare, Trash } from 'react-bootstrap-icons';
+import { PencilSquare, Trash, ClockHistory } from 'react-bootstrap-icons';
 import { convertUnits } from '@/lib/unitConverter';
 import { QuantityUnit } from '@prisma/client';
 
@@ -45,6 +45,7 @@ export type RecipeCardProps = {
   quantity: number;
   unit: QuantityUnit | null;
 }[]
+  expiringNames?: Set<string>;
   averageRating?: number | null;
   ratingCount?: number;
   onSelect?: (recipe: { id: number; title: string; ingredientItems: IngredientItemCard[] }) => void;
@@ -71,6 +72,7 @@ export default function RecipeCard({
   sourceUrl = null,
   pantryNames,
   pantryItems,
+  expiringNames = new Set(),
   averageRating = null,
   ratingCount = 0,
   onSelect,
@@ -165,6 +167,16 @@ export default function RecipeCard({
             alt={title}
             className="w-100 recipe-card-img"
           />
+          {/* Expiring items banner on card image (issue-165) */}
+          {ingredientItems.some((item) => expiringNames.has(item.name.toLowerCase())) && (
+            <div
+              className="position-absolute bottom-0 start-0 end-0 d-flex align-items-center gap-1 px-2 py-1"
+              style={{ background: 'rgba(255, 193, 7, 0.92)', fontSize: '0.78rem', fontWeight: 600 }}
+            >
+              <ClockHistory size={13} />
+              Uses expiring pantry items
+            </div>
+          )}
         </div>
 
         <Card.Body className="d-flex flex-column">
@@ -227,8 +239,9 @@ export default function RecipeCard({
                 <span className="fw-semibold">Ingredients:</span>
 
                 <div className="mt-1 d-flex flex-wrap gap-2">
-                  {ingredientItems.map((item) => {
+                {ingredientItems.map((item) => {
                     const hasItem = pantryNames.has(item.name.toLowerCase());
+                    const isExpiring = expiringNames.has(item.name.toLowerCase());
                     let hasEnough = false;
                     let convertedUnit = 0;
                     for (let p of pantryItems){
@@ -240,21 +253,38 @@ export default function RecipeCard({
                     if (hasItem && typeof item.quantity === 'number' && convertedUnit >= item.quantity) {
                       hasEnough = true;
                     }
-                    return (
+
+                    // Determine badge color: expiring takes priority over normal in-pantry state
+                    const badgeBg = isExpiring
+                      ? 'warning'
+                      : !hasItem
+                        ? 'danger'
+                        : hasEnough
+                          ? 'success'
+                          : 'warning';
+
+                    const badge = (
                       <Badge
                         key={`${id}-${item.id ?? item.name}`}
                         pill
-                        bg={!hasItem
-                            ? 'danger'
-                            : hasEnough
-                              ? 'success'
-                              : 'warning'
-                          }
-                        className="px-2 py-1"
+                        bg={badgeBg}
+                        text={badgeBg === 'warning' ? 'dark' : undefined}
+                        className="px-2 py-1 d-inline-flex align-items-center gap-1"
                       >
+                        {isExpiring && <ClockHistory size={10} />}
                         {item.name}
                       </Badge>
                     );
+
+                    return isExpiring ? (
+                      <OverlayTrigger
+                        key={`${id}-${item.id ?? item.name}`}
+                        placement="top"
+                        overlay={<Tooltip>Expiring soon – use it up!</Tooltip>}
+                      >
+                        <span>{badge}</span>
+                      </OverlayTrigger>
+                    ) : badge;
                   })}
                 </div>
               </div>
