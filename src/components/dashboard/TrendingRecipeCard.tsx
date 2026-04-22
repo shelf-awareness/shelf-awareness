@@ -11,6 +11,8 @@ type TrendingRecipeCardProps = {
   imageUrl?: string | null;
   cookCount: number;
   rank: number;
+  averageRating?: number | null;
+  ratingCount?: number;
 };
 
 export default function TrendingRecipeCard({
@@ -20,7 +22,22 @@ export default function TrendingRecipeCard({
   imageUrl,
   cookCount,
   rank,
+  averageRating = null,
+  ratingCount = 0,
 }: TrendingRecipeCardProps) {
+    const renderStars = (rating: number) => {
+    const normalized = Math.round(rating * 2) / 2;
+    const full = Math.floor(normalized);
+    const hasHalf = normalized % 1 !== 0;
+
+    let stars = '';
+
+    for (let i = 0; i < full; i++) stars += '★';
+    if (hasHalf) stars += '⯨';
+    for (let i = stars.length; i < 5; i++) stars += '☆';
+
+    return stars;
+  };
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.02 }}
@@ -90,7 +107,37 @@ export default function TrendingRecipeCard({
           >
             {title}
           </h5>
+                      <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.45rem',
+              marginBottom: '0.65rem',
+            }}
+          >
+            <span
+              style={{
+                color: '#f5c518',
+                fontSize: '0.9rem',
+                letterSpacing: '1px',
+                lineHeight: 1,
+              }}
+            >
+              {ratingCount > 0 ? renderStars(averageRating ?? 0) : '☆☆☆☆☆'}
+            </span>
 
+            <span
+              style={{
+                color: '#5f6b7a',
+                fontSize: '0.85rem',
+                fontWeight: 500,
+              }}
+            >
+              {ratingCount > 0
+                ? `${(averageRating ?? 0).toFixed(1)} (${ratingCount})`
+                : 'No ratings yet'}
+            </span>
+          </div>
           <div
             style={{
               display: 'inline-block',
