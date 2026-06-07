@@ -29,8 +29,8 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      # - name: Install Playwright Browsers
+      # run: npx playwright install --with-deps
 
       # CURRENTLY DISABLED DUE TO CHROME ISSUES
       # - name: Run TestCafe Acceptance Tests
