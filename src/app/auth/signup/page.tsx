@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,32 +19,14 @@ const SignUp = () => {
   const router = useRouter();
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [verificationCodeSent, setVerificationCodeSent] = useState(false);
-  const [enteredCode, setEnteredCode] = useState('');
-  const [verificationSuccess, setVerificationSuccess] = useState('');
-  const [verificationError, setVerificationError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState<SignUpForm | null>(null);
-
-  // Countdown state
-  const [resendCountdown, setResendCountdown] = useState(0);
 
   useEffect(() => {
     if (status === 'authenticated') {
       router.replace('/dashboard');
     }
   }, [status, router]);
-
-  // Countdown effect
-  useEffect(() => {
-    if (resendCountdown <= 0) {
-      return () => {};
-    }
-    const timer = setInterval(() => {
-      setResendCountdown((prev) => prev - 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, [resendCountdown]);
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().required('Email is required').email('Email is invalid'),
@@ -65,77 +47,31 @@ const SignUp = () => {
     resolver: yupResolver(validationSchema),
   });
 
-  // Send verification code
-  const sendVerificationCode = async (email: string) => {
-    // Start countdown right away (60s)
-    setResendCountdown(60);
-
-    try {
-      const res = await fetch('/api/auth/send-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Failed to send code');
-
-      setVerificationCodeSent(true);
-    } catch (err: any) {
-      setErrorMessage(err.message || 'Failed to send verification code');
-      // Reset countdown if request fails
-      setResendCountdown(0);
-    }
-  };
-
-  // Handle registration
   const onSubmit = async (data: SignUpForm) => {
     setIsSubmitting(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: data.email, password: data.password }),
       });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.message || 'Registration failed');
 
-      setErrorMessage('');
-      setFormData(data);
-      await sendVerificationCode(data.email);
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || 'Registration failed');
+      }
+
+      setSuccessMessage('Account created successfully! Redirecting to sign in...');
+
+      setTimeout(() => {
+        router.push('/auth/signin');
+      }, 1200);
     } catch (err: any) {
       setErrorMessage(err.message || 'Something went wrong.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  // Handle code verification + auto-login
-  const handleVerifyCode = async () => {
-    if (!formData) return;
-    setIsSubmitting(true);
-    setVerificationError('');
-
-    try {
-      const res = await fetch('/api/auth/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: formData.email, code: enteredCode }),
-      });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Verification failed');
-
-      const signInResult = await signIn('credentials', {
-        redirect: false,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      if (signInResult?.error) throw new Error(signInResult.error);
-
-      setVerificationSuccess('Email verified! Redirecting...');
-      router.push('/dashboard');
-    } catch (err: any) {
-      setVerificationError(err.message || 'Verification failed.');
     } finally {
       setIsSubmitting(false);
     }
@@ -150,6 +86,7 @@ const SignUp = () => {
         <p className={styles.descriptionCentered}>Sign up with your email</p>
 
         {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+        {successMessage && <p className={styles.success}>{successMessage}</p>}
 
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <div className={styles.inputGroup}>
@@ -186,48 +123,6 @@ const SignUp = () => {
             {isSubmitting ? <span className={styles.spinner} /> : 'Register'}
           </button>
         </form>
-
-        {verificationCodeSent && (
-          <div className={styles.verificationPopup}>
-            <h2>Verify Your Email</h2>
-            <p>
-              We sent a code to
-              {' '}
-              <strong>{formData?.email}</strong>
-              . Enter it below:
-            </p>
-
-            <input
-              type="text"
-              value={enteredCode}
-              onChange={(e) => setEnteredCode(e.target.value)}
-              className={`${styles.input} ${verificationError ? styles.invalid : ''}`}
-              placeholder="Enter code"
-            />
-
-            {verificationError && <p className={styles.error}>{verificationError}</p>}
-            {verificationSuccess && <p className={styles.success}>{verificationSuccess}</p>}
-
-            <button
-              type="button"
-              className={styles.button}
-              onClick={handleVerifyCode}
-              disabled={isSubmitting}
-              style={{ marginTop: '12px' }}
-            >
-              {isSubmitting ? <span className={styles.spinner} /> : 'Verify Code'}
-            </button>
-
-            <button
-              type="button"
-              className={styles.resendButton}
-              onClick={() => formData && sendVerificationCode(formData.email)}
-              disabled={isSubmitting || resendCountdown > 0}
-            >
-              {resendCountdown > 0 ? `Resend Code (${resendCountdown})` : 'Resend Code'}
-            </button>
-          </div>
-        )}
 
         <p className={styles.accountPromptWrapper}>
           Already have an account?&nbsp;
